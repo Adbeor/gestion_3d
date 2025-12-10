@@ -1,3 +1,5 @@
+import base64
+from django.core.files.base import ContentFile
 from django.db import models
 
 # Create your models here.
@@ -66,6 +68,76 @@ class Pieza(models.Model):
     imagen = models.ImageField(
         upload_to="piezas/", null=True, blank=True, verbose_name="Foto de la pieza"
     )
+
+# Campo para el archivo GCODE real
+    archivo_gcode = models.FileField(upload_to='gcodes/', null=True, blank=True, verbose_name="Archivo GCode")
+    
+
+    def save(self, *args, **kwargs):
+        # DETECTAR SI HAY UN GCODE NUEVO Y NO HAY IMAGEN
+        # Si estamos subiendo un GCode y la imagen está vacía...
+        if self.archivo_gcode and not self.imagen:
+            imagen_extraida = self.extraer_thumbnail_gcode()
+            if imagen_extraida:
+                # Guardamos la imagen con el mismo nombre que la pieza + .png
+                nombre_archivo = f"{self.nombre}_thumbnail.png"
+                self.imagen.save(nombre_archivo, imagen_extraida, save=False)
+        
+        super().save(*args, **kwargs)
+
+    def extraer_thumbnail_gcode(self):
+        """
+        Lee el archivo GCode sin cerrarlo para no romper el guardado de Django.
+        """
+        try:
+            # 1. Abrimos el archivo en modo lectura binaria ('rb')
+            self.archivo_gcode.open('rb')
+            
+            # 2. Leemos todas las líneas
+            lines = self.archivo_gcode.readlines()
+            
+            # 3. ¡IMPORTANTE! Rebobinamos el archivo al inicio (byte 0)
+            # Si no hacemos esto, Django guardará un archivo vacío.
+            self.archivo_gcode.seek(0)
+            
+            # NOTA: NO HACEMOS .close() AQUÍ. Django lo cerrará después de guardar.
+            
+            capturando = False
+            base64_string = ""
+            
+            for line in lines:
+                # Como leemos en binario (rb), decodificamos a texto
+                try:
+                    line_str = line.decode('utf-8', errors='ignore').strip()
+                except:
+                    continue
+                
+                # INICIO DEL THUMBNAIL
+                if "; thumbnail begin" in line_str or "; THUMBNAIL_BLOCK_START" in line_str:
+                    capturando = True
+                    continue
+                
+                # FIN DEL THUMBNAIL
+                if "; thumbnail end" in line_str or "; THUMBNAIL_BLOCK_END" in line_str:
+                    capturando = False
+                    break 
+                
+                # CAPTURANDO DATOS
+                if capturando:
+                    data = line_str.replace(';', '').strip()
+                    base64_string += data
+
+            if base64_string:
+                image_data = base64.b64decode(base64_string)
+                return ContentFile(image_data)
+            
+            return None
+                
+        except Exception as e:
+            print(f"Error interno extrayendo thumbnail: {e}")
+            # En caso de error, aseguramos rebobinar por si acaso
+            self.archivo_gcode.seek(0)
+            return None
 
     def __str__(self):
         return f"{self.nombre} ({self.material.color})"
@@ -150,3 +222,90 @@ class ComposicionProducto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     pieza = models.ForeignKey(Pieza, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
+
+
+# --- SECCIÓN DE VENTAS Y PEDIDOS ---
+
+
+class Cliente(models.Model):
+
+    nombre = models.CharField(max_length=100, verbose_name="Nombre del Cliente")
+
+    telefono = models.CharField(
+        max_length=20, blank=True, verbose_name="Teléfono / WhatsApp"
+    )
+    email = models.EmailField(blank=True)
+    direccion = models.TextField(blank=True, verbose_name="Dirección de Envío")
+
+    def __str__(self):
+        return self.nombre
+
+
+class Pedido(models.Model):
+    # Opciones de Estado (Tuplas: 'VALOR_BD', 'Nombre Visible')
+    ESTADOS_PAGO = [
+        ("PENDIENTE", "🔴 Pendiente de Pago"),
+        ("PARCIAL", "🟡 Pago Parcial (Seña)"),
+        ("PAGADO", "🟢 Pagado Totalmente"),
+    ]
+
+    ESTADOS_ENTREGA = [
+        ("PREPARACION", "📦 En Preparación"),
+        ("TRANSITO", "🚚 En Tránsito / Enviado"),
+        ("ENTREGADO", "✅ Entregado al Cliente"),
+    ]
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_entrega_estimada = models.DateField(null=True, blank=True)
+
+    estado_pago = models.CharField(
+        max_length=20, choices=ESTADOS_PAGO, default="PENDIENTE"
+    )
+    monto_pagado = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, verbose_name="Monto Abonado (S/)"
+    )
+
+    estado_entrega = models.CharField(
+        max_length=20, choices=ESTADOS_ENTREGA, default="PREPARACION"
+    )
+    codigo_seguimiento = models.CharField(
+        max_length=50, blank=True, help_text="Número de guía o tracking"
+    )
+
+    def __str__(self):
+        return f"Pedido #{self.id} - {self.cliente.nombre}"
+
+    @property
+    def total_pedido(self):
+        """Suma el precio de todos los items dentro de este pedido"""
+        total = 0
+        for item in self.items.all():
+            total += item.subtotal
+        return total
+
+    @property
+    def saldo_pendiente(self):
+        return self.total_pedido - self.monto_pagado
+
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, related_name="items", on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio_unitario = models.DecimalField(
+        max_digits=10, decimal_places=2, help_text="Precio al momento de la venta"
+    )
+
+    @property
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario
+
+    def save(self, *args, **kwargs):
+        # Si no ponemos precio, jalamos el precio actual del producto automáticamente
+        if not self.precio_unitario:
+            self.precio_unitario = self.producto.precio
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.cantidad}x {self.producto.nombre}"

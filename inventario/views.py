@@ -2,7 +2,14 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Producto, Filamento, Pieza
+from .models import Producto, Filamento, Pieza, ItemPedido, Pedido
+from django.db.models import Sum  # <--- AGREGA ESTO AL PRINCIPIO CON LOS OTROS IMPORTS
+
+
+def lista_pedidos(request):
+    # Traemos los pedidos ordenados: Primero los pendientes, luego los recientes
+    pedidos = Pedido.objects.all().order_by("estado_entrega", "-fecha_creacion")
+    return render(request, "inventario/lista_pedidos.html", {"pedidos": pedidos})
 
 
 def dashboard_produccion(request):
@@ -157,34 +164,57 @@ def dashboard_simple(request):
 
 
 def detalle_producto(request, producto_id):
+    # 1. Obtener el producto básico
     producto = get_object_or_404(Producto, pk=producto_id)
 
-    # Aquí hacemos la lógica de "Medio molino" (Equivalencia)
+    # ---------------------------------------------------------
+    # PARTE 1: Lógica de Piezas (Barritas de progreso)
+    # ---------------------------------------------------------
     piezas_info = []
     composicion = producto.composicionproducto_set.all()
 
     for item in composicion:
         # Matemática: Tengo 1, necesito 2 = 0.5 Molinos
-        equivalencia = item.pieza.stock_fisico / item.cantidad
+        # Agregamos una validación simple por si item.cantidad fuera 0 (seguridad)
+        if item.cantidad > 0:
+            equivalencia = item.pieza.stock_fisico / item.cantidad
+        else:
+            equivalencia = 0
 
         piezas_info.append(
             {
                 "pieza": item.pieza,
                 "requerido": item.cantidad,
                 "tengo": item.pieza.stock_fisico,
-                "equivalencia": round(equivalencia, 1),  # Ej: 0.5, 2.0, 3.5
-                "porcentaje": min(
-                    (equivalencia * 100), 100
-                ),  # Para una barrita de progreso visual
+                "equivalencia": round(equivalencia, 1),
+                "porcentaje": min((equivalencia * 100), 100),
             }
         )
 
+    # ---------------------------------------------------------
+    # PARTE 2: Lógica de Pedidos (Demanda Pendiente)
+    # ---------------------------------------------------------
+    resultado_suma = ItemPedido.objects.filter(
+        producto=producto, pedido__estado_entrega="PREPARACION"
+    ).aggregate(total=Sum("cantidad"))
+
+    cantidad_pendiente = resultado_suma["total"]
+    if cantidad_pendiente is None:
+        cantidad_pendiente = 0
+
+    # Calculamos cuánto falta. Si el resultado es negativo (sobra stock), ponemos 0.
+    faltante = max(0, cantidad_pendiente - producto.stock_armado)
+    # ---------------------------------------------------------
+    # PARTE 3: Enviar TODO junto al HTML
+    # ---------------------------------------------------------
     return render(
         request,
         "inventario/detalle_producto.html",
         {
             "producto": producto,
-            "piezas": piezas_info,
+            "piezas": piezas_info,  # Viene de la Parte 1
+            "demanda_pendiente": cantidad_pendiente,  # Viene de la Parte 2
+            "cantidad_faltante": faltante,
             "puede_armar": producto.cantidad_armable_hoy() > 0,
         },
     )
