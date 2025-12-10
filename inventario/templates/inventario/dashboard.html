@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión 3D Avanzada</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .container { display: flex; gap: 20px; }
+        .columna { flex: 1; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        h1 { text-align: center; color: #1a1a1a; }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; color: #444; }
+        
+        .item-card { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px; background: #fff; }
+        .stock-badge { background: #eee; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        
+        /* Botones */
+        button { cursor: pointer; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; color: white; margin-top: 5px;}
+        .btn-imprimir { background-color: #3498db; } /* Azul */
+        .btn-armar { background-color: #f39c12; }    /* Naranja */
+        .btn-vender { background-color: #27ae60; }    /* Verde */
+        
+        /* Alertas */
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 5px; color: white; }
+        .alert-success { background-color: #2ecc71; }
+        .alert-error { background-color: #e74c3c; }
+        .alert-warning { background-color: #f1c40f; color: #333; }
+    </style>
+</head>
+<body>
+
+    <h1>🏭 Sistema de Producción 3D</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if alertas_compra %}
+        <div class="alert alert-warning">
+            ⚠️ <strong>Comprar Filamento:</strong>
+            {% for f in alertas_compra %}
+                {{ f.tipo }} {{ f.color }} (Queda: {{ f.stock_total }}g) |
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="container">
+        
+        <div class="columna">
+            <h2>🧩 Stock de Piezas (Impresión)</h2>
+            <p><small>Aquí imprimes piezas sueltas para llenar tu almacén.</small></p>
+            
+            {% for pieza in lista_piezas %}
+                <div class="item-card">
+                    <div style="display:flex; justify-content:space-between;">
+                        <strong>{{ pieza.nombre }}</strong>
+                        <span class="stock-badge">En caja: {{ pieza.stock_fisico }}</span>
+                    </div>
+                    <small>Usa: {{ pieza.material.tipo }} {{ pieza.material.color }} ({{ pieza.peso_gramos }}g)</small>
+                    
+                    <form action="{% url 'imprimir_pieza' pieza.id %}" method="POST" style="margin-top:10px;">
+                        {% csrf_token %}
+                        <input type="number" name="cantidad" value="1" min="1" style="width: 40px;">
+                        <button type="submit" class="btn-imprimir">🖨️ Imprimir</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="columna">
+            <h2>🚀 Productos (Armado y Venta)</h2>
+            <p><small>Arma molinos con tus piezas o vende los que ya tienes.</small></p>
+
+            {% for item in lista_productos %}
+                <div class="item-card">
+                    <h3>{{ item.producto.nombre }}</h3>
+                    <div style="margin-bottom: 10px;">
+                        <span class="stock-badge" style="background:#d4edda; color:#155724;">
+                            📦 Listos para vender: {{ item.producto.stock_armado }}
+                        </span>
+                        <span class="stock-badge">💰 Vendidos: {{ item.producto.ventas }}</span>
+                    </div>
+
+                    {% if item.se_puede_armar %}
+                        <form action="{% url 'armar_producto' item.producto.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-armar">🔧 Armar 1 Unidad</button>
+                        </form>
+                    {% else %}
+                        <div style="color: #e74c3c; font-size: 0.9em; margin-bottom:5px;">
+                            <strong>No se puede armar. Falta:</strong>
+                            <ul>
+                                {% for error in item.faltantes_armado %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    {% if item.producto.stock_armado > 0 %}
+                        <form action="{% url 'vender_producto' item.producto.id %}" method="POST" style="display:inline; float:right;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-vender">💵 Vender</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    
+    </div>
+
+</body>
+</html>

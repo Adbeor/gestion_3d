@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle {{ producto.nombre }}</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; padding: 20px; max-width: 900px; margin: 0 auto;}
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-volver { text-decoration: none; color: #666; font-weight: bold; }
+        
+        /* Controles Principales */
+        .acciones-producto { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 20px; align-items: center;}
+        
+        /* Tabla de Piezas */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: #444; }
+        
+        /* Barra de Progreso */
+        .barra-fondo { width: 100px; height: 8px; background: #eee; border-radius: 4px; display: inline-block; }
+        .barra-relleno { height: 100%; background: #3498db; border-radius: 4px; }
+        .equiv { font-weight: bold; color: #2980b9; }
+
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold;}
+        .btn-print { background: #3498db; }
+        .btn-armar { background: #f39c12; font-size: 1.2em; padding: 10px 20px;}
+        .btn-vender { background: #27ae60; font-size: 1.2em; padding: 10px 20px;}
+
+/* ESTILOS PARA LA IMAGEN FLOTANTE */
+
+/* El contenedor del texto que activará el hover */
+.hover-trigger {
+    position: relative; /* Necesario para que la imagen flote respecto a este elemento */
+    cursor: help; /* Cambia el cursor para indicar que hay info extra */
+    border-bottom: 1px dashed #ccc; /* Subrayado sutil para indicar interactividad */
+}
+
+/* La imagen flotante (oculta por defecto) */
+.popover-imagen {
+    display: none; /* Oculto */
+    position: absolute; /* Flotante */
+    bottom: 100%; /* Aparece justo encima del texto */
+    left: 50%;
+    transform: translateX(-50%); /* Centrado horizontalmente */
+    
+    /* Estética de tarjeta */
+    background: white;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 100; /* Asegura que quede por encima de todo */
+    margin-bottom: 10px; /* Un pequeño espacio entre el texto y la imagen */
+    width: 200px; /* Tamaño fijo para que no sea gigante */
+    text-align: center;
+}
+
+.popover-imagen img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* El Triangulito decorativo debajo de la imagen */
+.popover-imagen::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+
+/* LA MAGIA: Mostrar al pasar el mouse */
+.hover-trigger:hover .popover-imagen {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Animación suave de entrada */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* MODIFICADOR: Mostrar hacia abajo si falta espacio arriba */
+.popover-imagen.mostrar-abajo {
+    bottom: auto; /* Anula la regla anterior que lo empujaba arriba */
+    top: 100%;    /* Lo empuja hacia abajo desde el texto */
+    margin-bottom: 0;
+    margin-top: 10px; /* Espacio entre texto e imagen */
+}
+
+/* Ajustar el triangulito para que apunte hacia arriba */
+.popover-imagen.mostrar-abajo::after {
+    top: auto;    /* Anula la regla anterior */
+    bottom: 100%; /* Lo pone en el borde superior de la caja blanca */
+    border-color: transparent transparent white transparent; /* Invierte los colores del triángulo */
+}
+
+/* Ajustar la animación para que baje suavemente en lugar de subir */
+.hover-trigger:hover .popover-imagen.mostrar-abajo {
+    animation: fadeInDown 0.2s ease-in-out;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+    </style>
+</head>
+<body>
+
+    <a href="{% url 'dashboard' %}" class="btn-volver">← Volver al Dashboard</a>
+
+    <div class="header">
+        <h1>
+            🛠️ Gestión: 
+            
+            <span class="hover-trigger">
+                {{ producto.nombre }}
+                
+                {% if producto.imagen %}
+                    <div class="popover-imagen">
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    </div>
+                {% endif %}
+            </span>
+        </h1>
+        <div>
+            <h2>Stock Terminado: {{ producto.stock_armado }}</h2>
+        </div>
+    </div>
+
+    <div class="acciones-producto">
+        <div style="flex: 1;">
+            {% if puede_armar %}
+                <p style="color: #27ae60;">✅ Tienes piezas suficientes para armar.</p>
+                <form action="{% url 'armar_producto' producto.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                    <button class="btn btn-armar">🔧 Armar 1 Unidad</button>
+                </form>
+            {% else %}
+                <p style="color: #e74c3c;">⚠️ Faltan imprimir piezas para armar.</p>
+            {% endif %}
+        </div>
+        
+        {% if producto.stock_armado > 0 %}
+            <form action="{% url 'vender_producto' producto.id %}" method="POST">
+                {% csrf_token %}
+
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                <button class="btn btn-vender">💵 Registrar Venta</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <h3>🧩 Estado de las Piezas</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Pieza</th>
+                <th>Requerido</th>
+                <th>En Caja</th>
+                <th>Equivalencia (Molinos)</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in piezas %}
+            <tr>
+                <td>
+                    <span class="hover-trigger">
+                        <strong>{{ item.pieza.nombre }}</strong>
+                        
+                        {% if item.pieza.imagen %}
+                            <div class="popover-imagen">
+                                <img src="{{ item.pieza.imagen.url }}" alt="{{ item.pieza.nombre }}">
+                            </div>
+                        {% endif %}
+                    </span>
+                    <br>
+                    <small style="color:#888">{{ item.pieza.material.tipo }} {{ item.pieza.material.color}}</small>
+                </td>
+                <td>{{ item.requerido }} u.</td>
+                <td><strong>{{ item.tengo }} u.</strong></td>
+                <td>
+                    <span class="equiv">{{ item.equivalencia }} Molinos</span>
+                    <br>
+                    <div class="barra-fondo">
+                        <div class="barra-relleno" style="width: {{ item.porcentaje }}%;"></div>
+                    </div>
+                </td>
+                <td>
+                    <form action="{% url 'imprimir_pieza' item.pieza.id %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="cantidad" value="1">
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button class="btn btn-print">+1 Imprimir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 1. Buscamos todos los elementos que activan el hover
+            const triggers = document.querySelectorAll('.hover-trigger');
+
+            triggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', function() {
+                    // 2. Buscamos la imagen dentro de este trigger
+                    const popover = this.querySelector('.popover-imagen');
+                    if (!popover) return; // Si no hay imagen, no hacemos nada
+
+                    // 3. Medimos la distancia desde el elemento hasta el techo de la ventana
+                    // getBoundingClientRect() nos da las coordenadas exactas del elemento
+                    const rect = this.getBoundingClientRect();
+                    const distanciaAlTecho = rect.top;
+
+                    // 4. Definimos el "umbral de seguridad" (ej. 250px para la imagen)
+                    const espacioNecesario = 250;
+
+                    // 5. Decidimos: ¿Cabe arriba o lo mandamos abajo?
+                    if (distanciaAlTecho < espacioNecesario) {
+                        // Está muy arriba: añadir clase para mostrar abajo
+                        popover.classList.add('mostrar-abajo');
+                    } else {
+                        // Hay espacio de sobra: asegurar que se muestre arriba (default)
+                        popover.classList.remove('mostrar-abajo');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen Minería 3D</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; padding: 20px; }
+        .grid-dashboard { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+        
+        /* Panel Filamentos */
+        .panel-filamentos { background: white; padding: 20px; border-radius: 12px; height: fit-content; }
+        .fila-filamento { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .critico { color: #c0392b; font-weight: bold; } /* Rojo */
+        .alerta { color: #d35400; } /* Naranja */
+        .bien { color: #27ae60; } /* Verde */
+
+        /* Panel Productos */
+        .grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card-producto { 
+            background: white; padding: 20px; border-radius: 12px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #e1e4e8;
+            text-decoration: none; color: inherit; display: block;
+        }
+        .card-producto:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: #3498db; }
+        
+        .numero-grande { font-size: 2.5em; font-weight: bold; margin: 0; color: #2c3e50; }
+        .etiqueta { font-size: 0.8em; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px;}
+        .badge-armar { background: #eafaf1; color: #2ecc71; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.9em;}
+    </style>
+</head>
+<body>
+    <h1>📊 Estado del Negocio</h1>
+
+    <div class="grid-dashboard">
+        
+        <div class="panel-filamentos">
+            <h3>🧵 Inventario Filamentos</h3>
+            <p><small>Ordenado por urgencia de compra</small></p>
+            
+            {% for f in filamentos %}
+                <div class="fila-filamento">
+                    <div>
+                        <strong>{{ f.tipo }}</strong> {{ f.color }}
+                    </div>
+                    <div class="{% if f.stock_total < 500 %}critico{% elif f.stock_total < 1500 %}alerta{% else %}bien{% endif %}">
+                        {{ f.cantidad_rollos }}R + {{ f.gramos_sueltos|floatformat:0 }}g
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div>
+            <h3>🚜 Modelos a Escala</h3>
+            <div class="grid-productos">
+                {% for item in productos %}
+                    <a href="{% url 'detalle_producto' item.obj.id %}" class="card-producto">
+                        <h2 style="margin-top:0;">{{ item.obj.nombre }}</h2>
+                        
+                        <div style="display:flex; justify-content: space-between; align-items: flex-end;">
+                            <div>
+                                <p class="numero-grande">{{ item.listos_venta }}</p>
+                                <span class="etiqueta">En Stock</span>
+                            </div>
+                            
+                            {% if item.listos_armar > 0 %}
+                                <div class="badge-armar">
+                                    +{{ item.listos_armar }} para armar
+                                </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
