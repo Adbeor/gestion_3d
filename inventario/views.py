@@ -46,9 +46,24 @@ def dashboard_produccion(request):
 def accion_imprimir_pieza(request, pieza_id):
     if request.method == "POST":
         pieza = get_object_or_404(Pieza, pk=pieza_id)
-        cantidad_a_imprimir = int(request.POST.get("cantidad", 1))  # Por defecto 1
+        cantidad_a_imprimir = int(request.POST.get("cantidad", 1))
 
-        peso_total = pieza.peso_gramos * cantidad_a_imprimir
+        # --- CORRECCIÓN DE SEGURIDAD ---
+        # Si el peso es None, asumimos 0.0 para evitar el error
+        peso_unitario = pieza.peso_gramos if pieza.peso_gramos is not None else 0.0
+
+        peso_total = peso_unitario * cantidad_a_imprimir
+
+        # Validación extra: Si el peso es 0, advertimos pero dejamos imprimir (para ajustar stock físico)
+        if peso_total == 0:
+            messages.warning(
+                request,
+                f"⚠️ La pieza '{pieza.nombre}' no tiene peso registrado. No se descontó filamento.",
+            )
+            pieza.stock_fisico += cantidad_a_imprimir
+            pieza.save()
+            # Redirección inteligente
+            return redirect(request.POST.get("next") or "dashboard")
 
         # Intentamos descontar del filamento
         if pieza.material.descontar_material(peso_total):
@@ -58,20 +73,19 @@ def accion_imprimir_pieza(request, pieza_id):
                 request,
                 f"🖨️ Se imprimieron {cantidad_a_imprimir} unidades de {pieza.nombre}.",
             )
+
         else:
             messages.error(
                 request,
                 f"❌ No hay suficiente filamento {pieza.material.color} para imprimir.",
             )
 
-    # --- CAMBIO IMPORTANTE AQUÍ ---
-    # Buscamos si el formulario nos mandó una dirección "next"
+    # Redirección inteligente (la que ya tenías)
     direccion_retorno = request.POST.get("next")
-
     if direccion_retorno:
-        return redirect(direccion_retorno)  # Si existe, volvemos ahí (al detalle)
+        return redirect(direccion_retorno)
     else:
-        return redirect("dashboard")  # Si no existe, vamos al dashboard por defecto
+        return redirect("dashboard")
 
 
 # ACCIÓN 2: ARMAR UN MOLINO (Usando piezas impresas)
