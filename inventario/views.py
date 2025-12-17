@@ -1,9 +1,117 @@
-# en inventario/views.py
+# inventario/views.py
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Producto, Filamento, Pieza, ItemPedido, Pedido
 from django.db.models import Sum  # <--- AGREGA ESTO AL PRINCIPIO CON LOS OTROS IMPORTS
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+from .forms import PedidoForm, ClienteForm, ItemPedidoFormSet  # <--- Importar
+from django.db import transaction  # Para que si falla algo, no guarde nada a medias
+
+
+def crear_pedido(request):
+    # Inicializamos los formularios vacíos
+    pedido_form = PedidoForm()
+    cliente_form = ClienteForm()
+    formset = ItemPedidoFormSet()
+
+    if request.method == "POST":
+        pedido_form = PedidoForm(request.POST)
+        cliente_form = ClienteForm(request.POST)
+        formset = ItemPedidoFormSet(request.POST)
+
+        # Usamos 'transaction.atomic' para seguridad: O se guarda TODO o NADA
+        try:
+            with transaction.atomic():
+                # LÓGICA DEL CLIENTE
+                # Si el usuario eligió "Crear Nuevo Cliente" (detectamos esto por un input hidden o lógica JS)
+                # O simplemente revisamos si mandaron datos en el form de cliente
+                usar_nuevo_cliente = request.POST.get("usar_nuevo_cliente") == "on"
+
+                cliente = None
+                if usar_nuevo_cliente:
+                    if cliente_form.is_valid():
+                        cliente = cliente_form.save()  # Guardamos el nuevo cliente
+                    else:
+                        raise Exception("Error en datos del cliente nuevo")
+                else:
+                    # Usamos el del select
+                    if pedido_form.is_valid():
+                        cliente = pedido_form.cleaned_data["cliente"]
+
+                if not cliente:
+                    raise Exception("Debes seleccionar o crear un cliente")
+
+                # GUARDAR EL PEDIDO
+                # Creamos el objeto pedido pero sin guardar en BD aún (commit=False)
+                # para poder asignarle el cliente manualmente
+                if pedido_form.is_valid():
+                    pedido = pedido_form.save(commit=False)
+                    pedido.cliente = cliente  # Asignamos el cliente (nuevo o viejo)
+                    pedido.save()  # Ahora sí guardamos el pedido padre
+
+                    # GUARDAR LOS PRODUCTOS
+                    # Le decimos al formset a qué pedido pertenecen estos items
+                    formset = ItemPedidoFormSet(request.POST, instance=pedido)
+                    if formset.is_valid():
+                        formset.save()
+                        return redirect("lista_pedidos")  # ¡Éxito!
+                    else:
+                        raise Exception("Error en los productos")
+
+        except Exception as e:
+            print(f"Error al guardar: {e}")
+            # Aquí podrías agregar un messages.error(request, str(e))
+
+    return render(
+        request,
+        "inventario/crear_pedido.html",
+        {"pedido_form": pedido_form, "cliente_form": cliente_form, "formset": formset},
+    )
+
+
+# 1. VISTA DE LA PIZARRA
+def tablero_kanban(request):
+    # Filtramos los pedidos por cada estado para mandarlos ordenaditos
+    context = {
+        "cola": Pedido.objects.filter(estado_entrega="COLA"),
+        "taller": Pedido.objects.filter(estado_entrega="TALLER"),
+        "transito": Pedido.objects.filter(estado_entrega="TRANSITO"),
+        "entregados": Pedido.objects.filter(estado_entrega="ENTREGADO").order_by(
+            "-fecha_creacion"
+        )[
+            :5
+        ],  # Solo los ultimos 5
+    }
+    return render(request, "inventario/tablero_kanban.html", context)
+
+
+def actualizar_estado_pedido(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        pedido_id = data.get("id")
+        nuevo_estado = data.get("estado")
+
+        try:
+            pedido = Pedido.objects.get(pk=pedido_id)
+            pedido.estado_entrega = nuevo_estado
+            pedido.save()
+            return JsonResponse(
+                {
+                    "status": "ok",
+                    "mensaje": f"Pedido #{pedido_id} movido a {nuevo_estado}",
+                }
+            )
+        except Pedido.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "mensaje": "Pedido no encontrado"}, status=404
+            )
+
+    return JsonResponse({"status": "error"}, status=400)
 
 
 def lista_pedidos(request):

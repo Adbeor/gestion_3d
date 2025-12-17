@@ -1,0 +1,23 @@
+<div class="kanban-card card-{{ color }}" data-id="{{ pedido.id }}">
+    <div style="display:flex; justify-content:space-between;">
+        <span class="card-client">{{ pedido.cliente.nombre }}</span>
+        <small style="color:#999">#{{ pedido.id }}</small>
+    </div>
+    
+    <div class="card-title">
+        {% for item in pedido.items.all|slice:":2" %}
+            {{ item.cantidad }}x {{ item.producto.nombre }}<br>
+        {% endfor %}
+        {% if pedido.items.count > 2 %}
+            <small>... y {{ pedido.items.count|add:"-2" }} más</small>
+        {% endif %}
+    </div>
+
+    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+        <small>{{ pedido.fecha_entrega_estimada|date:"d M" }}</small>
+        
+        {% if pedido.es_urgente %}
+            <span style="background:red; color:white; padding:2px 5px; border-radius:4px; font-size:0.7em;">🔥 URGENTE</span>
+        {% endif %}
+    </div>
+</div>

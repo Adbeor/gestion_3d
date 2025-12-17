@@ -20,4 +20,8 @@ urlpatterns = [
         name="vender_producto",
     ),
     path("pedidos/", views.lista_pedidos, name="lista_pedidos"),
+    path("pedidos/nuevo/", views.crear_pedido, name="crear_pedido"),
+    # kanban
+    path("kanban/", views.tablero_kanban, name="tablero_kanban"),
+    path("api/mover-pedido/", views.actualizar_estado_pedido, name="api_mover_pedido"),
 ]

@@ -1,0 +1,133 @@
+{% extends 'inventario/base.html' %} {% block content %}
+<style>
+    /* ESTILOS DE LA PIZARRA */
+    .kanban-board {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 Columnas iguales */
+        gap: 20px;
+        padding: 20px;
+        height: 85vh; /* Ocupa casi toda la pantalla */
+    }
+
+    .kanban-column {
+        background: #ebecf0;
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .column-header {
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 10px;
+        text-align: center;
+        border-bottom: 2px solid rgba(0,0,0,0.1);
+        margin-bottom: 10px;
+    }
+
+    /* ESTILOS DE LA TARJETA */
+    .kanban-card {
+        background: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        cursor: grab; /* Manita para agarrar */
+        transition: transform 0.2s;
+        border-left: 5px solid #bdc3c7; /* Color por defecto */
+    }
+    
+    .kanban-card:active { cursor: grabbing; transform: rotate(2deg); }
+    .kanban-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
+    /* Colores por estado (Borde izquierdo) */
+    .card-cola { border-color: #f1c40f; }      /* Amarillo */
+    .card-taller { border-color: #e67e22; }    /* Naranja */
+    .card-transito { border-color: #3498db; }  /* Azul */
+    .card-entregado { border-color: #2ecc71; opacity: 0.7; } /* Verde */
+
+    .card-title { font-weight: bold; font-size: 1.1em; color: #2c3e50; }
+    .card-client { color: #7f8c8d; font-size: 0.9em; margin-bottom: 5px;}
+    .card-items { font-size: 0.85em; color: #34495e; background: #f8f9fa; padding: 5px; border-radius: 4px;}
+</style>
+
+<h2>📋 Pizarra de Control de Pedidos</h2>
+
+<div class="kanban-board">
+    
+    <div class="kanban-column" id="col-COLA" data-estado="COLA" style="background: #fdfae6;">
+        <div class="column-header" style="color: #f39c12;">⏳ En Cola</div>
+        {% for p in cola %}
+            {% include "inventario/tarjeta_kanban.html" with pedido=p color="cola" %}
+        {% endfor %}
+    </div>
+
+    <div class="kanban-column" id="col-TALLER" data-estado="TALLER" style="background: #fdf2e9;">
+        <div class="column-header" style="color: #d35400;">🔨 En Taller</div>
+        {% for p in taller %}
+            {% include "inventario/tarjeta_kanban.html" with pedido=p color="taller" %}
+        {% endfor %}
+    </div>
+
+    <div class="kanban-column" id="col-TRANSITO" data-estado="TRANSITO" style="background: #ebf5fb;">
+        <div class="column-header" style="color: #2980b9;">🚚 En Tránsito</div>
+        {% for p in transito %}
+            {% include "inventario/tarjeta_kanban.html" with pedido=p color="transito" %}
+        {% endfor %}
+    </div>
+
+    <div class="kanban-column" id="col-ENTREGADO" data-estado="ENTREGADO" style="background: #eafaf1;">
+        <div class="column-header" style="color: #27ae60;">✅ Entregados</div>
+        {% for p in entregados %}
+            {% include "inventario/tarjeta_kanban.html" with pedido=p color="entregado" %}
+        {% endfor %}
+    </div>
+
+</div>
+
+<script type="text/html" id="template-card">
+    </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+    // 1. Configurar Drag & Drop en las 4 columnas
+    const columnas = document.querySelectorAll('.kanban-column');
+    
+    columnas.forEach(col => {
+        new Sortable(col, {
+            group: 'kanban', // Permite mover items entre listas con el mismo nombre de grupo
+            animation: 150,
+            ghostClass: 'bg-blue-100', // Clase visual cuando arrastras
+            onEnd: function (evt) {
+                // ESTA FUNCIÓN SE EJECUTA AL SOLTAR LA TARJETA
+                const itemEl = evt.item; // La tarjeta que moviste
+                const nuevoEstado = evt.to.getAttribute('data-estado'); // A qué columna cayó
+                const pedidoId = itemEl.getAttribute('data-id'); // ID del pedido
+
+                // Enviamos el cambio a Django
+                actualizarEstado(pedidoId, nuevoEstado);
+            }
+        });
+    });
+
+    // 2. Función AJAX para hablar con Django
+    function actualizarEstado(id, estado) {
+        fetch("{% url 'api_mover_pedido' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}" // ¡Seguridad Django!
+            },
+            body: JSON.stringify({ id: id, estado: estado })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Actualizado:", data);
+            // Opcional: Mostrar un toast o notificación pequeña
+        })
+        .catch(error => console.error("Error:", error));
+    }
+</script>
+
+{% endblock %}

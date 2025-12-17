@@ -1,0 +1,146 @@
+{% extends 'inventario/base.html' %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;">📝 Nuevo Pedido</h2>
+
+    <form method="post" id="form-pedido">
+        {% csrf_token %}
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin-top:0">👤 Cliente</h4>
+            
+            <div id="selector-cliente-box">
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex-grow: 1;">
+                        {{ pedido_form.cliente }} </div>
+                    <button type="button" onclick="toggleNuevoCliente()" style="background: #27ae60; color: white; border: none; width: 40px; border-radius: 5px; cursor: pointer; font-size: 1.2em;">+</button>
+                </div>
+                <small style="color: #777;">Selecciona un cliente o dale al '+' para crear uno.</small>
+            </div>
+
+            <div id="nuevo-cliente-box" style="display: none; margin-top: 15px; border-left: 4px solid #27ae60; padding-left: 15px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <strong style="color: #27ae60;">Nuevo Cliente</strong>
+                    <button type="button" onclick="toggleNuevoCliente()" style="background: none; border: none; color: #c0392b; cursor: pointer;">✖ Cancelar</button>
+                </div>
+                
+                <input type="hidden" name="usar_nuevo_cliente" id="input-usar-nuevo">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    {{ cliente_form.nombre }}
+                    {{ cliente_form.telefono }}
+                    {{ cliente_form.email }}
+                </div>
+                <div style="margin-top: 10px;">
+                    {{ cliente_form.direccion }}
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <div style="flex: 1;">
+                <label>Fecha Entrega:</label>
+                {{ pedido_form.fecha_entrega_estimada }}
+            </div>
+            <div style="padding-top: 25px;">
+                <label style="margin-right: 15px;">
+                    {{ pedido_form.es_urgente }} ¿Urgente? 🔥
+                </label>
+                <label>
+                    {{ pedido_form.requiere_factura }} ¿Factura? 📄
+                </label>
+            </div>
+        </div>
+
+        <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">📦 Productos</h4>
+        
+        {{ formset.management_form }} <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #eee; text-align: left;">
+                    <th style="padding: 8px;">Producto</th>
+                    <th style="padding: 8px; width: 100px;">Cant.</th>
+                    <th style="padding: 8px; width: 100px;">Precio</th>
+                    <th style="padding: 8px;">Detalles/Dedicatoria</th>
+                    <th style="padding: 8px; width: 50px;">🗑</th>
+                </tr>
+            </thead>
+            <tbody id="lista-productos">
+                {% for form in formset %}
+                    <tr class="item-row">
+                        <td style="padding: 5px;">
+                            {{ form.id }} {{ form.producto }}
+                        </td>
+                        <td style="padding: 5px;">{{ form.cantidad }}</td>
+                        <td style="padding: 5px;">{{ form.precio_unitario }}</td>
+                        <td style="padding: 5px;">{{ form.texto_dedicatoria }}</td>
+                        <td style="padding: 5px; text-align: center;">
+                            {% if formset.can_delete %}
+                                {{ form.DELETE }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 30px; text-align: right;">
+            <a href="{% url 'lista_pedidos' %}" style="text-decoration: none; color: #777; margin-right: 20px;">Cancelar</a>
+            <button type="submit" style="background: #2980b9; color: white; padding: 10px 30px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer;">Guardar Pedido</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 1. AL CARGAR LA PÁGINA: Desactivamos el 'required' del nombre oculto
+    document.addEventListener("DOMContentLoaded", function() {
+        var inputNombre = document.querySelector('[name="nombre"]');
+        if (inputNombre) {
+            inputNombre.required = false; 
+        }
+    });
+
+    function toggleNuevoCliente() {
+        var boxNuevo = document.getElementById('nuevo-cliente-box');
+        var boxViejo = document.getElementById('selector-cliente-box');
+        var inputFlag = document.getElementById('input-usar-nuevo');
+        
+        // Elementos a manipular
+        var selectCliente = document.querySelector('.select-cliente');
+        var inputNombre = document.querySelector('[name="nombre"]'); // El campo que da problemas
+
+        if (boxNuevo.style.display === 'none') {
+            // --- MODO: MOSTRAR FORMULARIO DE NUEVO CLIENTE ---
+            boxNuevo.style.display = 'block';
+            
+            // Efecto visual de deshabilitado en el selector viejo
+            boxViejo.style.opacity = '0.5';
+            boxViejo.style.pointerEvents = 'none'; 
+            
+            inputFlag.value = 'on'; // Avisamos al backend
+
+            // INTERCAMBIO DE OBLIGATORIEDAD
+            selectCliente.required = false;       // El select ya no es obligatorio
+            if(inputNombre) inputNombre.required = true;   // El nombre AHORA SÍ es obligatorio
+            
+            // Poner el cursor en el nombre automáticamente
+            if(inputNombre) inputNombre.focus();
+
+        } else {
+            // --- MODO: OCULTAR (VOLVER A SELECCIONAR EXISTENTE) ---
+            boxNuevo.style.display = 'none';
+            
+            boxViejo.style.opacity = '1';
+            boxViejo.style.pointerEvents = 'auto';
+            
+            inputFlag.value = 'off';
+
+            // INTERCAMBIO DE OBLIGATORIEDAD
+            selectCliente.required = true;        // El select VUELVE a ser obligatorio
+            if(inputNombre) inputNombre.required = false;  // El nombre YA NO es obligatorio
+        }
+    }
+</script>
+
+{% endblock %}

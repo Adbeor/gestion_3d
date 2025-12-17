@@ -280,14 +280,17 @@ class Pedido(models.Model):
     ]
 
     ESTADOS_ENTREGA = [
-        ("PREPARACION", "📦 En Preparación"),
-        ("TRANSITO", "🚚 En Tránsito / Enviado"),
-        ("ENTREGADO", "✅ Entregado al Cliente"),
+        ("COLA", "⏳ En Cola (Pendiente)"),
+        ("TALLER", "🔨 En Taller (Fabricación)"),
+        ("TRANSITO", "🚚 En Tránsito"),
+        ("ENTREGADO", "✅ Entregado y Conforme"),
     ]
 
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_entrega_estimada = models.DateField(null=True, blank=True)
+
+    es_urgente = models.BooleanField(default=False, verbose_name="¿Es Urgente?")
 
     # Estados y Montos
     estado_pago = models.CharField(
@@ -297,7 +300,7 @@ class Pedido(models.Model):
         max_digits=10, decimal_places=2, default=0, verbose_name="Monto Abonado (S/)"
     )
     estado_entrega = models.CharField(
-        max_length=20, choices=ESTADOS_ENTREGA, default="PREPARACION"
+        max_length=20, choices=ESTADOS_ENTREGA, default="COLA"
     )
 
     # Datos de Envío
@@ -342,7 +345,7 @@ class ItemPedido(models.Model):
     texto_dedicatoria = models.TextField(
         null=True,
         blank=True,
-        help_text="Ej: 'Recuerdo de la Gerencia de Mantenimiento 2025'"
+        help_text="Ej: 'Recuerdo de la Gerencia de Mantenimiento 2025'",
     )
 
     @property

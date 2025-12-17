@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D TEC - Gestión</title>
+    <style>
+        /* ESTILOS GLOBALES (Los que tenías en tus otros archivos) */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f4f6f8; 
+            margin: 0; 
+            padding: 0; 
+            padding-top: 70px; /* Espacio para la barra fija */
+        }
+
+        /* BARRA DE NAVEGACIÓN SUPERIOR */
+        .navbar {
+            background-color: #2c3e50; /* Tu azul oscuro corporativo */
+            color: white;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+            margin-right: 40px; /* Para que no se pegue al borde derecho */
+        }
+
+        .nav-link {
+            color: #bdc3c7;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Bloques para CSS extra si hace falta */
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'dashboard' %}" class="navbar-brand">
+            🚀 3D TEC
+        </a>
+
+        <div class="navbar-menu">
+            <a href="{% url 'dashboard' %}" class="nav-link">📊 Dashboard</a>
+            <a href="{% url 'lista_pedidos' %}" class="nav-link">📋 Lista Pedidos</a>
+            <a href="{% url 'tablero_kanban' %}" class="nav-link" style="color: #f1c40f;">📋 Pizarra Kanban</a>
+            <a href="{% url 'admin:index' %}" class="nav-link">⚙️ Admin</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #c3e6cb;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
