@@ -340,6 +340,10 @@ class ItemPedido(models.Model):
     # Campos personalizados
     cubierta = models.BooleanField(default=True, verbose_name="¿Lleva cubierta?")
 
+    # nombre
+    nombre = models.TextField(blank=True, verbose_name="Dirección de Envío")
+    poner_nombre = models.BooleanField(default=True, verbose_name="¿Lleva nombre?")
+
     logo = models.ForeignKey(Logo, on_delete=models.SET_NULL, blank=True, null=True)
 
     texto_dedicatoria = models.TextField(

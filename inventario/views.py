@@ -22,6 +22,9 @@ def crear_pedido(request):
     cliente_form = ClienteForm()
     formset = ItemPedidoFormSet()
 
+    productos = Producto.objects.all()
+    precios = {p.id: float(p.precio) for p in productos}
+
     if request.method == "POST":
         pedido_form = PedidoForm(request.POST)
         cliente_form = ClienteForm(request.POST)
@@ -73,7 +76,9 @@ def crear_pedido(request):
     return render(
         request,
         "inventario/crear_pedido.html",
-        {"pedido_form": pedido_form, "cliente_form": cliente_form, "formset": formset},
+        {"pedido_form": pedido_form, "cliente_form": cliente_form, "formset": formset,
+        'precios_json': json.dumps(precios) 
+         },
     )
 
 
@@ -344,3 +349,6 @@ def detalle_producto(request, producto_id):
             "puede_armar": producto.cantidad_armable_hoy() > 0,
         },
     )
+
+
+

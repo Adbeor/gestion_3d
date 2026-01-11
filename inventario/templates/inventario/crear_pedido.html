@@ -3,177 +3,105 @@
 {% block content %}
 
 <style>
-    /* Estilo base para todos los inputs y selectores */
-    .form-control {
-        width: 100%;
-        padding: 10px 15px; /* Más espacio interno */
-        font-size: 14px;
-        line-height: 1.5;
-        color: #2c3e50;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #ced4da; /* Borde gris suave */
-        border-radius: 6px; /* Esquinas redondeadas */
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        box-sizing: border-box; /* Evita que el padding rompa el ancho */
+    .form-control { width: 100%; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; }
+    .item-row td { vertical-align: middle; border-bottom: 1px solid #f1f1f1; padding: 10px 5px !important; }
+    .col-nombre { width: 180px; }
+    
+    /* Botón flotante para agregar */
+    .btn-add-row {
+        background-color: #f1f2f6; color: #2c3e50; 
+        border: 2px dashed #bdc3c7; border-radius: 8px;
+        width: 100%; padding: 10px; margin-top: 10px;
+        font-weight: 600; cursor: pointer; transition: all 0.2s;
     }
-
-    /* Efecto al hacer clic (Foco) */
-    .form-control:focus {
-        color: #2c3e50;
-        background-color: #fff;
-        border-color: #3498db; /* Azul al seleccionar */
-        outline: 0;
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25); /* Resplandor suave */
-    }
-
-    /* Estilo especial para las filas de la tabla */
-    .item-row td {
-        vertical-align: middle; /* Centra todo verticalmente */
-        border-bottom: 1px solid #f1f1f1;
-    }
-
-    /* Checkbox más bonito y grande */
-    input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-        accent-color: #2980b9; /* Color de check azul */
-        vertical-align: middle;
-    }
-
-    /* Etiquetas (Labels) */
-    label {
-        font-weight: 600;
-        color: #34495e;
-        margin-bottom: 5px;
-        display: block;
-        font-size: 0.9em;
-    }
-
-    /* Botón eliminar */
-    .btn-delete {
-        color: #e74c3c;
-        cursor: pointer;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 1.2em;
-        transition: color 0.2s;
-    }
-    .btn-delete:hover {
-        color: #c0392b;
-        transform: scale(1.1);
-    }
+    .btn-add-row:hover { background-color: #e8f6f3; border-color: #27ae60; color: #27ae60; }
 </style>
 
-<div style="max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+<div style="max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
     
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #f1f2f6; padding-bottom: 20px; margin-bottom: 30px;">
+    <div style="border-bottom: 2px solid #f1f2f6; padding-bottom: 15px; margin-bottom: 20px;">
         <h2 style="color: #2c3e50; margin:0;">📝 Nuevo Pedido</h2>
-        <span style="color:#95a5a6; font-size: 0.9em;">Crea y gestiona tus ventas</span>
     </div>
 
     <form method="post" id="form-pedido">
         {% csrf_token %}
         
-        <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid #edf2f7;">
-            <h4 style="margin-top:0; color:#2c3e50; margin-bottom: 15px;">👤 Información del Cliente</h4>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+            <h4 style="margin-top:0; color:#2c3e50;">👤 Cliente</h4>
             
             <div id="selector-cliente-box">
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 10px;">
                     <div style="flex-grow: 1;">
                         {{ pedido_form.cliente }} 
                     </div>
-                    <button type="button" onclick="toggleNuevoCliente()" title="Crear nuevo cliente"
-                            style="background: #27ae60; color: white; border: none; width: 45px; height: 42px; border-radius: 6px; cursor: pointer; font-size: 1.4em; display:flex; align-items:center; justify-content:center; transition: background 0.2s;">
-                        +
-                    </button>
+                    <button type="button" onclick="toggleNuevoCliente()" style="background: #27ae60; color: white; border: none; width: 40px; border-radius: 6px; cursor: pointer; font-size: 1.2em;">+</button>
                 </div>
-                <small style="color: #7f8c8d; display:block; margin-top:5px;">Busca un cliente existente o crea uno nuevo con el botón (+).</small>
             </div>
 
-            <div id="nuevo-cliente-box" style="display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 8px; border-left: 5px solid #27ae60; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <strong style="color: #27ae60; font-size:1.1em;">✨ Registrando Nuevo Cliente</strong>
-                    <button type="button" onclick="toggleNuevoCliente()" style="background: none; border: none; color: #7f8c8d; cursor: pointer; font-weight:600;">✕ Cancelar</button>
+            <div id="nuevo-cliente-box" style="display: none; margin-top: 15px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
+                <div style="display: flex; justify-content: space-between; margin-bottom:10px;">
+                    <strong style="color: #27ae60;">Nuevo Cliente</strong>
+                    <button type="button" onclick="toggleNuevoCliente()" style="background:none; border:none; color:#999; cursor:pointer;">✕ Cancelar</button>
                 </div>
-                
                 <input type="hidden" name="usar_nuevo_cliente" id="input-usar-nuevo">
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                    <div>
-                        <label>Nombre Completo</label>
-                        {{ cliente_form.nombre }}
-                    </div>
-                    <div>
-                        <label>Teléfono / WhatsApp</label>
-                        {{ cliente_form.telefono }}
-                    </div>
-                    <div>
-                        <label>Email (Opcional)</label>
-                        {{ cliente_form.email }}
-                    </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    {{ cliente_form.nombre }}
+                    {{ cliente_form.telefono }}
+                    {{ cliente_form.email }}
                 </div>
-                <div style="margin-top: 15px;">
-                    <label>Dirección de Envío</label>
-                    {{ cliente_form.direccion }}
-                </div>
+                <div style="margin-top: 10px;">{{ cliente_form.direccion }}</div>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
             <div>
-                <label>📅 Fecha de Entrega Estimada</label>
+                <label>📅 Fecha Entrega</label>
                 {{ pedido_form.fecha_entrega_estimada }}
             </div>
-            
-            <div style="display: flex; gap: 20px; align-items: center; background: #fff; padding: 10px; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    {{ pedido_form.es_urgente }}
-                    <span style="color: #c0392b; font-weight: 600;">¿Es Urgente? 🔥</span>
-                </div>
-                
-                <div style="width: 1px; height: 30px; background: #eee;"></div> <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                    {{ pedido_form.requiere_factura }}
-                    <span style="color: #2980b9; font-weight: 600;">¿Requiere Factura? 📄</span>
-                </div>
+            <div style="display: flex; gap: 20px; align-items: center; background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 8px;">
+                <label style="cursor:pointer;">{{ pedido_form.es_urgente }} 🔥 Urgente</label>
+                <label style="cursor:pointer;">{{ pedido_form.requiere_factura }} 📄 Factura</label>
             </div>
         </div>
 
-        <h4 style="border-bottom: 2px solid #eee; padding-bottom: 10px; color:#2c3e50; margin-bottom: 15px;">📦 Productos del Pedido</h4>
+        <h4 style="color:#2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;">📦 Items</h4>
         
         {{ formset.management_form }} 
         
-        <table style="width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr style="background: #f1f2f6; text-align: left; color: #576574;">
-                    <th style="padding: 12px 15px;">Producto</th>
-                    <th style="padding: 12px; width: 90px;">Cant.</th>
-                    <th style="padding: 12px; width: 110px;">Precio S/</th>
-                    <th style="padding: 12px; width: 80px; text-align: center;">Cubierta</th>
-                    <th style="padding: 12px;">Logo</th>
-                    <th style="padding: 12px;">Detalles / Dedicatoria</th>
-                    <th style="padding: 12px; width: 50px; text-align: center;">🗑</th>
+                <tr style="background: #f8f9fa; color: #7f8c8d; text-align: left;">
+                    <th style="padding: 10px;">Producto</th>
+                    <th style="width: 70px;">Cant.</th>
+                    <th style="width: 90px;">Precio</th>
+                    <th style="text-align: center;">Cubierta?</th>
+                    <th style="text-align: center;">Nombre?</th>
+                    <th class="col-nombre">Texto Nombre</th>
+                    <th>Logo / Dedicatoria</th>
+                    <th style="width: 40px;"></th>
                 </tr>
             </thead>
             <tbody id="lista-productos">
                 {% for form in formset %}
                     <tr class="item-row">
-                        <td style="padding: 10px 15px;">
-                            {{ form.id }} 
+                        <td>
+                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
                             {{ form.producto }}
-                            {% if form.producto.errors %}<div style="color:red; font-size:0.8em;">{{ form.producto.errors }}</div>{% endif %}
                         </td>
-                        <td style="padding: 10px;">{{ form.cantidad }}</td>
-                        <td style="padding: 10px;">{{ form.precio_unitario }}</td>
-                        <td style="padding: 10px; text-align: center;">{{ form.cubierta }}</td>
-                        <td style="padding: 10px;">
-                            {{ form.logo }}
+                        <td>{{ form.cantidad }}</td>
+                        <td>{{ form.precio_unitario }}</td>
+                        <td style="text-align: center;">{{ form.cubierta }}</td>
+                        <td style="text-align: center;">{{ form.poner_nombre }}</td>
+                        <td class="col-nombre">{{ form.nombre }}</td>
+                        <td>
+                            <div style="margin-bottom: 5px;">{{ form.logo }}</div>
+                            {{ form.texto_dedicatoria }}
                         </td>
-                        <td style="padding: 10px;">{{ form.texto_dedicatoria }}</td>
-                        <td style="padding: 10px; text-align: center;">
+                        <td style="text-align: center;">
                             {% if formset.can_delete %}
-                                <div style="display:none;">{{ form.DELETE }}</div> <span class="btn-delete" onclick="marcarBorrar(this)">🗑</span>
+                                <span class="btn-delete" onclick="marcarBorrar(this)" style="cursor:pointer; color:red;">🗑</span>
+                                <div style="display:none;">{{ form.DELETE }}</div>
                             {% endif %}
                         </td>
                     </tr>
@@ -181,36 +109,145 @@
             </tbody>
         </table>
 
-        <div style="margin-top: 40px; text-align: right; padding-top: 20px; border-top: 1px solid #eee;">
-            <a href="{% url 'lista_pedidos' %}" style="text-decoration: none; color: #7f8c8d; margin-right: 25px; font-weight: 500;">Cancelar</a>
-            <button type="submit" 
-                    style="background: #2980b9; color: white; padding: 12px 40px; border: none; border-radius: 6px; font-size: 1.1em; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(41, 128, 185, 0.3); transition: transform 0.1s;">
-                Guardar Pedido
-            </button>
+        <button type="button" class="btn-add-row" onclick="agregarFila()">+ Agregar Otro Producto</button>
+
+        <div style="margin-top: 40px; text-align: right;">
+            <a href="{% url 'lista_pedidos' %}" style="text-decoration: none; color: #7f8c8d; margin-right: 20px;">Cancelar</a>
+            <button type="submit" style="background: #2980b9; color: white; padding: 12px 40px; border: none; border-radius: 6px; font-size: 1.1em; cursor: pointer;">Guardar Pedido</button>
         </div>
     </form>
 </div>
 
+<table style="display:none">
+    <tbody id="empty-form-template">
+        <tr class="item-row">
+            <td>
+                {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
+                {{ formset.empty_form.producto }}
+            </td>
+            <td>{{ formset.empty_form.cantidad }}</td>
+            <td>{{ formset.empty_form.precio_unitario }}</td>
+            <td style="text-align: center;">{{ formset.empty_form.cubierta }}</td>
+            <td style="text-align: center;">{{ formset.empty_form.poner_nombre }}</td>
+            <td class="col-nombre">{{ formset.empty_form.nombre }}</td>
+            <td>
+                <div style="margin-bottom: 5px;">{{ formset.empty_form.logo }}</div>
+                {{ formset.empty_form.texto_dedicatoria }}
+            </td>
+            <td style="text-align: center;">
+                <span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
 <script>
-    // 1. Script para el botón de eliminar bonito
+// --- 0. RECIBIMOS LOS PRECIOS DE DJANGO ---
+    // Usamos 'safe' para que Django renderice el JSON tal cual
+    const LISTA_PRECIOS = {{ precios_json|safe }};
+
+    // --- FUNCIÓN PARA AUTO-LLENAR PRECIO ---
+    function actualizarPrecio(selectElement) {
+        // 1. ¿Qué producto seleccionaron? (Obtenemos el ID)
+        var productoId = selectElement.value;
+        
+        // 2. Buscamos el precio en nuestra lista
+        var precioEncontrado = LISTA_PRECIOS[productoId];
+
+        // 3. Buscamos la casilla de precio que está EN LA MISMA FILA
+        // Usamos closest('tr') para subir a la fila y luego buscar hacia abajo
+        var fila = selectElement.closest('tr');
+        var inputPrecio = fila.querySelector('input[name$="precio_unitario"]');
+
+        // 4. Si hay precio y la casilla existe, lo ponemos
+        if (precioEncontrado !== undefined && inputPrecio) {
+            inputPrecio.value = precioEncontrado.toFixed(2); // Formato 00.00
+            
+            // Efecto visual coqueto (opcional): Parpadeo amarillo para indicar cambio
+            inputPrecio.style.backgroundColor = "#fff3cd";
+            setTimeout(() => inputPrecio.style.backgroundColor = "white", 500);
+        }
+    }
+    // 1. AGREGAR FILA DINÁMICA
+    function agregarFila() {
+        // Buscamos el input oculto que dice cuántos formularios hay
+        // El nombre suele ser "items-TOTAL_FORMS" o "itempedido_set-TOTAL_FORMS"
+        // Lo buscamos por el atributo name que termina en TOTAL_FORMS
+        var totalFormsInput = document.querySelector('[name$="-TOTAL_FORMS"]');
+        var currentCount = parseInt(totalFormsInput.value);
+
+        // Obtenemos la plantilla HTML
+        var template = document.getElementById('empty-form-template').innerHTML;
+
+        // Reemplazamos __prefix__ por el número actual (ej: 1, 2, 3...)
+        var newRowHtml = template.replace(/__prefix__/g, currentCount);
+
+        // Insertamos la nueva fila en la tabla
+        document.getElementById('lista-productos').insertAdjacentHTML('beforeend', newRowHtml);
+
+        // Actualizamos el contador total para que Django sepa que hay uno más
+        totalFormsInput.value = currentCount + 1;
+    }
+
+    // 2. ELIMINAR FILA (Para las filas nuevas creadas con JS)
+    function eliminarFilaNueva(btn) {
+        // Como no están en base de datos, solo borramos el HTML
+        btn.closest('tr').remove();
+        // Nota: No es estrictamente necesario bajar el TOTAL_FORMS, Django lo maneja bien si hay saltos,
+        // pero idealmente deberíamos, aunque por simplicidad esto funciona.
+    }
+
+    // 3. ELIMINAR FILA (Para las filas existentes que vienen de Django)
     function marcarBorrar(btn) {
-        // En Django formsets, el checkbox DELETE suele estar oculto. Lo buscamos y lo marcamos.
-        // Buscamos el input checkbox que está justo antes del botón en el HTML (ver línea 146)
-        var checkbox = btn.previousElementSibling.querySelector('input[type="checkbox"]');
+        var checkbox = btn.nextElementSibling.querySelector('input');
         if(checkbox) {
             checkbox.checked = true;
-            // Ocultamos la fila visualmente para que parezca borrada
             btn.closest('tr').style.opacity = '0.3';
-            btn.closest('tr').style.backgroundColor = '#fbecec';
+            btn.closest('tr').style.backgroundColor = '#fbecec'; // Feedback visual rojo claro
         }
     }
 
-    // 2. Lógica de Cliente Nuevo/Viejo (La que ya teníamos)
+    // 4. LÓGICA DE NOMBRE (Tu script anterior)
+    function getNombreClienteActual() {
+        var inputNuevo = document.getElementById('input-usar-nuevo');
+        if (inputNuevo && inputNuevo.value === 'on') {
+            var campoNombre = document.querySelector('input[name="nombre"]'); 
+            return campoNombre ? campoNombre.value : '';
+        } else {
+            var select = document.querySelector('.select-cliente');
+            if (select && select.selectedIndex >= 0) {
+                return select.options[select.selectedIndex].text;
+            }
+        }
+        return '';
+    }
+
+    function toggleNombre(checkbox) {
+        var fila = checkbox.closest('tr');
+        var inputNombre = fila.querySelector('.input-nombre');
+
+        if (checkbox.checked) {
+            inputNombre.style.display = 'block';
+            inputNombre.focus();
+            if (inputNombre.value.trim() === '') {
+                var nombreCliente = getNombreClienteActual();
+                if (nombreCliente && !nombreCliente.includes('----')) {
+                    inputNombre.value = nombreCliente;
+                }
+            }
+        } else {
+            inputNombre.style.display = 'none';
+        }
+    }
+
+    // 5. LÓGICA DE CLIENTE (Tu script anterior)
     document.addEventListener("DOMContentLoaded", function() {
         var inputNombre = document.querySelector('[name="nombre"]');
-        if (inputNombre) {
-            inputNombre.required = false; 
-        }
+        if (inputNombre) { inputNombre.required = false; }
+        
+        // Inicializar checks de nombres existentes
+        var checks = document.querySelectorAll('.check-nombre');
+        checks.forEach(function(c) { toggleNombre(c); });
     });
 
     function toggleNuevoCliente() {
@@ -218,29 +255,26 @@
         var boxViejo = document.getElementById('selector-cliente-box');
         var inputFlag = document.getElementById('input-usar-nuevo');
         var selectCliente = document.querySelector('.select-cliente');
-        var inputNombre = document.querySelector('[name="nombre"]'); 
+        
+        // El input del form de cliente
+        // OJO: Django renderiza input con id "id_nombre" usualmente, pero aquí buscamos genérico
+        // Asegúrate que este selector encuentre el input correcto dentro del boxNuevo
+        var inputNombreCliente = boxNuevo.querySelector('input[type="text"]'); 
 
         if (boxNuevo.style.display === 'none') {
-            // MOSTRAR NUEVO
             boxNuevo.style.display = 'block';
             boxViejo.style.opacity = '0.5';
-            boxViejo.style.pointerEvents = 'none'; 
+            boxViejo.style.pointerEvents = 'none';
             inputFlag.value = 'on';
-
             if(selectCliente) selectCliente.required = false;
-            if(inputNombre) {
-                inputNombre.required = true;
-                inputNombre.focus();
-            }
+            if(inputNombreCliente) inputNombreCliente.required = true;
         } else {
-            // OCULTAR NUEVO
             boxNuevo.style.display = 'none';
             boxViejo.style.opacity = '1';
             boxViejo.style.pointerEvents = 'auto';
             inputFlag.value = 'off';
-
             if(selectCliente) selectCliente.required = true;
-            if(inputNombre) inputNombre.required = false;
+            if(inputNombreCliente) inputNombreCliente.required = false;
         }
     }
 </script>
