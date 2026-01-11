@@ -1,308 +1,157 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'inventario/base.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <title>Detalle {{ producto.nombre }}</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f8;
-      padding: 20px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .header {
+{% block content %}
+<style>
+    /* Cabecera del Producto */
+    .header-producto {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
     }
 
-    .btn-volver {
-      text-decoration: none;
-      color: #666;
-      font-weight: bold;
-    }
-
-    /* Controles Principales */
-    .acciones-producto {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 20px;
-      align-items: center;
+    /* Tarjetas de Resumen */
+    .card-resumen {
+        background: white; padding: 20px; border-radius: 10px; flex: 1;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        display: flex; flex-direction: column; justify-content: center;
     }
 
     /* Tabla de Piezas */
-    table {
+    .tabla-piezas {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       background: white;
       border-radius: 10px;
       overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-top: 20px;
     }
 
-    th,
-    td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    th {
-      background: #f8f9fa;
-      color: #444;
-    }
+    .tabla-piezas th, .tabla-piezas td { padding: 15px; text-align: left; border-bottom: 1px solid #f1f2f6; }
+    .tabla-piezas th { background: #f8f9fa; color: #7f8c8d; font-weight: 600; text-transform: uppercase; font-size: 0.85em; }
 
     /* Barra de Progreso */
-    .barra-fondo {
-      width: 100px;
-      height: 8px;
-      background: #eee;
-      border-radius: 4px;
-      display: inline-block;
-    }
+    .barra-fondo { width: 100px; height: 8px; background: #ecf0f1; border-radius: 4px; display: inline-block; overflow: hidden;}
+    .barra-relleno { height: 100%; background: #3498db; border-radius: 4px; }
 
-    .barra-relleno {
-      height: 100%;
-      background: #3498db;
-      border-radius: 4px;
-    }
+    .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; transition: opacity 0.2s;}
+    .btn:hover { opacity: 0.9; }
+    .btn-print { background: #3498db; }
+    .btn-armar { background: #f39c12; font-size: 1.1em; padding: 12px 25px; box-shadow: 0 4px 6px rgba(243, 156, 18, 0.3);}
+    .btn-vender { background: #27ae60; font-size: 1.1em; padding: 12px 25px; box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);}
 
-    .equiv {
-      font-weight: bold;
-      color: #2980b9;
-    }
-
-    .btn {
-      padding: 8px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-    }
-
-    .btn-print {
-      background: #3498db;
-    }
-
-    .btn-armar {
-      background: #f39c12;
-      font-size: 1.2em;
-      padding: 10px 20px;
-    }
-
-    .btn-vender {
-      background: #27ae60;
-      font-size: 1.2em;
-      padding: 10px 20px;
-    }
-
-    /* ESTILOS PARA LA IMAGEN FLOTANTE */
-
-    /* El contenedor del texto que activará el hover */
-    .hover-trigger {
-      position: relative;
-      /* Necesario para que la imagen flote respecto a este elemento */
-      cursor: help;
-      /* Cambia el cursor para indicar que hay info extra */
-      border-bottom: 1px dashed #ccc;
-      /* Subrayado sutil para indicar interactividad */
-    }
-
-    /* La imagen flotante (oculta por defecto) */
+    /* ESTILOS PARA LA IMAGEN FLOTANTE (POPOVER) */
+    .hover-trigger { position: relative; cursor: help; border-bottom: 1px dashed #ccc; }
     .popover-imagen {
-      display: none;
-      /* Oculto */
-      position: absolute;
-      /* Flotante */
-      bottom: 100%;
-      /* Aparece justo encima del texto */
-      left: 50%;
-      transform: translateX(-50%);
-      /* Centrado horizontalmente */
-
-      /* Estética de tarjeta */
-      background: white;
-      padding: 5px;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      z-index: 100;
-      /* Asegura que quede por encima de todo */
-      margin-bottom: 10px;
-      /* Un pequeño espacio entre el texto y la imagen */
-      width: 200px;
-      /* Tamaño fijo para que no sea gigante */
-      text-align: center;
+      display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+      background: white; padding: 5px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 100; margin-bottom: 12px; width: 200px; text-align: center;
     }
-
-    .popover-imagen img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
-
-    /* El Triangulito decorativo debajo de la imagen */
+    .popover-imagen img { max-width: 100%; height: auto; border-radius: 5px; }
+    
+    /* Triangulito */
     .popover-imagen::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: white transparent transparent transparent;
+      content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+      border-width: 5px; border-style: solid; border-color: white transparent transparent transparent;
     }
 
-    /* LA MAGIA: Mostrar al pasar el mouse */
-    .hover-trigger:hover .popover-imagen {
-      display: block;
-      animation: fadeIn 0.2s ease-in-out;
-    }
+    .hover-trigger:hover .popover-imagen { display: block; animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
-    /* Animación suave de entrada */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translate(-50%, 10px);
-      }
+    /* Modificador hacia abajo */
+    .popover-imagen.mostrar-abajo { bottom: auto; top: 100%; margin-bottom: 0; margin-top: 12px; }
+    .popover-imagen.mostrar-abajo::after { top: auto; bottom: 100%; border-color: transparent transparent white transparent; }
+</style>
 
-      to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-      }
-    }
-
-    /* MODIFICADOR: Mostrar hacia abajo si falta espacio arriba */
-    .popover-imagen.mostrar-abajo {
-      bottom: auto;
-      /* Anula la regla anterior que lo empujaba arriba */
-      top: 100%;
-      /* Lo empuja hacia abajo desde el texto */
-      margin-bottom: 0;
-      margin-top: 10px;
-      /* Espacio entre texto e imagen */
-    }
-
-    /* Ajustar el triangulito para que apunte hacia arriba */
-    .popover-imagen.mostrar-abajo::after {
-      top: auto;
-      /* Anula la regla anterior */
-      bottom: 100%;
-      /* Lo pone en el borde superior de la caja blanca */
-      border-color: transparent transparent white transparent;
-      /* Invierte los colores del triángulo */
-    }
-
-    /* Ajustar la animación para que baje suavemente en lugar de subir */
-    .hover-trigger:hover .popover-imagen.mostrar-abajo {
-      animation: fadeInDown 0.2s ease-in-out;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translate(-50%, -10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-  <a href="{% url 'dashboard' %}" class="btn-volver">← Volver al Dashboard</a>
-
-  <div class="header">
-    <h1>
-      🛠️ Gestión:
-
-      <span class="hover-trigger">
-        {{ producto.nombre }}
-
-        {% if producto.imagen %}
-        <div class="popover-imagen">
-          <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
-        </div>
-        {% endif %}
-      </span>
-    </h1>
-    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-      <div style="background: white; padding: 15px; border-radius: 8px; border-left: 5px solid #2ecc71; flex: 1;">
-        <small style="color: #777;">En Almacén (Listos)</small>
-        <div style="font-size: 1.5em; font-weight: bold;">{{ producto.stock_armado }} un.</div>
-      </div>
-
-      <div style="background: white; padding: 15px; border-radius: 8px; border-left: 5px solid #e74c3c; flex: 1;">
-        <small style="color: #777;">Pedidos Pendientes</small>
-        <div style="font-size: 1.5em; font-weight: bold; color: #e74c3c;">
-          {{ demanda_pendiente }} un.
-        </div>
-        {% if cantidad_faltante > 0 %}
-        <small style="color: red; font-weight: bold;">
-          ⚠️ Faltan armar: {{ cantidad_faltante }}
-        </small>
-        {% else %}
-        <small style="color: green;">
-          ✅ Cubierto con stock
-        </small>
-        {% endif %}
-      </div>
+  <div class="header-producto">
+    <div>
+        <h1 style="margin:0; color:#2c3e50;">
+        🛠️ Gestión:
+        <span class="hover-trigger" style="color: #3498db;">
+            {{ producto.nombre }}
+            {% if producto.imagen %}
+            <div class="popover-imagen">
+            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+            </div>
+            {% endif %}
+        </span>
+        </h1>
+        <p style="color: #7f8c8d; margin-top: 5px;">Analiza y gestiona la producción de este modelo.</p>
     </div>
   </div>
 
-  <div class="acciones-producto">
+  <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+      <div class="card-resumen" style="border-left: 5px solid #2ecc71;">
+        <small style="color: #7f8c8d; text-transform: uppercase; font-weight: 600;">En Almacén (Listos)</small>
+        <div style="font-size: 2.2em; font-weight: bold; color: #2c3e50;">{{ producto.stock_armado }} <span style="font-size: 0.5em; color: #95a5a6;">unidades</span></div>
+      </div>
+
+      <div class="card-resumen" style="border-left: 5px solid #e74c3c;">
+        <small style="color: #7f8c8d; text-transform: uppercase; font-weight: 600;">Demanda Pendiente</small>
+        <div style="font-size: 2.2em; font-weight: bold; color: #e74c3c;">
+          {{ demanda_pendiente }} <span style="font-size: 0.5em; color: #e6b0aa;">pedidas</span>
+        </div>
+        {% if cantidad_faltante > 0 %}
+        <div style="background: #fadbd8; color: #c0392b; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; margin-top: 5px; display: inline-block;">
+          ⚠️ Faltan armar: <strong>{{ cantidad_faltante }}</strong>
+        </div>
+        {% else %}
+        <div style="color: #27ae60; font-size: 0.9em; margin-top: 5px;">
+          ✅ Cubierto con stock actual
+        </div>
+        {% endif %}
+      </div>
+  </div>
+
+  <div style="background: #ecf0f1; padding: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
     <div style="flex: 1;">
       {% if puede_armar %}
-      <p style="color: #27ae60;">✅ Tienes piezas suficientes para armar.</p>
-      <form action="{% url 'armar_producto' producto.id %}" method="POST" style="display:inline;">
-        {% csrf_token %}
-
-        <input type="hidden" name="next" value="{{ request.path }}">
-        <button class="btn btn-armar">🔧 Armar 1 Unidad</button>
-      </form>
+        <h3 style="margin:0 0 5px 0; color: #27ae60;">✅ Producción Viable</h3>
+        <p style="margin:0; color: #7f8c8d;">Tienes todas las piezas impresas necesarias.</p>
       {% else %}
-      <p style="color: #e74c3c;">⚠️ Faltan imprimir piezas para armar.</p>
+        <h3 style="margin:0 0 5px 0; color: #e74c3c;">⚠️ Producción Detenida</h3>
+        <p style="margin:0; color: #7f8c8d;">Faltan imprimir piezas para poder armar.</p>
       {% endif %}
     </div>
 
-    {% if producto.stock_armado > 0 %}
-    <form action="{% url 'vender_producto' producto.id %}" method="POST">
-      {% csrf_token %}
+    <div style="display: flex; gap: 15px;">
+        {% if puede_armar %}
+        <form action="{% url 'armar_producto' producto.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button class="btn btn-armar">🔧 Armar 1 Unidad</button>
+        </form>
+        {% endif %}
 
-      <input type="hidden" name="next" value="{{ request.path }}">
-      <button class="btn btn-vender">💵 Registrar Venta</button>
-    </form>
-    {% endif %}
+        {% if producto.stock_armado > 0 %}
+        <form action="{% url 'vender_producto' producto.id %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button class="btn btn-vender">💵 Registrar Venta</button>
+        </form>
+        {% endif %}
+    </div>
   </div>
 
-  <h3>🧩 Estado de las Piezas</h3>
-  <table>
+  <h3 style="color: #2c3e50; margin-bottom: 10px;">🧩 Estado de las Piezas</h3>
+  <table class="tabla-piezas">
     <thead>
       <tr>
         <th>Pieza</th>
-        <th>Requerido</th>
-        <th>En Caja</th>
+        <th>Requerido (Unit)</th>
+        <th>Stock Impreso</th>
         <th>Equivalencia (Molinos)</th>
-        <th>Acción</th>
+        <th>Acción Rápida</th>
       </tr>
     </thead>
     <tbody>
       {% for item in piezas %}
       <tr>
         <td>
-          <span class="hover-trigger">
-            <strong>{{ item.pieza.nombre }}</strong>
-
+          <span class="hover-trigger" style="font-weight: 600; color: #2c3e50;">
+            {{ item.pieza.nombre }}
             {% if item.pieza.imagen %}
             <div class="popover-imagen">
               <img src="{{ item.pieza.imagen.url }}" alt="{{ item.pieza.nombre }}">
@@ -310,12 +159,12 @@
             {% endif %}
           </span>
           <br>
-          <small style="color:#888">{{ item.pieza.material.tipo }} {{ item.pieza.material.color}}</small>
+          <small style="color:#95a5a6">{{ item.pieza.material.tipo }} {{ item.pieza.material.color}}</small>
         </td>
         <td>{{ item.requerido }} u.</td>
-        <td><strong>{{ item.tengo }} u.</strong></td>
+        <td style="font-size: 1.1em; color: #2c3e50;"><strong>{{ item.tengo }} u.</strong></td>
         <td>
-          <span class="equiv">{{ item.equivalencia }} Molinos</span>
+          <span class="equiv" style="color: #2980b9; font-weight: bold;">{{ item.equivalencia }} Molinos</span>
           <br>
           <div class="barra-fondo">
             <div class="barra-relleno" style="width: {{ item.porcentaje }}%;"></div>
@@ -326,44 +175,37 @@
             {% csrf_token %}
             <input type="hidden" name="cantidad" value="1">
             <input type="hidden" name="next" value="{{ request.path }}">
-            <button class="btn btn-print">+1 Imprimir</button>
+            <button class="btn btn-print" title="Imprimir una unidad extra">+1 Imprimir</button>
           </form>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+{% endblock %}
+
+{% block extra_js %}
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // 1. Buscamos todos los elementos que activan el hover
+      // Lógica para que el popover de la imagen no se salga de la pantalla
       const triggers = document.querySelectorAll('.hover-trigger');
 
       triggers.forEach(trigger => {
         trigger.addEventListener('mouseenter', function () {
-          // 2. Buscamos la imagen dentro de este trigger
           const popover = this.querySelector('.popover-imagen');
-          if (!popover) return; // Si no hay imagen, no hacemos nada
+          if (!popover) return; 
 
-          // 3. Medimos la distancia desde el elemento hasta el techo de la ventana
-          // getBoundingClientRect() nos da las coordenadas exactas del elemento
           const rect = this.getBoundingClientRect();
           const distanciaAlTecho = rect.top;
-
-          // 4. Definimos el "umbral de seguridad" (ej. 250px para la imagen)
           const espacioNecesario = 250;
 
-          // 5. Decidimos: ¿Cabe arriba o lo mandamos abajo?
           if (distanciaAlTecho < espacioNecesario) {
-            // Está muy arriba: añadir clase para mostrar abajo
             popover.classList.add('mostrar-abajo');
           } else {
-            // Hay espacio de sobra: asegurar que se muestre arriba (default)
             popover.classList.remove('mostrar-abajo');
           }
         });
       });
     });
   </script>
-</body>
-
-</html>
+{% endblock %}

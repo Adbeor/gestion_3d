@@ -1,92 +1,98 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de Pedidos</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
-        /* Estilos de la Tabla */
-        .tabla-pedidos { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: #555; font-weight: 600; }
-        tr:hover { background-color: #fcfcfc; }
+{% extends 'inventario/base.html' %}
 
-        /* Etiquetas de Estado */
-        .badge { padding: 5px 10px; border-radius: 15px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
-        
-        /* Colores Entrega */
-        .bg-PREPARACION { background: #ffeaa7; color: #d35400; }
-        .bg-TRANSITO { background: #74b9ff; color: #0984e3; }
-        .bg-ENTREGADO { background: #55efc4; color: #00b894; }
+{% block content %}
+<style>
+    .header-pedidos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    
+    /* Estilos de la Tabla */
+    .tabla-pedidos { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .tabla-pedidos th, .tabla-pedidos td { padding: 15px; text-align: left; border-bottom: 1px solid #f1f2f6; }
+    .tabla-pedidos th { background: #f8f9fa; color: #7f8c8d; font-weight: 600; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px; }
+    .tabla-pedidos tr:hover { background-color: #fafbfc; }
 
-        /* Colores Pago */
-        .pago-PENDIENTE { color: #e74c3c; font-weight: bold; }
-        .pago-PAGADO { color: #27ae60; font-weight: bold; }
+    /* Etiquetas de Estado */
+    .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: bold; text-transform: uppercase; display: inline-block;}
+    
+    /* Colores Entrega */
+    .bg-COLA { background: #fcf3cf; color: #d4ac0d; }
+    .bg-TALLER { background: #fae5d3; color: #d35400; }
+    .bg-TRANSITO { background: #d6eaf8; color: #2980b9; }
+    .bg-ENTREGADO { background: #d5f5e3; color: #27ae60; }
 
-        .btn-gestion { background: #2c3e50; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.9em; }
-        .btn-volver { text-decoration: none; color: #666; }
-    </style>
-</head>
-<body>
+    /* Colores Pago */
+    .pago-PENDIENTE { color: #e74c3c; font-weight: bold; background: #fadbd8; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;}
+    .pago-PARCIAL { color: #d35400; font-weight: bold; background: #fdebd0; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;}
+    .pago-PAGADO { color: #27ae60; font-weight: bold; background: #d4efdf; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;}
 
-    <div class="header">
-        <div>
-            <a href="{% url 'dashboard' %}" class="btn-volver">← Volver al Dashboard</a>
-            <h1>📦 Control de Pedidos</h1>
-        </div>
-        <a href="{% url 'admin:inventario_pedido_add' %}" class="btn-gestion" style="background: #27ae60;">+ Nuevo Pedido</a>
+    .btn-editar { background: #ecf0f1; color: #2c3e50; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; font-weight: 600; transition: background 0.2s;}
+    .btn-editar:hover { background: #bdc3c7; }
+</style>
+
+<div class="header-pedidos">
+    <div>
+        <h1 style="margin:0; color: #2c3e50;">📦 Historial de Pedidos</h1>
+        <p style="margin:5px 0 0 0; color: #7f8c8d;">Todos tus movimientos en un solo lugar</p>
     </div>
+    <a href="{% url 'crear_pedido' %}" style="background: #2980b9; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; box-shadow: 0 4px 6px rgba(41, 128, 185, 0.3);">
+        + Nuevo Pedido
+    </a>
+</div>
 
-    <table class="tabla-pedidos">
-        <thead>
-            <tr>
-                <th>#ID</th>
-                <th>Cliente</th>
-                <th>Productos</th>
-                <th>Total</th>
-                <th>Estado Entrega</th>
-                <th>Estado Pago</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pedido in pedidos %}
-            <tr>
-                <td>#{{ pedido.id }}</td>
-                <td>
-                    <strong>{{ pedido.cliente.nombre }}</strong><br>
-                    <small style="color:#888">{{ pedido.fecha_creacion|date:"d M Y" }}</small>
-                </td>
-                <td>
-                    {% for item in pedido.items.all %}
-                        <div>{{ item.cantidad }}x {{ item.producto.nombre }}</div>
-                    {% endfor %}
-                </td>
-                <td>S/ {{ pedido.total_pedido|floatformat:2 }}</td>
-                
-                <td>
-                    <span class="badge bg-{{ pedido.estado_entrega }}">
-                        {{ pedido.get_estado_entrega_display }}
-                    </span>
-                </td>
-                
-                <td class="pago-{{ pedido.estado_pago }}">
+<table class="tabla-pedidos">
+    <thead>
+        <tr>
+            <th>#ID</th>
+            <th>Cliente</th>
+            <th>Productos</th>
+            <th>Total</th>
+            <th>Estado Entrega</th>
+            <th>Estado Pago</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+            <td style="color: #95a5a6; font-weight: bold;">#{{ pedido.id }}</td>
+            <td>
+                <strong style="color: #2c3e50;">{{ pedido.cliente.nombre }}</strong><br>
+                <small style="color:#95a5a6;">{{ pedido.fecha_creacion|date:"d M Y" }}</small>
+                {% if pedido.es_urgente %}
+                    <span style="font-size: 0.7em; background: red; color: white; padding: 2px 4px; border-radius: 3px;">🔥 URGENTE</span>
+                {% endif %}
+            </td>
+            <td>
+                {% for item in pedido.items.all %}
+                    <div style="font-size: 0.95em; margin-bottom: 2px;">
+                        <strong>{{ item.cantidad }}x</strong> {{ item.producto.nombre }}
+                    </div>
+                {% endfor %}
+            </td>
+            <td style="font-weight: bold; color: #2c3e50;">S/ {{ pedido.total_pedido|floatformat:2 }}</td>
+            
+            <td>
+                <span class="badge bg-{{ pedido.estado_entrega }}">
+                    {{ pedido.get_estado_entrega_display }}
+                </span>
+            </td>
+            
+            <td>
+                <span class="pago-{{ pedido.estado_pago }}">
                     {{ pedido.get_estado_pago_display }}
-                </td>
+                </span>
+            </td>
 
-                <td>
-                    <a href="{% url 'admin:inventario_pedido_change' pedido.id %}" class="btn-gestion">✏️ Editar</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" style="text-align:center; padding: 30px;">No hay pedidos registrados.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-</body>
-</html>
+            <td>
+                <a href="{% url 'admin:inventario_pedido_change' pedido.id %}" class="btn-editar">✏️ Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align:center; padding: 40px; color: #7f8c8d;">
+                📭 No hay pedidos registrados aún. ¡Crea el primero!
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
