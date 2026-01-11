@@ -16,6 +16,9 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# login
+LOGIN_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = "/inventario/dashboard/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +29,7 @@ SECRET_KEY = "django-insecure-7t!d#7%8efl)iczzk0tkmas0t%txz=%#b8c4$@ej=yl$d0tr5-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

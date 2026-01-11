@@ -1,4 +1,8 @@
-<div class="kanban-card card-{{ color }}" data-id="{{ pedido.id }}">
+<div class="kanban-card card-{{ color }}" 
+     id="tarjeta-{{ pedido.id }}"
+     onclick="expandirTarjeta('{{ pedido.id }}')"
+     style="position: relative;">
+
     <div style="display:flex; justify-content:space-between;">
         <span class="card-client">{{ pedido.cliente.nombre }}</span>
         <small style="color:#999">#{{ pedido.id }}</small>
@@ -13,9 +17,47 @@
         {% endif %}
     </div>
 
-    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
-        <small>{{ pedido.fecha_entrega_estimada|date:"d M" }}</small>
+    <div id="detalle-{{ pedido.id }}" style="display: none;">
+        <h2 style="border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            Pedido #{{ pedido.id }} - {{ pedido.cliente.nombre }}
+        </h2>
         
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+            <div>
+                <h4>📍 Datos de Envío</h4>
+                <p><strong>Dirección:</strong> {{ pedido.cliente.direccion|default:"No especificada" }}</p>
+                <p><strong>Teléfono:</strong> {{ pedido.cliente.telefono }}</p>
+                <p><strong>Estado:</strong> {{ pedido.get_estado_entrega_display }}</p>
+            </div>
+            <div>
+                <h4>💰 Pago</h4>
+                <p><strong>Total:</strong> S/ {{ pedido.total_pedido }}</p>
+                <p><strong>A cuenta:</strong> S/ {{ pedido.monto_pagado }}</p>
+                <p><strong>Saldo:</strong> <span style="color:red">S/ {{ pedido.saldo_pendiente }}</span></p>
+            </div>
+        </div>
+
+        <h4>📦 Productos Completos</h4>
+        <ul style="list-style: none; padding: 0;">
+            {% for item in pedido.items.all %}
+                <li style="background: #f8f9fa; padding: 10px; margin-bottom: 5px; border-radius: 5px; display: flex; justify-content: space-between;">
+                    <span>
+                        <strong>{{ item.cantidad }}x</strong> {{ item.producto.nombre }}
+                        {% if item.texto_dedicatoria %}
+                            <br><small>✍ " {{ item.texto_dedicatoria }} "</small>
+                        {% endif %}
+                    </span>
+                    <span>S/ {{ item.subtotal }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <div style="margin-top: 20px; text-align: right;">
+            <a href="{% url 'admin:inventario_pedido_change' pedido.id %}" class="btn-editar">✏️ Editar en Admin</a>
+        </div>
+    </div>
+    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+        <small>{{ pedido.fecha_creacion|date:"d M" }}</small>
         {% if pedido.es_urgente %}
             <span style="background:red; color:white; padding:2px 5px; border-radius:4px; font-size:0.7em;">🔥 URGENTE</span>
         {% endif %}

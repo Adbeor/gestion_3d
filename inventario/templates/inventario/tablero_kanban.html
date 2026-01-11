@@ -1,12 +1,14 @@
-{% extends 'inventario/base.html' %} {% block content %}
+{% extends 'inventario/base.html' %}
+
+{% block content %}
 <style>
-    /* ESTILOS DE LA PIZARRA */
+    /* --- ESTILOS DEL TABLERO (KANBAN) --- */
     .kanban-board {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 4 Columnas iguales */
+        grid-template-columns: repeat(4, 1fr);
         gap: 20px;
-        padding: 20px;
-        height: 85vh; /* Ocupa casi toda la pantalla */
+        padding: 20px 0;
+        height: calc(100vh - 140px); /* Ajuste para que quepa en pantalla */
     }
 
     .kanban-column {
@@ -15,6 +17,8 @@
         padding: 10px;
         display: flex;
         flex-direction: column;
+        height: 100%; /* Ocupar altura completa */
+        overflow-y: auto; /* Scroll si hay muchas tarjetas */
     }
 
     .column-header {
@@ -22,34 +26,47 @@
         text-transform: uppercase;
         padding: 10px;
         text-align: center;
-        border-bottom: 2px solid rgba(0,0,0,0.1);
+        border-bottom: 2px solid rgba(0,0,0,0.05);
         margin-bottom: 10px;
+        position: sticky; top: 0; background: inherit; z-index: 10; /* Cabecera fija */
     }
 
-    /* ESTILOS DE LA TARJETA */
+    /* --- ESTILOS DE LA TARJETA PEQUEÑA (RESUMEN) --- */
     .kanban-card {
         background: white;
         padding: 15px;
         margin-bottom: 10px;
         border-radius: 6px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        cursor: grab; /* Manita para agarrar */
-        transition: transform 0.2s;
-        border-left: 5px solid #bdc3c7; /* Color por defecto */
+        cursor: pointer; /* Manita */
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 5px solid #bdc3c7;
+        position: relative;
     }
     
-    .kanban-card:active { cursor: grabbing; transform: rotate(2deg); }
-    .kanban-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+    .kanban-card:hover { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0,0,0,0.15); }
 
-    /* Colores por estado (Borde izquierdo) */
+    /* Colores de estado */
     .card-cola { border-color: #f1c40f; }      /* Amarillo */
     .card-taller { border-color: #e67e22; }    /* Naranja */
     .card-transito { border-color: #3498db; }  /* Azul */
-    .card-entregado { border-color: #2ecc71; opacity: 0.7; } /* Verde */
+    .card-entregado { border-color: #2ecc71; opacity: 0.8; } /* Verde */
 
-    .card-title { font-weight: bold; font-size: 1.1em; color: #2c3e50; }
-    .card-client { color: #7f8c8d; font-size: 0.9em; margin-bottom: 5px;}
-    .card-items { font-size: 0.85em; color: #34495e; background: #f8f9fa; padding: 5px; border-radius: 4px;}
+    .card-title { font-weight: bold; font-size: 1.1em; color: #2c3e50; margin: 8px 0; }
+    .card-client { color: #7f8c8d; font-size: 0.9em; }
+    
+    /* Botón editar */
+    .btn-editar {
+        display: inline-block;
+        background: #34495e;
+        color: white;
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        transition: background 0.2s;
+    }
+    .btn-editar:hover { background: #2c3e50; }
 </style>
 
 <h2>📋 Pizarra de Control de Pedidos</h2>
@@ -86,48 +103,123 @@
 
 </div>
 
-<script type="text/html" id="template-card">
-    </script>
+<div id="overlay-fondo" onclick="cerrarTarjeta()" 
+     style="position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+</div>
+
+<div id="tarjeta-expandida" 
+     style="position: fixed; background: white; z-index: 999; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: none;">
+    
+    <button onclick="cerrarTarjeta()" style="position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-weight: bold; color: #555; z-index: 1001; font-size: 1.2em;">✕</button>
+    
+    <div id="contenido-expandido" 
+         style="padding: 40px; height: 100%; overflow-y: auto; box-sizing: border-box; opacity: 0; transition: opacity 0.3s ease-in-out;">
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
 <script>
-    // 1. Configurar Drag & Drop en las 4 columnas
+    // --- PARTE 1: ARRASTRAR (DRAG & DROP) ---
     const columnas = document.querySelectorAll('.kanban-column');
-    
     columnas.forEach(col => {
         new Sortable(col, {
-            group: 'kanban', // Permite mover items entre listas con el mismo nombre de grupo
+            group: 'kanban',
             animation: 150,
-            ghostClass: 'bg-blue-100', // Clase visual cuando arrastras
+            ghostClass: 'bg-blue-100',
+            delay: 100,
             onEnd: function (evt) {
-                // ESTA FUNCIÓN SE EJECUTA AL SOLTAR LA TARJETA
-                const itemEl = evt.item; // La tarjeta que moviste
-                const nuevoEstado = evt.to.getAttribute('data-estado'); // A qué columna cayó
-                const pedidoId = itemEl.getAttribute('data-id'); // ID del pedido
-
-                // Enviamos el cambio a Django
+                const itemEl = evt.item;
+                const nuevoEstado = evt.to.getAttribute('data-estado');
+                const pedidoId = itemEl.getAttribute('id').replace('tarjeta-', '');
                 actualizarEstado(pedidoId, nuevoEstado);
             }
         });
     });
 
-    // 2. Función AJAX para hablar con Django
     function actualizarEstado(id, estado) {
         fetch("{% url 'api_mover_pedido' %}", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}" // ¡Seguridad Django!
+                "X-CSRFToken": "{{ csrf_token }}"
             },
             body: JSON.stringify({ id: id, estado: estado })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Actualizado:", data);
-            // Opcional: Mostrar un toast o notificación pequeña
-        })
-        .catch(error => console.error("Error:", error));
+        }).catch(error => console.error("Error:", error));
+    }
+
+
+    // --- PARTE 2: ANIMACIÓN FLUIDA ---
+    let tarjetaActiva = null; 
+
+    function expandirTarjeta(id) {
+        const tarjetaOriginal = document.getElementById('tarjeta-' + id);
+        const contenidoOculto = document.getElementById('detalle-' + id).innerHTML;
+        
+        const tarjetaExpandida = document.getElementById('tarjeta-expandida');
+        const overlay = document.getElementById('overlay-fondo');
+        const contenidoExpandido = document.getElementById('contenido-expandido');
+
+        // Posición Inicial
+        const rect = tarjetaOriginal.getBoundingClientRect();
+        tarjetaExpandida.style.display = 'block';
+        tarjetaExpandida.style.top = rect.top + 'px';
+        tarjetaExpandida.style.left = rect.left + 'px';
+        tarjetaExpandida.style.width = rect.width + 'px';
+        tarjetaExpandida.style.height = rect.height + 'px';
+        
+        contenidoExpandido.style.opacity = '0';
+        contenidoExpandido.innerHTML = contenidoOculto;
+
+        void tarjetaExpandida.offsetWidth; 
+
+        // Expansión
+        tarjetaExpandida.style.top = '10%';
+        tarjetaExpandida.style.left = '15%';
+        tarjetaExpandida.style.width = '70%';
+        tarjetaExpandida.style.height = '80%';
+        
+        overlay.style.pointerEvents = 'auto';
+        overlay.style.opacity = '1';
+
+        setTimeout(() => {
+            contenidoExpandido.style.opacity = '1';
+        }, 150);
+
+        tarjetaActiva = tarjetaOriginal;
+        tarjetaOriginal.style.opacity = '0'; 
+    }
+
+    function cerrarTarjeta() {
+        const tarjetaExpandida = document.getElementById('tarjeta-expandida');
+        const overlay = document.getElementById('overlay-fondo');
+        const contenidoExpandido = document.getElementById('contenido-expandido');
+
+        if (tarjetaActiva) {
+            // 1. Fade Out del texto
+            contenidoExpandido.style.opacity = '0';
+
+            // 2. Movimiento SIMULTÁNEO (10ms es imperceptible)
+            setTimeout(() => {
+                const rect = tarjetaActiva.getBoundingClientRect();
+                
+                tarjetaExpandida.style.top = rect.top + 'px';
+                tarjetaExpandida.style.left = rect.left + 'px';
+                tarjetaExpandida.style.width = rect.width + 'px';
+                tarjetaExpandida.style.height = rect.height + 'px';
+                
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+
+                // 3. Limpieza final
+                setTimeout(() => {
+                    tarjetaExpandida.style.display = 'none';
+                    if(tarjetaActiva) tarjetaActiva.style.opacity = '1'; 
+                    tarjetaActiva = null;
+                }, 400); 
+            }, 10); 
+        }
     }
 </script>
-
 {% endblock %}

@@ -12,7 +12,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import PedidoForm, ClienteForm, ItemPedidoFormSet  # <--- Importar
 from django.db import transaction  # Para que si falla algo, no guarde nada a medias
 
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def crear_pedido(request):
     # Inicializamos los formularios vacíos
     pedido_form = PedidoForm()
@@ -74,7 +77,7 @@ def crear_pedido(request):
     )
 
 
-# 1. VISTA DE LA PIZARRA
+@login_required  # <--- ¡AGREGA ESTO!
 def tablero_kanban(request):
     # Filtramos los pedidos por cada estado para mandarlos ordenaditos
     context = {
@@ -90,6 +93,7 @@ def tablero_kanban(request):
     return render(request, "inventario/tablero_kanban.html", context)
 
 
+@login_required
 def actualizar_estado_pedido(request):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -114,12 +118,14 @@ def actualizar_estado_pedido(request):
     return JsonResponse({"status": "error"}, status=400)
 
 
+@login_required
 def lista_pedidos(request):
     # Traemos los pedidos ordenados: Primero los pendientes, luego los recientes
     pedidos = Pedido.objects.all().order_by("estado_entrega", "-fecha_creacion")
     return render(request, "inventario/lista_pedidos.html", {"pedidos": pedidos})
 
 
+@login_required
 def dashboard_produccion(request):
     # 1. Alertas de Filamento (Materia Prima)
     filamentos = Filamento.objects.all()
@@ -150,7 +156,7 @@ def dashboard_produccion(request):
     return render(request, "inventario/dashboard.html", contexto)
 
 
-# ACCIÓN 1: IMPRIMIR UNA PIEZA SUELTA
+@login_required
 def accion_imprimir_pieza(request, pieza_id):
     if request.method == "POST":
         pieza = get_object_or_404(Pieza, pk=pieza_id)
@@ -196,7 +202,7 @@ def accion_imprimir_pieza(request, pieza_id):
         return redirect("dashboard")
 
 
-# ACCIÓN 2: ARMAR UN MOLINO (Usando piezas impresas)
+@login_required
 def accion_armar_producto(request, producto_id):
     if request.method == "POST":
         producto = get_object_or_404(Producto, pk=producto_id)
@@ -229,7 +235,7 @@ def accion_armar_producto(request, producto_id):
         return redirect("dashboard")  # Si no existe, vamos al dashboard por defecto
 
 
-# ACCIÓN 3: VENDER UN MOLINO
+@login_required
 def accion_vender_producto(request, producto_id):
     if request.method == "POST":
         producto = get_object_or_404(Producto, pk=producto_id)
@@ -255,10 +261,7 @@ def accion_vender_producto(request, producto_id):
         return redirect("dashboard")  # Si no existe, vamos al dashboard por defecto
 
 
-from django.shortcuts import render
-from .models import Producto, Filamento
-
-
+@login_required
 def dashboard_simple(request):
     # 1. FILAMENTOS: Los ordenamos para que los que tienen poco salgan primero
     # Usamos una función lambda para ordenar por la propiedad stock_total
@@ -285,6 +288,7 @@ def dashboard_simple(request):
     )
 
 
+@login_required
 def detalle_producto(request, producto_id):
     # 1. Obtener el producto básico
     producto = get_object_or_404(Producto, pk=producto_id)
