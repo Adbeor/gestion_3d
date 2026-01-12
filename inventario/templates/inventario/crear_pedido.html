@@ -3,11 +3,11 @@
 {% block content %}
 
 <style>
+    /* Estilos existentes... */
     .form-control { width: 100%; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; }
     .item-row td { vertical-align: middle; border-bottom: 1px solid #f1f1f1; padding: 10px 5px !important; }
     .col-nombre { width: 180px; }
     
-    /* Botón flotante para agregar */
     .btn-add-row {
         background-color: #f1f2f6; color: #2c3e50; 
         border: 2px dashed #bdc3c7; border-radius: 8px;
@@ -15,6 +15,20 @@
         font-weight: 600; cursor: pointer; transition: all 0.2s;
     }
     .btn-add-row:hover { background-color: #e8f6f3; border-color: #27ae60; color: #27ae60; }
+
+    /* --- ESTILOS DEL MODAL FLOTANTE --- */
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 1000;
+        display: none; justify-content: center; align-items: center;
+    }
+    .modal-content {
+        background: white; padding: 25px; border-radius: 12px;
+        width: 90%; max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown { from {transform: translateY(-20px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
 </style>
 
 <div style="max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
@@ -28,37 +42,27 @@
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
             <h4 style="margin-top:0; color:#2c3e50;">👤 Cliente</h4>
-            
             <div id="selector-cliente-box">
                 <div style="display: flex; gap: 10px;">
-                    <div style="flex-grow: 1;">
-                        {{ pedido_form.cliente }} 
-                    </div>
+                    <div style="flex-grow: 1;">{{ pedido_form.cliente }}</div>
                     <button type="button" onclick="toggleNuevoCliente()" style="background: #27ae60; color: white; border: none; width: 40px; border-radius: 6px; cursor: pointer; font-size: 1.2em;">+</button>
                 </div>
             </div>
-
             <div id="nuevo-cliente-box" style="display: none; margin-top: 15px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
                 <div style="display: flex; justify-content: space-between; margin-bottom:10px;">
                     <strong style="color: #27ae60;">Nuevo Cliente</strong>
                     <button type="button" onclick="toggleNuevoCliente()" style="background:none; border:none; color:#999; cursor:pointer;">✕ Cancelar</button>
                 </div>
                 <input type="hidden" name="usar_nuevo_cliente" id="input-usar-nuevo">
-                
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                    {{ cliente_form.nombre }}
-                    {{ cliente_form.telefono }}
-                    {{ cliente_form.email }}
+                    {{ cliente_form.nombre }} {{ cliente_form.telefono }} {{ cliente_form.email }}
                 </div>
                 <div style="margin-top: 10px;">{{ cliente_form.direccion }}</div>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-            <div>
-                <label>📅 Fecha Entrega</label>
-                {{ pedido_form.fecha_entrega_estimada }}
-            </div>
+            <div><label>📅 Fecha Entrega</label>{{ pedido_form.fecha_entrega_estimada }}</div>
             <div style="display: flex; gap: 20px; align-items: center; background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 8px;">
                 <label style="cursor:pointer;">{{ pedido_form.es_urgente }} 🔥 Urgente</label>
                 <label style="cursor:pointer;">{{ pedido_form.requiere_factura }} 📄 Factura</label>
@@ -85,10 +89,7 @@
             <tbody id="lista-productos">
                 {% for form in formset %}
                     <tr class="item-row">
-                        <td>
-                            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
-                            {{ form.producto }}
-                        </td>
+                        <td>{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}{{ form.producto }}</td>
                         <td>{{ form.cantidad }}</td>
                         <td>{{ form.precio_unitario }}</td>
                         <td style="text-align: center;">{{ form.cubierta }}</td>
@@ -118,163 +119,186 @@
     </form>
 </div>
 
-<table style="display:none">
-    <tbody id="empty-form-template">
-        <tr class="item-row">
-            <td>
-                {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
-                {{ formset.empty_form.producto }}
-            </td>
-            <td>{{ formset.empty_form.cantidad }}</td>
-            <td>{{ formset.empty_form.precio_unitario }}</td>
-            <td style="text-align: center;">{{ formset.empty_form.cubierta }}</td>
-            <td style="text-align: center;">{{ formset.empty_form.poner_nombre }}</td>
-            <td class="col-nombre">{{ formset.empty_form.nombre }}</td>
-            <td>
-                <div style="margin-bottom: 5px;">{{ formset.empty_form.logo }}</div>
-                {{ formset.empty_form.texto_dedicatoria }}
-            </td>
-            <td style="text-align: center;">
-                <span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div id="modal-nuevo-logo" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="margin-top: 0; color: #2c3e50;">✨ Nuevo Logo</h3>
+        <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 15px;">Sube el logo del cliente aquí mismo.</p>
+        
+        <form id="form-nuevo-logo" enctype="multipart/form-data">
+            <div style="margin-bottom: 15px;">
+                <label>Nombre Empresa / Logo</label>
+                <input type="text" name="nombre" class="form-control" placeholder="Ej: Minera Antamina" required>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label>Imagen del Logo</label>
+                <input type="file" name="image" class="form-control" accept="image/*" required>
+            </div>
+            
+            <div style="text-align: right; display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="cerrarModalLogo()" style="background: #ecf0f1; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Cancelar</button>
+                <button type="button" onclick="guardarNuevoLogo()" style="background: #3498db; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table style="display:none"><tbody id="empty-form-template"><tr class="item-row">
+    <td>{% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}{{ formset.empty_form.producto }}</td>
+    <td>{{ formset.empty_form.cantidad }}</td>
+    <td>{{ formset.empty_form.precio_unitario }}</td>
+    <td style="text-align: center;">{{ formset.empty_form.cubierta }}</td>
+    <td style="text-align: center;">{{ formset.empty_form.poner_nombre }}</td>
+    <td class="col-nombre">{{ formset.empty_form.nombre }}</td>
+    <td><div style="margin-bottom: 5px;">{{ formset.empty_form.logo }}</div>{{ formset.empty_form.texto_dedicatoria }}</td>
+    <td style="text-align: center;"><span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span></td>
+</tr></tbody></table>
 
 <script>
-// --- 0. RECIBIMOS LOS PRECIOS DE DJANGO ---
-    // Usamos 'safe' para que Django renderice el JSON tal cual
     const LISTA_PRECIOS = {{ precios_json|safe }};
+    let selectorLogoActivo = null; // Para recordar qué select disparó el modal
 
-    // --- FUNCIÓN PARA AUTO-LLENAR PRECIO ---
-    function actualizarPrecio(selectElement) {
-        // 1. ¿Qué producto seleccionaron? (Obtenemos el ID)
-        var productoId = selectElement.value;
+    // --- 1. INICIALIZACIÓN ---
+    document.addEventListener("DOMContentLoaded", function() {
+        // Inicializar lógica de nombres
+        var inputNombre = document.querySelector('[name="nombre"]'); // Cliente
+        if (inputNombre) inputNombre.required = false; 
         
-        // 2. Buscamos el precio en nuestra lista
-        var precioEncontrado = LISTA_PRECIOS[productoId];
+        document.querySelectorAll('.check-nombre').forEach(c => toggleNombre(c));
 
-        // 3. Buscamos la casilla de precio que está EN LA MISMA FILA
-        // Usamos closest('tr') para subir a la fila y luego buscar hacia abajo
-        var fila = selectElement.closest('tr');
-        var inputPrecio = fila.querySelector('input[name$="precio_unitario"]');
+        // INYECTAR OPCIÓN "NUEVO LOGO" EN LOS SELECTORES EXISTENTES
+        document.querySelectorAll('.select-logo').forEach(select => {
+            inyectarOpcionNuevo(select);
+        });
+    });
 
-        // 4. Si hay precio y la casilla existe, lo ponemos
-        if (precioEncontrado !== undefined && inputPrecio) {
-            inputPrecio.value = precioEncontrado.toFixed(2); // Formato 00.00
-            
-            // Efecto visual coqueto (opcional): Parpadeo amarillo para indicar cambio
-            inputPrecio.style.backgroundColor = "#fff3cd";
-            setTimeout(() => inputPrecio.style.backgroundColor = "white", 500);
+    // --- 2. LÓGICA DE LOGOS ---
+    
+    function inyectarOpcionNuevo(select) {
+        // Verifica si ya tiene la opción para no duplicar
+        if (!select.querySelector('option[value="crear_nuevo"]')) {
+            const opcion = document.createElement('option');
+            opcion.value = "crear_nuevo";
+            opcion.text = "➕ Nuevo Logo...";
+            opcion.style.fontWeight = "bold";
+            opcion.style.color = "#27ae60";
+            select.add(opcion, 0); // Agregar al principio
         }
     }
-    // 1. AGREGAR FILA DINÁMICA
+
+    function verificarNuevoLogo(select) {
+        if (select.value === "crear_nuevo") {
+            selectorLogoActivo = select; // Guardamos referencia
+            document.getElementById('modal-nuevo-logo').style.display = 'flex'; // Abrir modal
+            select.value = ""; // Resetear visualmente mientras tanto
+        }
+    }
+
+    function cerrarModalLogo() {
+        document.getElementById('modal-nuevo-logo').style.display = 'none';
+        document.getElementById('form-nuevo-logo').reset();
+        selectorLogoActivo = null;
+    }
+
+    function guardarNuevoLogo() {
+        const form = document.getElementById('form-nuevo-logo');
+        const formData = new FormData(form);
+
+        // AJAX Fetch
+        fetch("{% url 'api_crear_logo' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                // ÉXITO: Agregar el nuevo logo a TODOS los selectores de la página
+                const todosLosSelectores = document.querySelectorAll('.select-logo');
+                
+                todosLosSelectores.forEach(select => {
+                    const nuevaOpcion = new Option(data.nombre, data.id);
+                    // Insertar después de la opción "Nuevo Logo"
+                    select.add(nuevaOpcion, 1);
+                });
+
+                // Seleccionarlo en el que disparó la acción
+                if (selectorLogoActivo) {
+                    selectorLogoActivo.value = data.id;
+                }
+
+                cerrarModalLogo();
+            } else {
+                alert("Error: " + JSON.stringify(data.errors));
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+
+    // --- 3. LÓGICA DE FILAS (ADD/REMOVE) ---
     function agregarFila() {
-        // Buscamos el input oculto que dice cuántos formularios hay
-        // El nombre suele ser "items-TOTAL_FORMS" o "itempedido_set-TOTAL_FORMS"
-        // Lo buscamos por el atributo name que termina en TOTAL_FORMS
         var totalFormsInput = document.querySelector('[name$="-TOTAL_FORMS"]');
         var currentCount = parseInt(totalFormsInput.value);
-
-        // Obtenemos la plantilla HTML
         var template = document.getElementById('empty-form-template').innerHTML;
-
-        // Reemplazamos __prefix__ por el número actual (ej: 1, 2, 3...)
         var newRowHtml = template.replace(/__prefix__/g, currentCount);
+        
+        // Insertamos la fila
+        var tbody = document.getElementById('lista-productos');
+        tbody.insertAdjacentHTML('beforeend', newRowHtml);
+        
+        // **IMPORTANTE**: Al crear nueva fila, inyectar opción "Nuevo Logo" al nuevo select
+        var nuevaFila = tbody.lastElementChild;
+        var nuevoSelectLogo = nuevaFila.querySelector('.select-logo');
+        if(nuevoSelectLogo) inyectarOpcionNuevo(nuevoSelectLogo);
 
-        // Insertamos la nueva fila en la tabla
-        document.getElementById('lista-productos').insertAdjacentHTML('beforeend', newRowHtml);
-
-        // Actualizamos el contador total para que Django sepa que hay uno más
         totalFormsInput.value = currentCount + 1;
     }
 
-    // 2. ELIMINAR FILA (Para las filas nuevas creadas con JS)
-    function eliminarFilaNueva(btn) {
-        // Como no están en base de datos, solo borramos el HTML
-        btn.closest('tr').remove();
-        // Nota: No es estrictamente necesario bajar el TOTAL_FORMS, Django lo maneja bien si hay saltos,
-        // pero idealmente deberíamos, aunque por simplicidad esto funciona.
+    // --- 4. FUNCIONES AUXILIARES (Precio, Nombre, etc.) ---
+    function actualizarPrecio(select) {
+        var pid = select.value;
+        var precio = LISTA_PRECIOS[pid];
+        var input = select.closest('tr').querySelector('input[name$="precio_unitario"]');
+        if (precio !== undefined && input) input.value = precio.toFixed(2);
     }
 
-    // 3. ELIMINAR FILA (Para las filas existentes que vienen de Django)
-    function marcarBorrar(btn) {
-        var checkbox = btn.nextElementSibling.querySelector('input');
-        if(checkbox) {
-            checkbox.checked = true;
-            btn.closest('tr').style.opacity = '0.3';
-            btn.closest('tr').style.backgroundColor = '#fbecec'; // Feedback visual rojo claro
+    function toggleNombre(chk) {
+        var input = chk.closest('tr').querySelector('.input-nombre');
+        input.style.display = chk.checked ? 'block' : 'none';
+        if(chk.checked && !input.value) {
+            // Lógica simple para intentar copiar nombre cliente
+            var nombreCli = document.querySelector('.select-cliente option:checked')?.text || "";
+            if(!nombreCli.includes("---")) input.value = nombreCli;
         }
     }
 
-    // 4. LÓGICA DE NOMBRE (Tu script anterior)
-    function getNombreClienteActual() {
-        var inputNuevo = document.getElementById('input-usar-nuevo');
-        if (inputNuevo && inputNuevo.value === 'on') {
-            var campoNombre = document.querySelector('input[name="nombre"]'); 
-            return campoNombre ? campoNombre.value : '';
-        } else {
-            var select = document.querySelector('.select-cliente');
-            if (select && select.selectedIndex >= 0) {
-                return select.options[select.selectedIndex].text;
-            }
-        }
-        return '';
+    function eliminarFilaNueva(btn) { btn.closest('tr').remove(); }
+    function marcarBorrar(btn) { 
+        var chk = btn.nextElementSibling.querySelector('input');
+        if(chk) { chk.checked = true; btn.closest('tr').style.opacity = '0.3'; }
     }
-
-    function toggleNombre(checkbox) {
-        var fila = checkbox.closest('tr');
-        var inputNombre = fila.querySelector('.input-nombre');
-
-        if (checkbox.checked) {
-            inputNombre.style.display = 'block';
-            inputNombre.focus();
-            if (inputNombre.value.trim() === '') {
-                var nombreCliente = getNombreClienteActual();
-                if (nombreCliente && !nombreCliente.includes('----')) {
-                    inputNombre.value = nombreCliente;
-                }
-            }
-        } else {
-            inputNombre.style.display = 'none';
-        }
-    }
-
-    // 5. LÓGICA DE CLIENTE (Tu script anterior)
-    document.addEventListener("DOMContentLoaded", function() {
-        var inputNombre = document.querySelector('[name="nombre"]');
-        if (inputNombre) { inputNombre.required = false; }
-        
-        // Inicializar checks de nombres existentes
-        var checks = document.querySelectorAll('.check-nombre');
-        checks.forEach(function(c) { toggleNombre(c); });
-    });
-
+    
+    // Toggle Cliente Nuevo/Viejo (Tu lógica existente)
     function toggleNuevoCliente() {
         var boxNuevo = document.getElementById('nuevo-cliente-box');
         var boxViejo = document.getElementById('selector-cliente-box');
         var inputFlag = document.getElementById('input-usar-nuevo');
         var selectCliente = document.querySelector('.select-cliente');
-        
-        // El input del form de cliente
-        // OJO: Django renderiza input con id "id_nombre" usualmente, pero aquí buscamos genérico
-        // Asegúrate que este selector encuentre el input correcto dentro del boxNuevo
-        var inputNombreCliente = boxNuevo.querySelector('input[type="text"]'); 
+        var inputNombre = boxNuevo.querySelector('input[name$="nombre"]'); 
 
         if (boxNuevo.style.display === 'none') {
             boxNuevo.style.display = 'block';
-            boxViejo.style.opacity = '0.5';
-            boxViejo.style.pointerEvents = 'none';
+            boxViejo.style.opacity = '0.5'; boxViejo.style.pointerEvents = 'none';
             inputFlag.value = 'on';
             if(selectCliente) selectCliente.required = false;
-            if(inputNombreCliente) inputNombreCliente.required = true;
+            if(inputNombre) inputNombre.required = true;
         } else {
             boxNuevo.style.display = 'none';
-            boxViejo.style.opacity = '1';
-            boxViejo.style.pointerEvents = 'auto';
+            boxViejo.style.opacity = '1'; boxViejo.style.pointerEvents = 'auto';
             inputFlag.value = 'off';
             if(selectCliente) selectCliente.required = true;
-            if(inputNombreCliente) inputNombreCliente.required = false;
+            if(inputNombre) inputNombre.required = false;
         }
     }
 </script>

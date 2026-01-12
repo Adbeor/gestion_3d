@@ -24,4 +24,5 @@ urlpatterns = [
     # kanban
     path("kanban/", views.tablero_kanban, name="tablero_kanban"),
     path("api/mover-pedido/", views.actualizar_estado_pedido, name="api_mover_pedido"),
+    path('api/crear-logo/', views.api_crear_logo, name='api_crear_logo'),
 ]

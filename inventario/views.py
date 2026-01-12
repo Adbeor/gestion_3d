@@ -9,7 +9,7 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .forms import PedidoForm, ClienteForm, ItemPedidoFormSet  # <--- Importar
+from .forms import PedidoForm, ClienteForm, ItemPedidoFormSet, LogoForm
 from django.db import transaction  # Para que si falla algo, no guarde nada a medias
 
 from django.contrib.auth.decorators import login_required
@@ -351,4 +351,18 @@ def detalle_producto(request, producto_id):
     )
 
 
-
+def api_crear_logo(request):
+    """Recibe datos por AJAX y crea un logo al vuelo"""
+    if request.method == 'POST':
+        form = LogoForm(request.POST, request.FILES)
+        if form.is_valid():
+            logo = form.save()
+            return JsonResponse({
+                'status': 'ok',
+                'id': logo.id,
+                'nombre': logo.nombre
+            })
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+    
+    return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
