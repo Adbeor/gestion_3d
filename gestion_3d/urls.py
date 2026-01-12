@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Esta línea conecta tu app al proyecto:
     path("inventario/", include("inventario.urls")),
+    path('', RedirectView.as_view(url='/inventario/', permanent=True)),
 ]
 
 # Esto le dice a Django: "Si estamos en modo DEBUG (desarrollo),
