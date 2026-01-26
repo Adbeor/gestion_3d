@@ -351,10 +351,12 @@ class ItemPedido(models.Model):
         blank=True,
         help_text="Ej: 'Recuerdo de la Gerencia de Mantenimiento 2025'",
     )
+    descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Descuento (S/)")
 
     @property
     def subtotal(self):
-        return self.cantidad * self.precio_unitario
+        total_bruto = self.cantidad * self.precio_unitario
+        return total_bruto - self.descuento
 
     def save(self, *args, **kwargs):
         # Si no ponemos precio, jalamos el precio actual del producto automáticamente
