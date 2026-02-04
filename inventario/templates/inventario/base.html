@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D TEC - Gestión</title>
     <link rel="stylesheet" href="{% static 'inventario/css/styles.css' %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
         {% block extra_css %}{% endblock %}
     </style>
@@ -44,6 +45,7 @@
         {% endblock %}
     </div>
 
+    <script src="{% static 'inventario/js/scripts.js' %}"></script>
     {% block extra_js %}{% endblock %}
 
 </body>

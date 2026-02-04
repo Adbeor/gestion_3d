@@ -1,28 +1,27 @@
-# inventario/views.py
+# inventario/views/ui.py
 
 import json
+import logging
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.utils.html import conditional_escape
 from django.db import transaction  # Para guardar todo o nada si hay error
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncMonth
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 # Importamos Modelos
-from .models import (
+from inventario.models import (
     Producto, Filamento, Pieza, ItemPedido, 
-    Pedido, Proyecto, ItemPiezaPedido, ComposicionProducto, Insumo, ComposicionInsumo
+    Pedido, Proyecto, ItemPiezaPedido, ComposicionProducto, Insumo
 )
 
 # Importamos Formularios
-from .forms import (
+from inventario.forms import (
     PedidoForm, ClienteForm, ItemPedidoFormSet, 
     LogoForm, ProyectoForm, ItemPiezaFormSet
 )
 
+logger = logging.getLogger(__name__)
 
 # =========================================================
 # 1. CREACIÓN CENTRALIZADA (PEDIDOS Y PROYECTOS)
@@ -77,7 +76,7 @@ def crear_pedido(request):
                         
                         # Respaldo manual por si la validación estricta falló
                         if not cliente and request.POST.get('cliente'):
-                             from .models import Cliente
+                             from inventario.models import Cliente
                              cliente = Cliente.objects.get(id=request.POST.get('cliente'))
 
                     if not cliente:
@@ -128,6 +127,7 @@ def crear_pedido(request):
                         raise Exception(f"Error en el encabezado del pedido: {pedido_form.errors.as_text()}")
 
         except Exception as e:
+            logger.error(f"Error creando pedido/proyecto: {e}")
             messages.error(request, f"⚠️ No se pudo guardar: {str(e)}")
 
     # Renderizar plantilla
@@ -188,47 +188,6 @@ def kanban_proyectos(request):
 def tablero_kanban(request):
     """(Redirección por compatibilidad)"""
     return redirect('kanban_ventas')
-
-
-# =========================================================
-# 3. APIs PARA MOVER TARJETAS (AJAX)
-# =========================================================
-
-@login_required
-def actualizar_estado_pedido(request):
-    """Mueve un Pedido entre columnas del Kanban"""
-    if request.method == "POST":
-        data = json.loads(request.body)
-        pedido_id = data.get("id")
-        nuevo_estado = data.get("estado")
-
-        try:
-            pedido = Pedido.objects.get(pk=pedido_id)
-            pedido.estado_entrega = nuevo_estado
-            pedido.save()
-            return JsonResponse({"status": "ok", "mensaje": f"Movido a {nuevo_estado}"})
-        except Pedido.DoesNotExist:
-            return JsonResponse({"status": "error", "mensaje": "Pedido no encontrado"}, status=404)
-
-    return JsonResponse({"status": "error"}, status=400)
-
-@csrf_exempt
-def actualizar_estado_proyecto(request):
-    """Mueve un Proyecto entre fases"""
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        proyecto_id = data.get('id')
-        nuevo_estado = data.get('estado')
-        
-        try:
-            proy = Proyecto.objects.get(id=proyecto_id)
-            proy.estado = nuevo_estado
-            proy.save()
-            return JsonResponse({'status': 'success'})
-        except Proyecto.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Proyecto no encontrado'})
-            
-    return JsonResponse({'status': 'error', 'message': 'Método no válido'})
 
 
 # =========================================================
@@ -375,12 +334,12 @@ def accion_imprimir_pieza(request, pieza_id):
             return redirect(request.POST.get("next") or "dashboard")
 
         # Intentamos descontar material
-        if pieza.material.descontar_material(peso_total):
+        if pieza.material and pieza.material.descontar_material(peso_total):
             pieza.stock_fisico += cantidad
             pieza.save()
             messages.success(request, f"🖨️ Se imprimieron {cantidad} unidades de {pieza.nombre}.")
         else:
-            messages.error(request, f"❌ No hay suficiente filamento {pieza.material.color}.")
+            messages.error(request, f"❌ No hay suficiente filamento {pieza.material.color if pieza.material else 'Sin Material'}.")
 
     return redirect(request.POST.get("next") or "dashboard")
 
@@ -439,10 +398,6 @@ def accion_agregar_pieza_composicion(request, producto_id):
             )
             
             if not created:
-                # Si ya existía, actualizamos la cantidad (opcional: sumar o reemplazar. Aquí reemplazamos/sumamos)
-                # Lógica: Si el usuario pone "2", ¿quiere que sean 2 en total o sumar 2?
-                # UX Estándar: "Agregar" suele ser sumar, pero en configuración de producto suele ser "Definir cantidad".
-                # Aquí haremos algo inteligente: Si viene de un form "Agregar", sumamos.
                 item.cantidad += cantidad
                 item.save()
                 messages.success(request, f"Actualizado: Ahora requiere {item.cantidad}x {pieza.nombre}")
@@ -477,25 +432,25 @@ def accion_crear_pieza_superrapida(request, producto_id):
                     archivo_stl=archivo_stl
                 )
                 
-                # Forzar extracción inmediata (a veces el save del create no lo coge bien si el archivo aun no esta en disco)
+                # Forzar extracción inmediata
                 if archivo_gcode:
                     try:
-                        print(f"Procesando archivo: {archivo_gcode.name}")
+                        logger.info(f"Procesando archivo: {archivo_gcode.name}")
                         # Peso
                         peso = nueva_pieza.extraer_peso_gcode()
                         if peso:
                             nueva_pieza.peso_gramos = peso
-                            print(f"Peso detectado: {peso}")
+                            logger.info(f"Peso detectado: {peso}")
                         
                         # Tiempo
                         tiempo = nueva_pieza.extraer_tiempo()
                         if tiempo:
                             nueva_pieza.tiempo_impresion = tiempo
-                            print(f"Tiempo detectado: {tiempo}")
+                            logger.info(f"Tiempo detectado: {tiempo}")
                             
                         nueva_pieza.save()
                     except Exception as e:
-                        print(f"Error procesando GCode en vista: {e}")
+                        logger.error(f"Error procesando GCode en vista: {e}")
                 
                 # Crear la relación automáticamente
                 ComposicionProducto.objects.create(
@@ -507,163 +462,12 @@ def accion_crear_pieza_superrapida(request, producto_id):
                 messages.success(request, f"✨ Pieza '{nombre}' creada y vinculada correctamente.")
                 
             except Exception as e:
+                logger.error(f"Error creando pieza: {e}")
                 messages.error(request, f"Error creando pieza: {e}")
         else:
             messages.error(request, "Faltan datos obligatorios (Nombre o Material).")
 
     return redirect("detalle_producto", producto_id=producto_id)
-
-
-# =========================================================
-# 6. API STOCK (CONTROL INTERACTIVO)
-# =========================================================
-
-@login_required
-def api_control_stock_pieza(request, pieza_id):
-    """
-    API para controlar stock:
-    - accion: 'imprimir' (+1 y resta material), 'ajustar' (delta simple), 'fijar' (set manual)
-    - cantidad: int
-    """
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            accion = data.get("accion") # imprimir, ajustar, fijar
-            cantidad = float(data.get("cantidad", 0)) # Puede ser negativo
-            
-            pieza = get_object_or_404(Pieza, pk=pieza_id)
-            mensaje = ""
-            status = "ok"
-
-            if accion == "imprimir":
-                # Lógica completa de impresión (Consumo de material)
-                peso_total = (pieza.peso_gramos or 0) * cantidad
-                if peso_total > 0:
-                    if pieza.material.descontar_material(peso_total):
-                        pieza.stock_fisico += int(cantidad)
-                        mensaje = f"Impresa: +{int(cantidad)} (Stock: {pieza.stock_fisico})"
-                    else:
-                        status = "error"
-                        mensaje = f"Sin filamento suficiente ({pieza.material.color})"
-                else:
-                    # Sin peso, solo sumamos
-                    pieza.stock_fisico += int(cantidad)
-                    mensaje = f"Impresa (Sin peso): +{int(cantidad)}"
-
-            elif accion == "ajustar":
-                # Solo suma/resta el número (Corrige stock)
-                pieza.stock_fisico += int(cantidad)
-                # Evitar negativos
-                if pieza.stock_fisico < 0: pieza.stock_fisico = 0
-                mensaje = f"Ajustado: Stock actual {pieza.stock_fisico}"
-
-            elif accion == "fijar":
-                # Auditoría: Poner el número exacto
-                pieza.stock_fisico = int(cantidad)
-                if pieza.stock_fisico < 0: pieza.stock_fisico = 0
-                mensaje = f"Fijado: Stock actual {pieza.stock_fisico}"
-
-            pieza.save()
-            return JsonResponse({"status": status, "nuevo_stock": pieza.stock_fisico, "mensaje": mensaje})
-
-        except Exception as e:
-            return JsonResponse({"status": "error", "mensaje": str(e)}, status=400)
-
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-
-@login_required
-def api_crear_filamento(request):
-    """API para crear filamento al vuelo desde modales."""
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            tipo = data.get("tipo")
-            color = data.get("color")
-            
-            if not tipo or not color:
-                return JsonResponse({"status": "error", "mensaje": "Faltan datos"}, status=400)
-                
-            filamento = Filamento.objects.create(
-                tipo=tipo,
-                color=color,
-                cantidad_rollos=1 # Default 1 rollo al crear
-            )
-            
-            return JsonResponse({
-                "status": "ok", 
-                "id": filamento.id, 
-                "text": f"{filamento.tipo} - {filamento.color}"
-            })
-            
-        except Exception as e:
-            return JsonResponse({"status": "error", "mensaje": str(e)}, status=400)
-            
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-
-@login_required
-def api_stock_filamento(request, filamento_id):
-    """API para sumar/restar rollos de filamento."""
-    if request.method == "POST":
-        try:
-            filamento = get_object_or_404(Filamento, pk=filamento_id)
-            data = json.loads(request.body)
-            accion = data.get("accion") # 'sumar' o 'restar'
-            
-            if accion == "sumar":
-                filamento.cantidad_rollos += 1
-                msg = f"Rollo agregado a {filamento.tipo} {filamento.color}"
-            elif accion == "restar":
-                if filamento.cantidad_rollos > 0:
-                    filamento.cantidad_rollos -= 1
-                    msg = f"Rollo quitado de {filamento.tipo} {filamento.color}"
-                else:
-                    return JsonResponse({"status": "error", "mensaje": "No hay rollos para quitar"}, status=400)
-            else:
-                 return JsonResponse({"status": "error", "mensaje": "Acción desconocida"}, status=400)
-            
-            filamento.save()
-            return JsonResponse({
-                "status": "ok",
-                "nuevo_stock": filamento.cantidad_rollos,
-                "mensaje": msg
-            })
-            
-        except Exception as e:
-            return JsonResponse({"status": "error", "mensaje": str(e)}, status=400)
-
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-
-@login_required
-def api_actualizar_costo_filamento(request, filamento_id):
-    """API para actualizar el costo de un rollo."""
-    if request.method == "POST":
-        try:
-            filamento = get_object_or_404(Filamento, pk=filamento_id)
-            data = json.loads(request.body)
-            nuevo_costo = data.get("costo")
-            
-            if nuevo_costo is not None:
-                filamento.costo_rollo = float(nuevo_costo)
-                filamento.save()
-                return JsonResponse({"status": "ok", "mensaje": "Costo actualizado"})
-            
-            return JsonResponse({"status": "error", "mensaje": "Falta el costo"}, status=400)
-            
-        except Exception as e:
-            return JsonResponse({"status": "error", "mensaje": str(e)}, status=400)
-
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-
-# =========================================================
-# 8. GESTIÓN DE INSUMOS
-# =========================================================
 
 @login_required
 def gestion_insumos(request):
@@ -672,87 +476,6 @@ def gestion_insumos(request):
     return render(request, "inventario/gestion_insumos.html", {
         "insumos": insumos
     })
-
-@login_required
-def api_stock_insumo(request, insumo_id):
-    """API para sumar/restar stock de insumos."""
-    if request.method == "POST":
-        insumo = get_object_or_404(Insumo, pk=insumo_id)
-        data = json.loads(request.body)
-        accion = data.get("accion")
-
-        if accion == "sumar":
-            insumo.stock += 1
-        elif accion == "restar" and insumo.stock > 0:
-            insumo.stock -= 1
-        
-        insumo.save()
-        return JsonResponse({"status": "ok", "nuevo_stock": insumo.stock})
-
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-@login_required
-def api_crear_insumo(request):
-    """API para crear un insumo rápido."""
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            nombre = data.get("nombre")
-            unidad = data.get("unidad", "unidad")
-            costo = data.get("costo", 0)
-
-            if not nombre:
-                return JsonResponse({"status": "error", "mensaje": "Falta nombre"})
-
-            Insumo.objects.create(
-                nombre=nombre,
-                unidad=unidad,
-                costo_unitario=costo
-            )
-            return JsonResponse({"status": "ok", "mensaje": "Insumo creado"})
-        except Exception as e:
-            return JsonResponse({"status": "error", "mensaje": str(e)})
-            
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-
-@login_required
-def api_vincular_insumo(request, producto_id):
-    """Vincular un insumo existente a un producto."""
-    if request.method == "POST":
-        try:
-            producto = get_object_or_404(Producto, pk=producto_id)
-            data = json.loads(request.body)
-            insumo_id = data.get("insumo_id")
-            cantidad = float(data.get("cantidad", 1))
-            es_opcional = data.get("es_opcional", False)
-
-            insumo = get_object_or_404(Insumo, pk=insumo_id)
-            
-            # Crear o actualizar vinculo
-            comp, created = ComposicionInsumo.objects.update_or_create(
-                producto=producto,
-                insumo=insumo,
-                defaults={'cantidad': cantidad, 'es_opcional': es_opcional}
-            )
-            
-            return JsonResponse({"status": "ok"})
-        except Exception as e:
-            return JsonResponse({"status": "error", "mensaje": str(e)})
-
-    return JsonResponse({"status": "error", "mensaje": "Método no permitido"}, status=405)
-
-def api_crear_logo(request):
-    if request.method == 'POST':
-        form = LogoForm(request.POST, request.FILES)
-        if form.is_valid():
-            logo = form.save()
-            return JsonResponse({'status': 'ok', 'id': logo.id, 'nombre': logo.nombre})
-        else:
-            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
-    
-    return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
-
 
 @login_required
 def gestion_filamentos(request):

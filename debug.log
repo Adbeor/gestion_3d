@@ -1,0 +1,27 @@
+INFO 2026-02-04 22:21:08,118 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 22:23:35,835 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-04 22:23:36,260 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 22:24:35,537 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-04 22:24:35,921 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 22:25:04,769 basehttp "GET /inventario/ HTTP/1.1" 200 12048
+INFO 2026-02-04 22:25:04,857 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-04 22:25:08,879 basehttp "GET /inventario/ HTTP/1.1" 200 12048
+INFO 2026-02-04 22:25:11,384 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 64421
+INFO 2026-02-04 22:25:12,476 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-04 22:25:13,585 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 12940
+INFO 2026-02-04 22:25:16,197 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10720
+INFO 2026-02-04 22:25:25,648 basehttp "POST /inventario/api/costo-filamento/8/ HTTP/1.1" 200 48
+INFO 2026-02-04 22:25:29,202 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5738
+INFO 2026-02-04 22:25:30,927 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+INFO 2026-02-04 22:25:31,595 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 12940
+INFO 2026-02-04 22:25:32,400 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-04 22:25:32,915 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 64421
+INFO 2026-02-04 22:25:33,269 basehttp "GET /inventario/ HTTP/1.1" 200 12048
+INFO 2026-02-04 22:29:20,537 basehttp "GET /inventario/ HTTP/1.1" 200 12048
+INFO 2026-02-04 22:29:20,591 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-04 22:29:22,152 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 12940
+INFO 2026-02-04 22:29:23,579 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+INFO 2026-02-04 22:29:25,261 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5738
+INFO 2026-02-04 22:29:27,889 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 84587
+INFO 2026-02-04 22:29:29,099 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5738
+INFO 2026-02-04 22:29:29,840 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721

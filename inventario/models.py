@@ -1,8 +1,12 @@
-import base64
 import re
-from django.core.files.base import ContentFile
-from django.db import models
 import zipfile
+import logging
+from io import BytesIO
+from django.db import models
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+
+logger = logging.getLogger(__name__)
 
 # ==============================================================================
 # SECCIÓN 1: INVENTARIO Y PRODUCCIÓN
@@ -161,7 +165,7 @@ class Pieza(models.Model):
             return self.archivo_gcode.read()
             
         except Exception as e:
-            print(f"Error leyendo archivo: {e}")
+            logger.error(f"Error leyendo archivo: {e}")
             return None
         finally:
             # Asegurar que el archivo quede cerrado/reseteado si es necesario
@@ -174,34 +178,29 @@ class Pieza(models.Model):
         Busca y lee Metadata/slice_info.config en 3MF para datos extra.
         Retorna diccionario con 'peso' y 'tiempo' si encuentra algo.
         """
-        print(f"[DEBUG] _leer_metadata_bambu: Procesando {self.archivo_gcode.name}")
+        logger.debug(f"_leer_metadata_bambu: Procesando {self.archivo_gcode.name}")
         datos = {}
         if not self.archivo_gcode.name.lower().endswith(".3mf"):
-            print("[DEBUG] No es .3mf, saltando metadata bambu.")
+            logger.debug("No es .3mf, saltando metadata bambu.")
             return datos
             
         try:
             self.archivo_gcode.open("rb")
-            print("[DEBUG] Abierto archivo 3mf para zip reading...")
+            logger.debug("Abierto archivo 3mf para zip reading...")
             with zipfile.ZipFile(self.archivo_gcode) as z:
                 # Buscar slice_info.config
                 target = "Metadata/slice_info.config"
                 file_list = z.namelist()
-                print(f"[DEBUG] Archivos en zip: {len(file_list)} encontrados.")
+                logger.debug(f"Archivos en zip: {len(file_list)} encontrados.")
                 
                 candidates = [f for f in file_list if f.lower().endswith("slice_info.config")]
                 
                 if candidates:
-                    print(f"[DEBUG] Metadata encontrada: {candidates[0]}")
+                    logger.debug(f"Metadata encontrada: {candidates[0]}")
                     with z.open(candidates[0]) as f:
                         content = f.read().decode("utf-8", errors="ignore")
-                        print(f"[DEBUG] Contenido slice_info ({len(content)} chars)")
+                        logger.debug(f"Contenido slice_info ({len(content)} chars)")
                         
-                        # DEBUG: Imprimir TODAS las lineas de metadata para ver que claves hay
-                        for line in content.split('\n'):
-                            if "metadata key=" in line:
-                                print(f"[DEBUG] Metadata Line: {line.strip()}")
-
                         # Buscar Peso
                         # 1. Formato Key=Value (Bambu antiguo/Orca)
                         m_peso = re.search(r"(?i)total_weight\s*=\s*([0-9.]+)", content)
@@ -213,9 +212,9 @@ class Pieza(models.Model):
                         
                         if m_peso:
                             datos['peso'] = float(m_peso.group(1))
-                            print(f"[DEBUG] Peso metadata encontrado: {datos['peso']}")
+                            logger.debug(f"Peso metadata encontrado: {datos['peso']}")
                         else:
-                            print("[DEBUG] No se halló weight en metadata.")
+                            logger.debug("No se halló weight en metadata.")
                             
                         # Buscar Tiempo
                         m_time = re.search(r"(?i)estimated_time\s*=\s*([0-9]+)", content)
@@ -228,14 +227,14 @@ class Pieza(models.Model):
                         
                         if m_time:
                             datos['tiempo_seg'] = int(m_time.group(1))
-                            print(f"[DEBUG] Tiempo (seg) metadata encontrado: {datos['tiempo_seg']}")
+                            logger.debug(f"Tiempo (seg) metadata encontrado: {datos['tiempo_seg']}")
                         else:
-                            print("[DEBUG] No se halló estimated_time/prediction en metadata.")
+                            logger.debug("No se halló estimated_time/prediction en metadata.")
                 else:
-                    print("[DEBUG] No se encontró slice_info.config en el zip.")
+                    logger.debug("No se encontró slice_info.config en el zip.")
 
         except Exception as e:
-            print(f"[DEBUG] Error leyendo metadata Bambu: {e}")
+            logger.error(f"Error leyendo metadata Bambu: {e}")
             pass
         finally:
              try: self.archivo_gcode.seek(0)
@@ -266,8 +265,11 @@ class Pieza(models.Model):
             if base64_string:
                 return ContentFile(base64.b64decode(base64_string))
             return None
+            if base64_string:
+                return ContentFile(base64.b64decode(base64_string))
+            return None
         except Exception as e:
-            print(f"Error extrayendo thumbnail: {e}")
+            logger.error(f"Error extrayendo thumbnail: {e}")
             return None
 
     def extraer_peso_gcode(self):
@@ -275,24 +277,24 @@ class Pieza(models.Model):
         Busca en el GCode cuánto filamento consume.
         Soporta GCode plano y 3MF (Bambu/Orca Metadata fallback).
         """
-        print(f"[DEBUG] Iniciando extraer_peso_gcode para {self.archivo_gcode.name}")
+        logger.debug(f"Iniciando extraer_peso_gcode para {self.archivo_gcode.name}")
         
         # 1. Intentar Metadata Bambu
         meta = self._leer_metadata_bambu()
         if 'peso' in meta:
-            print(f"[DEBUG] Retornando peso desde Metadata: {meta['peso']}")
+            logger.debug(f"Retornando peso desde Metadata: {meta['peso']}")
             return meta['peso']
 
         # 2. Intentar buscar en GCODE interno
         try:
-            print("[DEBUG] Buscando peso en contenido RAW (GCode plano)...")
+            logger.debug("Buscando peso en contenido RAW (GCode plano)...")
             raw_data = self._leer_contenido_gcode_raw()
             if not raw_data: 
-                print("[DEBUG] No se pudo leer contenido raw.")
+                logger.debug("No se pudo leer contenido raw.")
                 return None
             
             contenido = raw_data.decode("utf-8", errors="ignore")
-            print(f"[DEBUG] Contenido decodificado ({len(contenido)} chars). Buscando regex...")
+            logger.debug(f"Contenido decodificado ({len(contenido)} chars). Buscando regex...")
 
             # LISTA DE PATRONES
             patrones = [
