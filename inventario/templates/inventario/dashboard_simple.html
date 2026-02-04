@@ -1,41 +1,7 @@
 {% extends 'inventario/base.html' %}
 
 {% block content %}
-<style>
-    /* Estilos específicos del Dashboard */
-    .grid-dashboard { display: grid; grid-template-columns: 350px 1fr; gap: 25px; }
-    
-    /* Panel Filamentos */
-    .panel-filamentos { background: white; padding: 25px; border-radius: 12px; height: fit-content; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-    .fila-filamento { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f2f6; }
-    .fila-filamento:last-child { border-bottom: none; }
-    
-    .critico { color: #e74c3c; font-weight: bold; background: #fadbd8; padding: 2px 8px; border-radius: 10px; font-size: 0.9em; } 
-    .alerta { color: #d35400; font-weight: bold; background: #fdebd0; padding: 2px 8px; border-radius: 10px; font-size: 0.9em;} 
-    .bien { color: #27ae60; background: #d4efdf; padding: 2px 8px; border-radius: 10px; font-size: 0.9em;} 
 
-    /* Panel Productos */
-    .grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-    .card-producto { 
-        background: white; padding: 20px; border-radius: 12px; cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #e1e4e8;
-        text-decoration: none; color: inherit; display: flex; flex-direction: column; justify-content: space-between; height: 160px;
-    }
-    .card-producto:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: #3498db; }
-    
-    .numero-grande { font-size: 2.8em; font-weight: bold; margin: 0; color: #2c3e50; line-height: 1;}
-    .etiqueta { font-size: 0.8em; color: #95a5a6; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
-    
-    .badge-armar { 
-        background: #e8f8f5; color: #1abc9c; padding: 5px 10px; 
-        border-radius: 20px; font-weight: bold; font-size: 0.85em; 
-        align-self: flex-end; border: 1px solid #a2d9ce;
-    }
-
-    @media (max-width: 768px) {
-        .grid-dashboard { grid-template-columns: 1fr; }
-    }
-</style>
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
     <h1 style="margin: 0; color: #2c3e50;">📊 Estado del Negocio</h1>
@@ -49,7 +15,7 @@
     <div class="panel-filamentos">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">
             <h3 style="margin:0; color: #2c3e50;">🧵 Materia Prima</h3>
-            <a href="{% url 'admin:inventario_filamento_changelist' %}" 
+            <a href="{% url 'gestion_filamentos' %}" 
                style="background:#ecf0f1; color:#7f8c8d; padding:5px 10px; text-decoration:none; border-radius:4px; font-size:0.8em; font-weight: 600;">
                ⚙️ Gestionar
             </a>
@@ -61,7 +27,7 @@
                     <span style="color: #7f8c8d; font-size: 0.9em;">{{ f.tipo }}</span> {{ f.color }}
                 </div>
                 <div class="{% if f.stock_total < 500 %}critico{% elif f.stock_total < 1500 %}alerta{% else %}bien{% endif %}">
-                    {{ f.cantidad_rollos }}R + {{ f.gramos_sueltos|floatformat:0 }}g
+                    {{ f.cantidad_rollos }} R
                 </div>
             </div>
         {% endfor %}
@@ -92,4 +58,66 @@
     </div>
 
 </div>
+
+<div style="margin-top: 40px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0; color: #2c3e50; margin-bottom: 20px;">📈 Evolución de Pedidos</h3>
+    
+    <div style="height: 300px; width: 100%;">
+        <canvas id="miGraficoVentas"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('miGraficoVentas').getContext('2d');
+        
+        // Recibimos los datos de Django (usamos safe para que no escape caracteres)
+        const labels = {{ grafico_labels|safe }};
+        const dataCreados = {{ grafico_creados|safe }};
+        const dataEntregados = {{ grafico_entregados|safe }};
+
+        new Chart(ctx, {
+            type: 'line', // Tipo de gráfico: 'line', 'bar', 'pie', etc.
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Pedidos Recibidos',
+                        data: dataCreados,
+                        borderColor: '#3498db', // Azul
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3, // Curvatura de la línea
+                        fill: true
+                    },
+                    {
+                        label: 'Entregados',
+                        data: dataEntregados,
+                        borderColor: '#27ae60', // Verde
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 } // Para que no muestre decimales (1.5 pedidos)
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

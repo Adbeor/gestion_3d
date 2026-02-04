@@ -2,138 +2,193 @@
 
 {% block content %}
 <style>
-    /* --- ESTILOS DEL TABLERO (KANBAN) --- */
+    /* --- ESTRUCTURA PRINCIPAL --- */
     .kanban-board {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+        display: flex;
+        gap: 15px;
         padding: 20px 0;
-        height: calc(100vh - 140px); /* Ajuste para que quepa en pantalla */
+        overflow-x: auto; /* Scroll horizontal si hay muchas columnas */
+        height: calc(100vh - 140px); /* Altura fija respecto a la pantalla */
+        align-items: flex-start; /* Evita estiramientos raros */
     }
 
+    /* LA COLUMNA (El marco gris) */
     .kanban-column {
+        min-width: 300px;
+        width: 320px; /* Un poco más ancho para comodidad */
         background: #ebecf0;
         border-radius: 8px;
-        padding: 10px;
         display: flex;
-        flex-direction: column;
-        height: 100%; /* Ocupar altura completa */
-        overflow-y: auto; /* Scroll si hay muchas tarjetas */
+        flex-direction: column; /* Apila Header + Body */
+        max-height: 100%; /* IMPORTANTE: No pasar del alto del tablero */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    /* EL ENCABEZADO (Fijo arriba) */
     .column-header {
         font-weight: bold;
         text-transform: uppercase;
-        padding: 10px;
-        text-align: center;
-        border-bottom: 2px solid rgba(0,0,0,0.05);
-        margin-bottom: 10px;
-        position: sticky; top: 0; background: inherit; z-index: 10; /* Cabecera fija */
-    }
-
-    /* --- ESTILOS DE LA TARJETA PEQUEÑA (RESUMEN) --- */
-    .kanban-card {
-        background: white;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        cursor: pointer; /* Manita */
-        transition: transform 0.2s, box-shadow 0.2s;
-        border-left: 5px solid #bdc3c7;
-        position: relative;
-    }
-    
-    .kanban-card:hover { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0,0,0,0.15); }
-
-    /* Colores de estado */
-    .card-cola { border-color: #f1c40f; }      /* Amarillo */
-    .card-taller { border-color: #e67e22; }    /* Naranja */
-    .card-transito { border-color: #3498db; }  /* Azul */
-    .card-entregado { border-color: #2ecc71; opacity: 0.8; } /* Verde */
-
-    .card-title { font-weight: bold; font-size: 1.1em; color: #2c3e50; margin: 8px 0; }
-    .card-client { color: #7f8c8d; font-size: 0.9em; }
-    
-    /* Botón editar */
-    .btn-editar {
-        display: inline-block;
-        background: #34495e;
+        padding: 12px 15px;
         color: white;
-        text-decoration: none;
-        padding: 8px 15px;
-        border-radius: 4px;
-        font-size: 0.9em;
-        transition: background 0.2s;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        flex-shrink: 0; /* No te encojas nunca */
     }
-    .btn-editar:hover { background: #2c3e50; }
+
+    /* EL CUERPO (Donde van las tarjetas y el scroll) */
+    .kanban-body {
+        padding: 10px;
+        overflow-y: auto;  /* AQUÍ ESTÁ LA MAGIA DEL SCROLL */
+        flex-grow: 1;      /* Ocupa todo el espacio restante */
+        min-height: 50px;  /* Zona mínima para soltar tarjetas */
+        
+        /* Estilizado del Scrollbar para que se vea elegante */
+        scrollbar-width: thin;
+        scrollbar-color: #bdc3c7 transparent;
+    }
+    .kanban-body::-webkit-scrollbar { width: 6px; }
+    .kanban-body::-webkit-scrollbar-thumb { background-color: #bdc3c7; border-radius: 4px; }
+
+    /* COLORES DE CABECERA */
+    .head-venta { background: linear-gradient(to right, #8e44ad, #9b59b6); }
+    .head-cola { background: linear-gradient(to right, #f39c12, #f1c40f); }
+    .head-proceso { background: linear-gradient(to right, #d35400, #e67e22); }
+    .head-listo { background: linear-gradient(to right, #2980b9, #3498db); }
+    .head-entregado { background: linear-gradient(to right, #27ae60, #2ecc71); }
+
+    /* --- ESTILOS DE TARJETA (FIX ARRASTRE) --- */
+    .kanban-card { 
+        cursor: grab; 
+        /* ESTO SOLUCIONA EL PROBLEMA DE SELECCIÓN DE TEXTO 👇 */
+        user-select: none; 
+        -webkit-user-select: none; 
+        -moz-user-select: none;
+        
+        /* Mejoras visuales */
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+    
+    .kanban-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+    }
+
+    .kanban-card:active { 
+        cursor: grabbing; 
+        transform: scale(0.98); /* Efecto de apretar */
+    }
+
+    /* HUECO FANTASMA (Donde va a caer la tarjeta) */
+    .sortable-ghost { 
+        opacity: 0.4; 
+        background: #c8ebfb !important; 
+        border: 2px dashed #3498db !important; 
+        box-shadow: none !important;
+    }
+    
+    /* TARJETA SIENDO ARRASTRADA */
+    .sortable-drag {
+        background: white;
+        opacity: 1 !important;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.3) !important;
+        transform: rotate(2deg); /* Pequeña rotación visual */
+    }
 </style>
 
-<h2>📋 Pizarra de Control de Pedidos</h2>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <h2 style="margin:0; color: #2c3e50;">
+        {% if modo_taller %} 🔨 Tablero de Producción {% else %} 💰 Flujo de Ventas {% endif %}
+    </h2>
+    <span style="background:#e8f6f3; color:#16a085; padding:5px 10px; border-radius:15px; font-weight:bold; border:1px solid #a3e4d7;">
+        Total en vista: {{ cola.count|add:proceso.count|add:listo.count }}
+    </span>
+</div>
 
 <div class="kanban-board">
     
-    <div class="kanban-column" id="col-COLA" data-estado="COLA" style="background: #fdfae6;">
-        <div class="column-header" style="color: #f39c12;">⏳ En Cola</div>
-        {% for p in cola %}
-            {% include "inventario/tarjeta_kanban.html" with pedido=p color="cola" %}
-        {% endfor %}
+    {% if not modo_taller %}
+    <div class="kanban-column">
+        <div class="column-header head-venta">💰 Cotización</div>
+        <div class="kanban-body" id="col-VENTA" data-estado="VENTA">
+            {% for p in venta %}
+                {% include "inventario/tarjeta_kanban.html" with pedido=p %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="kanban-column">
+        <div class="column-header head-cola">⏳ En Cola</div>
+        <div class="kanban-body" id="col-COLA" data-estado="COLA">
+            {% for p in cola %}
+                {% include "inventario/tarjeta_kanban.html" with pedido=p %}
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="kanban-column" id="col-TALLER" data-estado="TALLER" style="background: #fdf2e9;">
-        <div class="column-header" style="color: #d35400;">🔨 En Taller</div>
-        {% for p in taller %}
-            {% include "inventario/tarjeta_kanban.html" with pedido=p color="taller" %}
-        {% endfor %}
+    <div class="kanban-column">
+        <div class="column-header head-proceso">🔨 En Producción</div>
+        <div class="kanban-body" id="col-PROCESO" data-estado="PROCESO">
+            {% for p in proceso %}
+                {% include "inventario/tarjeta_kanban.html" with pedido=p %}
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="kanban-column" id="col-TRANSITO" data-estado="TRANSITO" style="background: #ebf5fb;">
-        <div class="column-header" style="color: #2980b9;">🚚 En Tránsito</div>
-        {% for p in transito %}
-            {% include "inventario/tarjeta_kanban.html" with pedido=p color="transito" %}
-        {% endfor %}
+    <div class="kanban-column">
+        <div class="column-header head-listo">📦 Listo para Retiro</div>
+        <div class="kanban-body" id="col-LISTO" data-estado="LISTO">
+            {% for p in listo %}
+                {% include "inventario/tarjeta_kanban.html" with pedido=p %}
+            {% endfor %}
+        </div>
     </div>
 
-    <div class="kanban-column" id="col-ENTREGADO" data-estado="ENTREGADO" style="background: #eafaf1;">
-        <div class="column-header" style="color: #27ae60;">✅ Entregados</div>
-        {% for p in entregados %}
-            {% include "inventario/tarjeta_kanban.html" with pedido=p color="entregado" %}
-        {% endfor %}
+    {% if not modo_taller %}
+    <div class="kanban-column">
+        <div class="column-header head-entregado">✅ Entregados</div>
+        <div class="kanban-body" id="col-ENTREGADO" data-estado="ENTREGADO">
+            {% for p in entregados %}
+                {% include "inventario/tarjeta_kanban.html" with pedido=p %}
+            {% endfor %}
+        </div>
     </div>
+    {% endif %}
 
 </div>
 
-<div id="overlay-fondo" onclick="cerrarTarjeta()" 
-     style="position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
-</div>
+<div id="overlay-fondo" onclick="cerrarTarjeta()" style="position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(2px);"></div>
 
-<div id="tarjeta-expandida" 
-     style="position: fixed; background: white; z-index: 999; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: none;">
-    
-    <button onclick="cerrarTarjeta()" style="position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-weight: bold; color: #555; z-index: 1001; font-size: 1.2em;">✕</button>
-    
-    <div id="contenido-expandido" 
-         style="padding: 40px; height: 100%; overflow-y: auto; box-sizing: border-box; opacity: 0; transition: opacity 0.3s ease-in-out;">
-    </div>
+<div id="tarjeta-expandida" style="position: fixed; background: white; z-index: 999; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: none;">
+    <button onclick="cerrarTarjeta()" style="position: absolute; top: 15px; right: 15px; background: #f1f2f6; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-weight: bold; color: #555; z-index: 1001; font-size: 1.2em; transition: background 0.2s;">✕</button>
+    <div id="contenido-expandido" style="padding: 40px; height: 100%; overflow-y: auto; box-sizing: border-box; opacity: 0; transition: opacity 0.2s;"></div>
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
 <script>
-    // --- PARTE 1: ARRASTRAR (DRAG & DROP) ---
-    const columnas = document.querySelectorAll('.kanban-column');
-    columnas.forEach(col => {
-        new Sortable(col, {
-            group: 'kanban',
+    // --- 1. LÓGICA DE ARRASTRE (ACTUALIZADA) ---
+    // Ahora apuntamos a .kanban-body, no a la columna entera
+    const containers = document.querySelectorAll('.kanban-body');
+    
+    containers.forEach(container => {
+        new Sortable(container, {
+            group: 'kanban', // Permite mover entre listas
             animation: 150,
-            ghostClass: 'bg-blue-100',
-            delay: 100,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            delay: 0, // Sin retraso para que se sienta ágil
+            forceFallback: false, // Usar drag nativo para mejor rendimiento
+            
             onEnd: function (evt) {
                 const itemEl = evt.item;
-                const nuevoEstado = evt.to.getAttribute('data-estado');
+                // El contenedor destino (evt.to) tiene el atributo data-estado ahora
+                const nuevoEstado = evt.to.getAttribute('data-estado'); 
                 const pedidoId = itemEl.getAttribute('id').replace('tarjeta-', '');
-                actualizarEstado(pedidoId, nuevoEstado);
+                
+                // Evitar llamadas innecesarias si se suelta en la misma lista
+                if (pedidoId && nuevoEstado && evt.from !== evt.to) {
+                    actualizarEstado(pedidoId, nuevoEstado);
+                }
             }
         });
     });
@@ -146,17 +201,26 @@
                 "X-CSRFToken": "{{ csrf_token }}"
             },
             body: JSON.stringify({ id: id, estado: estado })
-        }).catch(error => console.error("Error:", error));
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status !== 'ok') {
+                alert('Error: ' + data.mensaje);
+                location.reload(); // Recargar si falló para evitar desincronización visual
+            }
+        })
+        .catch(err => console.error("Error red:", err));
     }
 
-
-    // --- PARTE 2: ANIMACIÓN FLUIDA ---
+    // --- 2. LÓGICA DE ANIMACIÓN (EXPANDIR) ---
     let tarjetaActiva = null; 
 
     function expandirTarjeta(id) {
         const tarjetaOriginal = document.getElementById('tarjeta-' + id);
-        const contenidoOculto = document.getElementById('detalle-' + id).innerHTML;
-        
+        const detalleOculto = document.getElementById('detalle-' + id);
+        if (!detalleOculto) return;
+
+        const contenidoHTML = detalleOculto.innerHTML;
         const tarjetaExpandida = document.getElementById('tarjeta-expandida');
         const overlay = document.getElementById('overlay-fondo');
         const contenidoExpandido = document.getElementById('contenido-expandido');
@@ -169,15 +233,18 @@
         tarjetaExpandida.style.width = rect.width + 'px';
         tarjetaExpandida.style.height = rect.height + 'px';
         
+        // Cargar contenido
         contenidoExpandido.style.opacity = '0';
-        contenidoExpandido.innerHTML = contenidoOculto;
+        contenidoExpandido.innerHTML = contenidoHTML;
 
+        // Forzar reflow
         void tarjetaExpandida.offsetWidth; 
 
-        // Expansión
+        // Animación Final (Centro)
         tarjetaExpandida.style.top = '10%';
-        tarjetaExpandida.style.left = '15%';
-        tarjetaExpandida.style.width = '70%';
+        tarjetaExpandida.style.left = '50%';
+        tarjetaExpandida.style.transform = 'translateX(-50%)'; // Centrado horizontal perfecto
+        tarjetaExpandida.style.width = 'min(800px, 90%)'; // Responsivo: max 800px o 90%
         tarjetaExpandida.style.height = '80%';
         
         overlay.style.pointerEvents = 'auto';
@@ -188,7 +255,7 @@
         }, 150);
 
         tarjetaActiva = tarjetaOriginal;
-        tarjetaOriginal.style.opacity = '0'; 
+        tarjetaOriginal.style.opacity = '0'; // Ocultar original
     }
 
     function cerrarTarjeta() {
@@ -197,10 +264,9 @@
         const contenidoExpandido = document.getElementById('contenido-expandido');
 
         if (tarjetaActiva) {
-            // 1. Fade Out del texto
             contenidoExpandido.style.opacity = '0';
+            tarjetaExpandida.style.transform = 'none'; // Quitar centrado para volver al origen
 
-            // 2. Movimiento SIMULTÁNEO (10ms es imperceptible)
             setTimeout(() => {
                 const rect = tarjetaActiva.getBoundingClientRect();
                 
@@ -212,13 +278,12 @@
                 overlay.style.opacity = '0';
                 overlay.style.pointerEvents = 'none';
 
-                // 3. Limpieza final
                 setTimeout(() => {
                     tarjetaExpandida.style.display = 'none';
                     if(tarjetaActiva) tarjetaActiva.style.opacity = '1'; 
                     tarjetaActiva = null;
-                }, 400); 
-            }, 10); 
+                }, 350); 
+            }, 50); 
         }
     }
 </script>

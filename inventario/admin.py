@@ -8,8 +8,13 @@ from .models import (
     Cliente,
     Pedido,
     ItemPedido,
+    ItemPedido,
     Logo,
+    Insumo,
+    ComposicionInsumo,
 )
+
+admin.site.register(Insumo)
 
 admin.site.register(Filamento)
 
@@ -36,6 +41,18 @@ admin.site.register(Pieza, PiezaAdmin)  # Registramos Pieza con su buscador
 # 3. Configuración de PRODUCTO (Con la tablita adentro)
 
 
+class ComposicionInsumoInline(admin.TabularInline):
+    model = ComposicionInsumo
+    extra = 1
+    autocomplete_fields = ["insumo"] # Busca insumos por nombre (necesita search_fields en InsumoAdmin)
+
+class InsumoAdmin(admin.ModelAdmin):
+    search_fields = ["nombre"]
+    list_display = ("nombre", "stock", "unidad", "costo_unitario")
+
+admin.site.unregister(Insumo) # Evitar doble registro si lo hice arriba simple
+admin.site.register(Insumo, InsumoAdmin)
+
 # Asegúrate de importar los nuevos modelos
 class ProductoAdmin(admin.ModelAdmin):
     # ESTA LÍNEA ES LA CURA DEL ERROR:
@@ -44,7 +61,7 @@ class ProductoAdmin(admin.ModelAdmin):
     # Opcional: Para que se vea bonito el listado de productos
     list_display = ("nombre", "precio", "stock_armado")
 
-    inlines = [ComposicionInline]
+    inlines = [ComposicionInline, ComposicionInsumoInline]
 
 
 admin.site.register(Producto, ProductoAdmin)

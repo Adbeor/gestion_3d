@@ -1,0 +1,31 @@
+<div class="project-card" id="proy-{{ p.id }}" draggable="true" ondragstart="drag(event)">
+    <div class="project-title">{{ p.nombre }}</div>
+    
+    <div class="project-client">
+        {% if p.cliente %}
+            <span style="color: #7f8c8d;">👤 {{ p.cliente.nombre }}</span>
+        {% else %}
+            <span style="background: #e8f8f5; color: #27ae60; padding: 2px 8px; border-radius: 12px; font-weight: 600; border: 1px solid #abebc6; font-size: 0.85em;">
+                🏢 Iniciativa Propia
+            </span>
+        {% endif %}
+    </div>
+
+    {% if p.descripcion %}
+        <div class="project-desc">
+            {{ p.descripcion|truncatechars:80 }}
+        </div>
+    {% endif %}
+
+    <div class="project-footer">
+        <span style="color: #95a5a6;">📅 {{ p.fecha_inicio|date:"d M" }}</span>
+        
+        {% if p.archivo_adjunto %}
+            <a href="{{ p.archivo_adjunto.url }}" target="_blank" class="btn-file" title="Ver Archivo">
+                📎 Archivo
+            </a>
+        {% else %}
+            <span style="color:#bdc3c7; font-size:0.9em;">Sin archivo</span>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,83 @@
+{% extends 'inventario/base.html' %}
+
+{% block content %}
+
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="color: #2c3e50; margin: 0;">🧵 Stock de Filamentos</h1>
+    <span style="color: #7f8c8d;">Gestión simplificada de rollos cerrados</span>
+</div>
+
+{% for f in filamentos %}
+<div class="fila-rollos">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <span class="badge-tipo 
+            {% if 'PLA' in f.tipo %}badge-pla{% elif 'PETG' in f.tipo %}badge-petg{% elif 'TPU' in f.tipo %}badge-tpu{% else %}badge-otro{% endif %}">
+            {{ f.tipo }}
+        </span>
+        <strong style="font-size: 1.2em; color: #2c3e50;">{{ f.color }}</strong>
+        
+        <!-- Costo Input -->
+        <div style="display: flex; align-items: center; gap: 5px; margin-left: 15px;">
+            <small style="color: #7f8c8d;">Costo S/</small>
+            <input type="number" step="0.01" value="{{ f.costo_rollo }}" 
+                   onchange="updateCosto('{{ f.id }}', this.value)"
+                   class="input-costo">
+        </div>
+    </div>
+
+    <div class="control-stock">
+        <button class="btn-stock btn-menos" onclick="updateStock('{{ f.id }}', 'restar')">-</button>
+        <div class="stock-numero" id="stock-{{ f.id }}">{{ f.cantidad_rollos }}</div>
+        <button class="btn-stock btn-mas" onclick="updateStock('{{ f.id }}', 'sumar')">+</button>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function updateStock(id, accion) {
+        try {
+            const res = await fetch(`/inventario/api/stock-filamento/${id}/`, {
+                method: 'POST',
+                body: JSON.stringify({ accion: accion }),
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            });
+            const data = await res.json();
+            
+            if(data.status === 'ok') {
+                // Actualizar número visualmente con animación
+                const el = document.getElementById(`stock-${id}`);
+                el.textContent = data.nuevo_stock;
+                el.style.color = "#2ecc71";
+                setTimeout(() => el.style.color = "#2c3e50", 500);
+            } else {
+                alert(data.mensaje);
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error de conexión");
+        }
+    }
+
+    async function updateCosto(id, valor) {
+        try {
+            const res = await fetch(`/inventario/api/costo-filamento/${id}/`, {
+                method: 'POST',
+                body: JSON.stringify({ costo: valor }),
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            });
+            const data = await res.json();
+            
+            if(data.status !== 'ok') {
+                alert("Error guardando costo: " + data.mensaje);
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error de conexión al guardar costo");
+        }
+    }
+</script>
+{% endblock %}

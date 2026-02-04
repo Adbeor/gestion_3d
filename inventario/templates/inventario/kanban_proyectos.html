@@ -1,0 +1,213 @@
+{% extends 'inventario/base.html' %}
+
+{% block content %}
+<style>
+    /* Estilos del Tablero */
+    .board {
+        display: flex;
+        overflow-x: auto;
+        height: calc(100vh - 150px);
+        padding-bottom: 20px;
+        gap: 20px;
+    }
+
+    .column {
+        min-width: 300px;
+        width: 300px;
+        background-color: #f4f5f7;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        max-height: 100%;
+    }
+
+    .column-header {
+        padding: 15px;
+        font-weight: bold;
+        color: white;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Colores de Fases de Proyecto */
+    .header-DISENO { background-color: #3498db; }      /* Azul */
+    .header-PRUEBA { background-color: #9b59b6; }      /* Morado */
+    .header-PRODUCCION { background-color: #e67e22; }  /* Naranja */
+    .header-TERMINADO { background-color: #27ae60; }   /* Verde */
+
+    .column-body {
+        padding: 10px;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    /* TARJETA DE PROYECTO (Diferente a la de Pedidos) */
+    .project-card {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 10px;
+        cursor: grab;
+        border-left: 4px solid #bdc3c7;
+        transition: transform 0.2s;
+    }
+    
+    .project-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .project-card:active { cursor: grabbing; }
+
+    .project-title { font-weight: bold; color: #2c3e50; font-size: 1.05em; margin-bottom: 5px; }
+    .project-client { font-size: 0.85em; color: #7f8c8d; display: flex; align-items: center; gap: 5px; }
+    .project-desc { font-size: 0.9em; color: #555; margin: 10px 0; line-height: 1.4; }
+    
+    .project-footer {
+        border-top: 1px solid #f1f1f1;
+        padding-top: 10px;
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85em;
+    }
+
+    .btn-file {
+        background: #ecf0f1; color: #2c3e50; text-decoration: none;
+        padding: 4px 8px; border-radius: 4px; font-weight: 600;
+    }
+    .btn-file:hover { background: #bdc3c7; }
+
+    /* Contador */
+    .badge-count { background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 0.9em; }
+</style>
+
+<div style="margin-bottom: 20px;">
+    <h1 style="color: #2c3e50;">🧪 Laboratorio de Proyectos</h1>
+    <p style="color: #7f8c8d;">Gestión de I+D, diseños y prototipos.</p>
+</div>
+
+<div class="board">
+    
+    <div class="column" ondrop="drop(event, 'DISENO')" ondragover="allowDrop(event)">
+        <div class="column-header header-DISENO">
+            <span>🎨 Diseño</span>
+            <span class="badge-count" id="count-DISENO">0</span>
+        </div>
+        <div class="column-body">
+            {% for p in proyectos %}
+                {% if p.estado == 'DISENO' %}
+                    {% include 'inventario/tarjeta_proyecto_include.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="column" ondrop="drop(event, 'PRUEBA')" ondragover="allowDrop(event)">
+        <div class="column-header header-PRUEBA">
+            <span>🧪 Pruebas</span>
+            <span class="badge-count" id="count-PRUEBA">0</span>
+        </div>
+        <div class="column-body">
+            {% for p in proyectos %}
+                {% if p.estado == 'PRUEBA' %}
+                    {% include 'inventario/tarjeta_proyecto_include.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="column" ondrop="drop(event, 'PRODUCCION')" ondragover="allowDrop(event)">
+        <div class="column-header header-PRODUCCION">
+            <span>🔨 Producción</span>
+            <span class="badge-count" id="count-PRODUCCION">0</span>
+        </div>
+        <div class="column-body">
+            {% for p in proyectos %}
+                {% if p.estado == 'PRODUCCION' %}
+                    {% include 'inventario/tarjeta_proyecto_include.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="column" ondrop="drop(event, 'TERMINADO')" ondragover="allowDrop(event)">
+        <div class="column-header header-TERMINADO">
+            <span>✅ Terminado</span>
+            <span class="badge-count" id="count-TERMINADO">0</span>
+        </div>
+        <div class="column-body">
+            {% for p in proyectos %}
+                {% if p.estado == 'TERMINADO' %}
+                    {% include 'inventario/tarjeta_proyecto_include.html' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Al cargar, actualizamos contadores
+    document.addEventListener("DOMContentLoaded", actualizarContadores);
+
+    function allowDrop(ev) {
+        ev.preventDefault(); // Necesario para permitir soltar
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+        ev.target.style.opacity = '0.5';
+    }
+
+    function drop(ev, nuevoEstado) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var tarjeta = document.getElementById(data);
+        
+        tarjeta.style.opacity = '1';
+        
+        // Encontrar la columna destino (el div .column-body más cercano)
+        var columnaDestino = ev.target.closest('.column').querySelector('.column-body');
+        columnaDestino.appendChild(tarjeta);
+
+        // Obtener ID limpio (quitamos 'proy-')
+        var proyectoId = data.replace('proy-', '');
+
+        // Llamada AJAX para guardar en base de datos
+        actualizarEstadoServidor(proyectoId, nuevoEstado);
+        
+        actualizarContadores();
+    }
+
+    function actualizarEstadoServidor(id, estado) {
+        fetch("{% url 'api_mover_proyecto' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                id: id,
+                estado: estado
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status !== 'success') alert("Error al mover: " + data.message);
+        });
+    }
+
+    function actualizarContadores() {
+        // Cuenta cuántas tarjetas hay en cada columna
+        const estados = ['DISENO', 'PRUEBA', 'PRODUCCION', 'TERMINADO'];
+        estados.forEach(est => {
+            // Buscamos la columna por su header class
+            const col = document.querySelector('.header-' + est).parentNode;
+            const count = col.querySelectorAll('.project-card').length;
+            document.getElementById('count-' + est).innerText = count;
+        });
+    }
+</script>
+{% endblock %}

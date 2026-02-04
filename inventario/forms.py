@@ -1,16 +1,27 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import Pedido, Cliente, ItemPedido, Logo
+from .models import Pedido, Cliente, ItemPedido, Logo, Proyecto, ItemPiezaPedido
 
 # Formulario del Pedido
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = ['cliente', 'fecha_entrega_estimada', 'es_urgente', 'requiere_factura']
+        fields = [
+            'cliente',  
+            'fecha_entrega_estimada', 
+            'es_urgente', 
+            'requiere_factura'
+        ]
         widgets = {
             'fecha_entrega_estimada': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'cliente': forms.Select(attrs={'class': 'form-control select-cliente'}),
+            'cliente': forms.Select(attrs={'class': 'form-control select-cliente'}), # Le ponemos clase para JS
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Hacemos que el cliente NO sea obligatorio en el formulario
+        # (Porque lo validamos nosotros manualmente en la vista)
+        self.fields['cliente'].required = False
 
 # Formulario del Cliente
 class ClienteForm(forms.ModelForm):
@@ -65,4 +76,30 @@ ItemPedidoFormSet = inlineformset_factory(
 
         "texto_dedicatoria": forms.TextInput(attrs={"class": "form-control", "placeholder": "Dedicatoria..."}),
     },
+)
+
+class ProyectoForm(forms.ModelForm):
+    class Meta:
+        model = Proyecto
+        fields = ['nombre', 'descripcion', 'archivo_adjunto']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Proyecto / Idea'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe los requerimientos, medidas, material deseado...'}),
+            'archivo_adjunto': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+
+class ItemPiezaPedidoForm(forms.ModelForm):
+    class Meta:
+        model = ItemPiezaPedido
+        fields = ['pieza', 'cantidad', 'precio_unitario']
+        widgets = {
+             'pieza': forms.Select(attrs={'class': 'form-control'}),
+             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'style': 'width: 80px;'}),
+             'precio_unitario': forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': '0.1', 'style': 'width: 100px;'}),
+        }
+
+ItemPiezaFormSet = inlineformset_factory(
+    Pedido, ItemPiezaPedido, form=ItemPiezaPedidoForm,
+    extra=0, can_delete=True
 )

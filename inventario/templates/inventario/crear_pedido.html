@@ -3,8 +3,8 @@
 {% block content %}
 
 <style>
-    /* Estilos existentes... */
-    .form-control { width: 100%; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; }
+    /* Estilos base */
+    .form-control { width: 100%; padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; }
     .item-row td { vertical-align: middle; border-bottom: 1px solid #f1f1f1; padding: 10px 5px !important; }
     .col-nombre { width: 180px; }
     
@@ -16,130 +16,210 @@
     }
     .btn-add-row:hover { background-color: #e8f6f3; border-color: #27ae60; color: #27ae60; }
 
-    /* --- ESTILOS DEL MODAL FLOTANTE --- */
-    .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5); z-index: 1000;
-        display: none; justify-content: center; align-items: center;
+    /* SWITCH DE MODO */
+    .modo-selector {
+        display: flex; gap: 20px; margin-bottom: 30px;
+        border-bottom: 2px solid #eee; padding-bottom: 20px;
     }
-    .modal-content {
-        background: white; padding: 25px; border-radius: 12px;
-        width: 90%; max-width: 400px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        animation: slideDown 0.3s ease;
+    .modo-option {
+        flex: 1; padding: 20px; border: 2px solid #eee; border-radius: 10px;
+        cursor: pointer; text-align: center; transition: all 0.2s;
+        opacity: 0.6;
     }
-    @keyframes slideDown { from {transform: translateY(-20px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+    .modo-option:hover { border-color: #bdc3c7; opacity: 0.8; }
+    
+    .modo-option.active { opacity: 1; border-color: #3498db; background: #ebf5fb; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2); }
+    .modo-option.active.proyecto { border-color: #9b59b6; background: #f5eef8; box-shadow: 0 4px 10px rgba(155, 89, 182, 0.2); }
+
+    .modo-titulo { display: block; font-size: 1.2em; font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+    .modo-desc { font-size: 0.9em; color: #7f8c8d; }
+
+    /* Secciones Ocultables */
+    .section-content { display: none; animation: fadeIn 0.3s; }
+    .section-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
 <div style="max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
     
-    <div style="border-bottom: 2px solid #f1f2f6; padding-bottom: 15px; margin-bottom: 20px;">
-        <h2 style="color: #2c3e50; margin:0;">📝 Nuevo Pedido</h2>
+    <div style="margin-bottom: 20px;">
+        <h2 style="color: #2c3e50; margin:0;">✨ Nuevo Registro</h2>
     </div>
 
-    <form method="post" id="form-pedido">
+    <form method="post" id="form-maestro" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+        <input type="hidden" name="tipo_creacion" id="input-tipo-creacion" value="pedido">
+
+        <div class="modo-selector">
+            <div class="modo-option active" id="btn-modo-pedido" onclick="cambiarModo('pedido')">
+                <span class="modo-titulo">📦 Venta de Producto</span>
+                <span class="modo-desc">Vender stock existente o fabricación estándar.</span>
+            </div>
+            
+            <div class="modo-option proyecto" id="btn-modo-proyecto" onclick="cambiarModo('proyecto')">
+                <span class="modo-titulo">🧪 Nuevo Proyecto</span>
+                <span class="modo-desc">Diseño, I+D, Prototipado o Encargo.</span>
+            </div>
+        </div>
+
+        <div class="bloque-cliente-container" style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; transition: opacity 0.3s;">
             <h4 style="margin-top:0; color:#2c3e50;">👤 Cliente</h4>
+            
             <div id="selector-cliente-box">
                 <div style="display: flex; gap: 10px;">
-                    <div style="flex-grow: 1;">{{ pedido_form.cliente }}</div>
-                    <button type="button" onclick="toggleNuevoCliente()" style="background: #27ae60; color: white; border: none; width: 40px; border-radius: 6px; cursor: pointer; font-size: 1.2em;">+</button>
+                    <div style="flex-grow: 1;">
+                        {{ pedido_form.cliente }} 
+                    </div>
+                    <button type="button" onclick="toggleNuevoCliente()" style="background: #27ae60; color: white; border: none; width: 40px; border-radius: 6px; cursor: pointer; font-size: 1.2em;" title="Crear Cliente Nuevo">+</button>
                 </div>
             </div>
+
             <div id="nuevo-cliente-box" style="display: none; margin-top: 15px; background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
                 <div style="display: flex; justify-content: space-between; margin-bottom:10px;">
                     <strong style="color: #27ae60;">Nuevo Cliente</strong>
                     <button type="button" onclick="toggleNuevoCliente()" style="background:none; border:none; color:#999; cursor:pointer;">✕ Cancelar</button>
                 </div>
                 <input type="hidden" name="usar_nuevo_cliente" id="input-usar-nuevo">
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                    {{ cliente_form.nombre }} {{ cliente_form.telefono }} {{ cliente_form.email }}
+                    {{ cliente_form.nombre }}
+                    {{ cliente_form.telefono }}
+                    {{ cliente_form.email }}
                 </div>
                 <div style="margin-top: 10px;">{{ cliente_form.direccion }}</div>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-            <div><label>📅 Fecha Entrega</label>{{ pedido_form.fecha_entrega_estimada }}</div>
-            <div style="display: flex; gap: 20px; align-items: center; background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 8px;">
-                <label style="cursor:pointer;">{{ pedido_form.es_urgente }} 🔥 Urgente</label>
-                <label style="cursor:pointer;">{{ pedido_form.requiere_factura }} 📄 Factura</label>
+        <div id="bloque-pedido" class="section-content active">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div>
+                    <label>📅 Fecha Entrega</label>
+                    {{ pedido_form.fecha_entrega_estimada }}
+                </div>
+                <div style="display: flex; gap: 20px; align-items: center; background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 8px;">
+                    <label style="cursor:pointer;">{{ pedido_form.es_urgente }} 🔥 Urgente</label>
+                    <label style="cursor:pointer;">{{ pedido_form.requiere_factura }} 📄 Factura</label>
+                </div>
+            </div>
+
+            <h4 style="color:#2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;">📦 Productos</h4>
+            {{ formset.management_form }} 
+            
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa; color: #7f8c8d; text-align: left;">
+                        <th style="padding: 10px;">Producto</th>
+                        <th style="width: 70px;">Cant.</th>
+                        <th style="width: 90px;">Precio</th>
+                        <th style="text-align: center;">Cubierta?</th>
+                        <th style="text-align: center;">Nombre?</th>
+                        <th class="col-nombre">Texto Nombre</th>
+                        <th>Logo / Dedicatoria</th>
+                        <th style="width: 40px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="lista-productos">
+                    {% for form in formset %}
+                        <tr class="item-row">
+                            <td>
+                                {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                {{ form.producto }}
+                            </td>
+                            <td>{{ form.cantidad }}</td>
+                            <td>{{ form.precio_unitario }}</td>
+                            <td style="text-align: center;">{{ form.cubierta }}</td>
+                            <td style="text-align: center;">{{ form.poner_nombre }}</td>
+                            <td class="col-nombre">{{ form.nombre }}</td>
+                            <td>
+                                <div style="margin-bottom: 5px;">{{ form.logo }}</div>
+                                {{ form.texto_dedicatoria }}
+                            </td>
+                            <td style="text-align: center;">
+                                {% if formset.can_delete %}
+                                    <span class="btn-delete" onclick="marcarBorrar(this)" style="cursor:pointer; color:red;">🗑</span>
+                                    <div style="display:none;">{{ form.DELETE }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" class="btn-add-row" onclick="agregarFila()">+ Agregar Otro Producto</button>
+
+            <div style="margin-top: 40px; border-top: 2px dashed #eee; padding-top: 20px;">
+                <h4 style="color:#e67e22; margin-bottom: 10px;">🔧 Piezas Sueltas / Repuestos</h4>
+                
+                {{ pieza_formset.management_form }}
+                
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #fdf2e9; color: #d35400; text-align: left;">
+                            <th style="padding: 10px;">Pieza (STL)</th>
+                            <th style="width: 80px;">Cant.</th>
+                            <th style="width: 100px;">Precio</th>
+                            <th style="width: 40px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-piezas">
+                        {% for form in pieza_formset %}
+                            <tr class="pieza-row">
+                                <td style="padding:5px;">
+                                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                    {{ form.pieza }}
+                                </td>
+                                <td>{{ form.cantidad }}</td>
+                                <td>{{ form.precio_unitario }}</td>
+                                <td style="text-align: center;">
+                                    {% if pieza_formset.can_delete %}
+                                        <span class="btn-delete" onclick="marcarBorrar(this)" style="cursor:pointer; color:red;">🗑</span>
+                                        <div style="display:none;">{{ form.DELETE }}</div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="button" class="btn-add-row" onclick="agregarFilaPieza()" style="border-color: #e67e22; color: #e67e22;">
+                    + Agregar Pieza Suelta
+                </button>
             </div>
         </div>
 
-        <h4 style="color:#2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px;">📦 Items</h4>
-        
-        {{ formset.management_form }} 
-        
-        <table style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr style="background: #f8f9fa; color: #7f8c8d; text-align: left;">
-                    <th style="padding: 10px;">Producto</th>
-                    <th style="width: 70px;">Cant.</th>
-                    <th style="width: 90px;">Precio</th>
-                    <th style="text-align: center;">Cubierta?</th>
-                    <th style="text-align: center;">Nombre?</th>
-                    <th class="col-nombre">Texto Nombre</th>
-                    <th>Logo / Dedicatoria</th>
-                    <th style="width: 40px;"></th>
-                </tr>
-            </thead>
-            <tbody id="lista-productos">
-                {% for form in formset %}
-                    <tr class="item-row">
-                        <td>{% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}{{ form.producto }}</td>
-                        <td>{{ form.cantidad }}</td>
-                        <td>{{ form.precio_unitario }}</td>
-                        <td style="text-align: center;">{{ form.cubierta }}</td>
-                        <td style="text-align: center;">{{ form.poner_nombre }}</td>
-                        <td class="col-nombre">{{ form.nombre }}</td>
-                        <td>
-                            <div style="margin-bottom: 5px;">{{ form.logo }}</div>
-                            {{ form.texto_dedicatoria }}
-                        </td>
-                        <td style="text-align: center;">
-                            {% if formset.can_delete %}
-                                <span class="btn-delete" onclick="marcarBorrar(this)" style="cursor:pointer; color:red;">🗑</span>
-                                <div style="display:none;">{{ form.DELETE }}</div>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div id="bloque-proyecto" class="section-content">
+            <div style="background: #f5eef8; padding: 25px; border-radius: 10px; border: 1px solid #ebdef0;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin:0; color: #8e44ad;">🧪 Detalles del Proyecto</h3>
+                    
+                    <label style="background: white; padding: 8px 15px; border-radius: 20px; border: 1px solid #d2b4de; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="proyecto_interno" id="check-interno" onchange="toggleClienteSection()">
+                        <span style="color: #8e44ad; font-weight: 600; font-size: 0.9em;">🏢 Es Iniciativa Interna</span>
+                    </label>
+                </div>
 
-        <button type="button" class="btn-add-row" onclick="agregarFila()">+ Agregar Otro Producto</button>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; color: #555;">Nombre del Proyecto</label>
+                    {{ proyecto_form.nombre }}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; color: #555;">Descripción</label>
+                    {{ proyecto_form.descripcion }}
+                </div>
+                <div>
+                    <label style="font-weight: bold; color: #555;">📎 Archivo</label>
+                    {{ proyecto_form.archivo_adjunto }}
+                </div>
+            </div>
+        </div>
 
-        <div style="margin-top: 40px; text-align: right;">
-            <a href="{% url 'lista_pedidos' %}" style="text-decoration: none; color: #7f8c8d; margin-right: 20px;">Cancelar</a>
-            <button type="submit" style="background: #2980b9; color: white; padding: 12px 40px; border: none; border-radius: 6px; font-size: 1.1em; cursor: pointer;">Guardar Pedido</button>
+        <div style="margin-top: 40px; text-align: right; border-top: 2px solid #f1f2f6; padding-top: 20px;">
+            <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #7f8c8d; margin-right: 20px;">Cancelar</a>
+            <button type="submit" id="btn-guardar" style="background: #2980b9; color: white; padding: 12px 40px; border: none; border-radius: 6px; font-size: 1.1em; cursor: pointer;">
+                Guardar Pedido
+            </button>
         </div>
     </form>
-</div>
-
-<div id="modal-nuevo-logo" class="modal-overlay">
-    <div class="modal-content">
-        <h3 style="margin-top: 0; color: #2c3e50;">✨ Nuevo Logo</h3>
-        <p style="color: #7f8c8d; font-size: 0.9em; margin-bottom: 15px;">Sube el logo del cliente aquí mismo.</p>
-        
-        <form id="form-nuevo-logo" enctype="multipart/form-data">
-            <div style="margin-bottom: 15px;">
-                <label>Nombre Empresa / Logo</label>
-                <input type="text" name="nombre" class="form-control" placeholder="Ej: Minera Antamina" required>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <label>Imagen del Logo</label>
-                <input type="file" name="image" class="form-control" accept="image/*" required>
-            </div>
-            
-            <div style="text-align: right; display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" onclick="cerrarModalLogo()" style="background: #ecf0f1; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Cancelar</button>
-                <button type="button" onclick="guardarNuevoLogo()" style="background: #3498db; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Guardar</button>
-            </div>
-        </form>
-    </div>
 </div>
 
 <table style="display:none"><tbody id="empty-form-template"><tr class="item-row">
@@ -153,109 +233,136 @@
     <td style="text-align: center;"><span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span></td>
 </tr></tbody></table>
 
+<table style="display:none"><tbody id="empty-pieza-template"><tr class="pieza-row">
+    <td style="padding:5px;">{% for hidden in pieza_formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}{{ pieza_formset.empty_form.pieza }}</td>
+    <td>{{ pieza_formset.empty_form.cantidad }}</td>
+    <td>{{ pieza_formset.empty_form.precio_unitario }}</td>
+    <td style="text-align: center;"><span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span></td>
+</tr></tbody></table>
+
 <script>
     const LISTA_PRECIOS = {{ precios_json|safe }};
-    let selectorLogoActivo = null; // Para recordar qué select disparó el modal
 
-    // --- 1. INICIALIZACIÓN ---
-    document.addEventListener("DOMContentLoaded", function() {
-        // Inicializar lógica de nombres
-        var inputNombre = document.querySelector('[name="nombre"]'); // Cliente
-        if (inputNombre) inputNombre.required = false; 
-        
-        document.querySelectorAll('.check-nombre').forEach(c => toggleNombre(c));
+    // --- 1. LÓGICA DE SWITCH DE MODO ---
+    function cambiarModo(modo) {
+        document.getElementById('input-tipo-creacion').value = modo;
 
-        // INYECTAR OPCIÓN "NUEVO LOGO" EN LOS SELECTORES EXISTENTES
-        document.querySelectorAll('.select-logo').forEach(select => {
-            inyectarOpcionNuevo(select);
-        });
-    });
+        // Estilos
+        document.getElementById('btn-modo-pedido').classList.remove('active');
+        document.getElementById('btn-modo-proyecto').classList.remove('active');
+        document.getElementById('btn-modo-' + modo).classList.add('active');
 
-    // --- 2. LÓGICA DE LOGOS ---
-    
-    function inyectarOpcionNuevo(select) {
-        // Verifica si ya tiene la opción para no duplicar
-        if (!select.querySelector('option[value="crear_nuevo"]')) {
-            const opcion = document.createElement('option');
-            opcion.value = "crear_nuevo";
-            opcion.text = "➕ Nuevo Logo...";
-            opcion.style.fontWeight = "bold";
-            opcion.style.color = "#27ae60";
-            select.add(opcion, 0); // Agregar al principio
-        }
-    }
+        document.getElementById('bloque-pedido').classList.remove('active');
+        document.getElementById('bloque-proyecto').classList.remove('active');
+        document.getElementById('bloque-' + modo).classList.add('active');
 
-    function verificarNuevoLogo(select) {
-        if (select.value === "crear_nuevo") {
-            selectorLogoActivo = select; // Guardamos referencia
-            document.getElementById('modal-nuevo-logo').style.display = 'flex'; // Abrir modal
-            select.value = ""; // Resetear visualmente mientras tanto
-        }
-    }
+        // Referencias a inputs
+        const inputsProyecto = document.querySelectorAll('#bloque-proyecto input, #bloque-proyecto textarea, #bloque-proyecto select');
+        const inputsPedido = document.querySelectorAll('#bloque-pedido input, #bloque-pedido textarea, #bloque-pedido select');
+        const btn = document.getElementById('btn-guardar');
 
-    function cerrarModalLogo() {
-        document.getElementById('modal-nuevo-logo').style.display = 'none';
-        document.getElementById('form-nuevo-logo').reset();
-        selectorLogoActivo = null;
-    }
-
-    function guardarNuevoLogo() {
-        const form = document.getElementById('form-nuevo-logo');
-        const formData = new FormData(form);
-
-        // AJAX Fetch
-        fetch("{% url 'api_crear_logo' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'ok') {
-                // ÉXITO: Agregar el nuevo logo a TODOS los selectores de la página
-                const todosLosSelectores = document.querySelectorAll('.select-logo');
-                
-                todosLosSelectores.forEach(select => {
-                    const nuevaOpcion = new Option(data.nombre, data.id);
-                    // Insertar después de la opción "Nuevo Logo"
-                    select.add(nuevaOpcion, 1);
-                });
-
-                // Seleccionarlo en el que disparó la acción
-                if (selectorLogoActivo) {
-                    selectorLogoActivo.value = data.id;
-                }
-
-                cerrarModalLogo();
-            } else {
-                alert("Error: " + JSON.stringify(data.errors));
+        if (modo === 'pedido') {
+            inputsProyecto.forEach(el => el.disabled = true);
+            inputsPedido.forEach(el => el.disabled = false);
+            btn.innerText = 'Guardar Pedido 💰';
+            btn.style.backgroundColor = '#2980b9'; 
+            
+            // Si volvemos a pedido, obligamos a que el cliente se active (los pedidos siempre tienen cliente)
+            const chk = document.getElementById('check-interno');
+            if(chk) { 
+                chk.checked = false; 
+                toggleClienteSection(); 
             }
-        })
-        .catch(error => console.error("Error:", error));
+        } else {
+            inputsPedido.forEach(el => el.disabled = true);
+            inputsProyecto.forEach(el => el.disabled = false);
+            btn.innerText = 'Iniciar Proyecto 🚀';
+            btn.style.backgroundColor = '#8e44ad';
+        }
     }
 
-    // --- 3. LÓGICA DE FILAS (ADD/REMOVE) ---
+    // --- 2. LÓGICA DE CLIENTE ---
+    function toggleClienteSection() {
+        const esInterno = document.getElementById('check-interno').checked;
+        const bloqueCliente = document.querySelector('.bloque-cliente-container');
+        
+        // Inputs dentro del bloque cliente
+        const inputsCliente = bloqueCliente.querySelectorAll('input, select, button');
+
+        if (esInterno) {
+            // Ocultar y Deshabilitar TODO lo del cliente
+            bloqueCliente.style.opacity = '0.3';
+            bloqueCliente.style.pointerEvents = 'none';
+            inputsCliente.forEach(el => el.disabled = true);
+        } else {
+            // Mostrar
+            bloqueCliente.style.opacity = '1';
+            bloqueCliente.style.pointerEvents = 'auto';
+            
+            // Lógica inteligente de rehabilitación:
+            // Dependemos de si estaba abierto el cajón de "Nuevo Cliente" o no.
+            const isNuevoOpen = document.getElementById('nuevo-cliente-box').style.display !== 'none';
+            
+            // Habilitamos el botón de toggle siempre
+            bloqueCliente.querySelector('button').disabled = false;
+
+            if (isNuevoOpen) {
+                // Si estaba creando nuevo: Input select desactivado, Inputs nuevos activados
+                bloqueCliente.querySelector('.select-cliente').disabled = true;
+                document.getElementById('nuevo-cliente-box').querySelectorAll('input').forEach(i => i.disabled = false);
+                document.getElementById('input-usar-nuevo').disabled = false;
+            } else {
+                // Si estaba seleccionando: Input select activado, Inputs nuevos desactivados
+                bloqueCliente.querySelector('.select-cliente').disabled = false;
+                document.getElementById('nuevo-cliente-box').querySelectorAll('input').forEach(i => i.disabled = true);
+                document.getElementById('input-usar-nuevo').disabled = false;
+            }
+        }
+    }
+
+    function toggleNuevoCliente() {
+        var boxNuevo = document.getElementById('nuevo-cliente-box');
+        var boxViejo = document.getElementById('selector-cliente-box');
+        var inputFlag = document.getElementById('input-usar-nuevo');
+        var inputsNuevos = boxNuevo.querySelectorAll('input, select');
+        var selectCliente = document.querySelector('.select-cliente');
+
+        if (boxNuevo.style.display === 'none') {
+            boxNuevo.style.display = 'block';
+            boxViejo.style.opacity = '0.5'; boxViejo.style.pointerEvents = 'none';
+            inputFlag.value = 'on';
+            inputsNuevos.forEach(el => el.disabled = false);
+            if(selectCliente) selectCliente.disabled = true;
+        } else {
+            boxNuevo.style.display = 'none';
+            boxViejo.style.opacity = '1'; boxViejo.style.pointerEvents = 'auto';
+            inputFlag.value = 'off';
+            inputsNuevos.forEach(el => el.disabled = true);
+            if(selectCliente) selectCliente.disabled = false;
+        }
+    }
+
+    // --- 3. LÓGICA DE TABLAS ---
     function agregarFila() {
-        var totalFormsInput = document.querySelector('[name$="-TOTAL_FORMS"]');
-        var currentCount = parseInt(totalFormsInput.value);
-        var template = document.getElementById('empty-form-template').innerHTML;
-        var newRowHtml = template.replace(/__prefix__/g, currentCount);
+        var totalInput = document.querySelector('[name="productos-TOTAL_FORMS"]');
+        var count = parseInt(totalInput.value);
+        var template = document.getElementById('empty-form-template').innerHTML.replace(/__prefix__/g, count);
+        document.getElementById('lista-productos').insertAdjacentHTML('beforeend', template);
+        totalInput.value = count + 1;
         
-        // Insertamos la fila
-        var tbody = document.getElementById('lista-productos');
-        tbody.insertAdjacentHTML('beforeend', newRowHtml);
-        
-        // **IMPORTANTE**: Al crear nueva fila, inyectar opción "Nuevo Logo" al nuevo select
-        var nuevaFila = tbody.lastElementChild;
-        var nuevoSelectLogo = nuevaFila.querySelector('.select-logo');
-        if(nuevoSelectLogo) inyectarOpcionNuevo(nuevoSelectLogo);
-
-        totalFormsInput.value = currentCount + 1;
+        var nuevaFila = document.getElementById('lista-productos').lastElementChild;
+        var nuevoSelect = nuevaFila.querySelector('.select-logo');
+        if(nuevoSelect && window.inyectarOpcionNuevo) window.inyectarOpcionNuevo(nuevoSelect);
     }
 
-    // --- 4. FUNCIONES AUXILIARES (Precio, Nombre, etc.) ---
+    function agregarFilaPieza() {
+        var totalInput = document.querySelector('[name="piezas-TOTAL_FORMS"]'); 
+        var count = parseInt(totalInput.value);
+        var template = document.getElementById('empty-pieza-template').innerHTML.replace(/__prefix__/g, count);
+        document.getElementById('lista-piezas').insertAdjacentHTML('beforeend', template);
+        totalInput.value = count + 1;
+    }
+
     function actualizarPrecio(select) {
         var pid = select.value;
         var precio = LISTA_PRECIOS[pid];
@@ -263,43 +370,26 @@
         if (precio !== undefined && input) input.value = precio.toFixed(2);
     }
 
-    function toggleNombre(chk) {
-        var input = chk.closest('tr').querySelector('.input-nombre');
-        input.style.display = chk.checked ? 'block' : 'none';
-        if(chk.checked && !input.value) {
-            // Lógica simple para intentar copiar nombre cliente
-            var nombreCli = document.querySelector('.select-cliente option:checked')?.text || "";
-            if(!nombreCli.includes("---")) input.value = nombreCli;
-        }
-    }
-
     function eliminarFilaNueva(btn) { btn.closest('tr').remove(); }
+    
     function marcarBorrar(btn) { 
         var chk = btn.nextElementSibling.querySelector('input');
         if(chk) { chk.checked = true; btn.closest('tr').style.opacity = '0.3'; }
     }
-    
-    // Toggle Cliente Nuevo/Viejo (Tu lógica existente)
-    function toggleNuevoCliente() {
-        var boxNuevo = document.getElementById('nuevo-cliente-box');
-        var boxViejo = document.getElementById('selector-cliente-box');
-        var inputFlag = document.getElementById('input-usar-nuevo');
-        var selectCliente = document.querySelector('.select-cliente');
-        var inputNombre = boxNuevo.querySelector('input[name$="nombre"]'); 
 
-        if (boxNuevo.style.display === 'none') {
-            boxNuevo.style.display = 'block';
-            boxViejo.style.opacity = '0.5'; boxViejo.style.pointerEvents = 'none';
-            inputFlag.value = 'on';
-            if(selectCliente) selectCliente.required = false;
-            if(inputNombre) inputNombre.required = true;
-        } else {
-            boxNuevo.style.display = 'none';
-            boxViejo.style.opacity = '1'; boxViejo.style.pointerEvents = 'auto';
-            inputFlag.value = 'off';
-            if(selectCliente) selectCliente.required = true;
-            if(inputNombre) inputNombre.required = false;
-        }
+    function toggleNombre(chk) {
+        var input = chk.closest('tr').querySelector('.input-nombre');
+        if(input) input.style.display = chk.checked ? 'block' : 'none';
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.check-nombre').forEach(c => toggleNombre(c));
+        
+        cambiarModo('pedido'); // Reset inicial
+        
+        // Apagar inputs de nuevo cliente al inicio
+        const boxNuevo = document.getElementById('nuevo-cliente-box');
+        if(boxNuevo) boxNuevo.querySelectorAll('input, select').forEach(el => el.disabled = true);
+    });
 </script>
 {% endblock %}

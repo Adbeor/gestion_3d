@@ -1,0 +1,95 @@
+{% extends 'inventario/base.html' %}
+
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="color: #2c3e50; margin: 0;">📦 Stock de Insumos</h1>
+    <span style="color: #7f8c8d;">Imanes, Motores, Acrílicos, etc.</span>
+</div>
+
+<!-- Formulario Rápido -->
+<div style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; gap: 10px;">
+    <input type="text" id="new-nombre" placeholder="Nombre (ej: Imán 5x2)" class="form-control" style="flex: 2;">
+    <input type="text" id="new-unidad" placeholder="Unidad (ej: un, m, kg)" class="form-control" style="flex: 1;">
+    <input type="number" id="new-costo" placeholder="Costo Unit." class="form-control" step="0.01" style="flex: 1;">
+    <button class="btn btn-print" onclick="crearInsumo()">Crear</button>
+</div>
+
+{% for i in insumos %}
+<div class="fila-rollos">
+    <div style="display: flex; gap: 15px; align-items: center; flex: 1;">
+        <span class="badge-tipo badge-otro" style="background: #95a5a6;">
+            {{ i.unidad }}
+        </span>
+        <strong style="font-size: 1.2em; color: #2c3e50;">{{ i.nombre }}</strong>
+        
+        <!-- Costo Display -->
+        <div style="display: flex; align-items: center; gap: 5px; margin-left: 15px;">
+            <small style="color: #7f8c8d;">Costo: S/ {{ i.costo_unitario }}</small>
+        </div>
+    </div>
+
+    <div class="control-stock">
+        <button class="btn-stock btn-menos" onclick="updateStock('{{ i.id }}', 'restar')">-</button>
+        <div class="stock-numero" id="stock-{{ i.id }}">{{ i.stock }}</div>
+        <button class="btn-stock btn-mas" onclick="updateStock('{{ i.id }}', 'sumar')">+</button>
+    </div>
+</div>
+{% empty %}
+<div style="text-align: center; color: #95a5a6; padding: 40px;">
+    No hay insumos registrados. ¡Crea el primero arriba!
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    async function updateStock(id, accion) {
+        try {
+            const res = await fetch(`/inventario/api/stock-insumo/${id}/`, {
+                method: 'POST',
+                body: JSON.stringify({ accion: accion }),
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            });
+            const data = await res.json();
+            
+            if(data.status === 'ok') {
+                const el = document.getElementById(`stock-${id}`);
+                el.textContent = data.nuevo_stock;
+                el.style.color = "#2ecc71";
+                setTimeout(() => el.style.color = "#2c3e50", 500);
+            } else {
+                alert(data.mensaje);
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error de conexión");
+        }
+    }
+
+    async function crearInsumo() {
+        const nombre = document.getElementById('new-nombre').value;
+        const unidad = document.getElementById('new-unidad').value;
+        const costo = document.getElementById('new-costo').value;
+
+        if(!nombre) return alert("Falta nombre");
+
+        try {
+            const res = await fetch(`/inventario/api/crear-insumo/`, {
+                method: 'POST',
+                body: JSON.stringify({ nombre, unidad, costo }),
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            });
+            const data = await res.json();
+            if(data.status === 'ok') {
+                location.reload();
+            } else {
+                alert(data.mensaje);
+            }
+        } catch(e) { 
+            alert("Error"); 
+        }
+    }
+</script>
+{% endblock %}

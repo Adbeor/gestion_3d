@@ -1,17 +1,19 @@
 import pandas as pd
 from django.core.management.base import BaseCommand
-from datetime import datetime
-from django.utils.timezone import make_aware # <--- IMPORTANTE: Para arreglar el warning
-from inventario.models import Cliente, Pedido, Producto, ItemPedido
+from django.utils.timezone import make_aware
+from inventario.models import (
+    Cliente, Pedido, Producto, ItemPedido, 
+    Proyecto, Pieza, ItemPiezaPedido, Filamento
+)
 
 class Command(BaseCommand):
-    help = 'Importar pedidos arreglando las Zonas Horarias (Timezones)'
+    help = 'Importar Excel preguntando al usuario (Modo Interactivo)'
 
     def handle(self, *args, **kwargs):
         archivo_excel = 'Ventas TEC.xlsx'
         nombre_hoja = 'Pedidos'
         
-        self.stdout.write(f"Leyendo archivo Excel: {archivo_excel}...")
+        self.stdout.write(f"📂 Cargando Excel: {archivo_excel}...")
 
         try:
             df = pd.read_excel(archivo_excel, sheet_name=nombre_hoja, header=1, engine='openpyxl')
@@ -20,141 +22,197 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Error al leer Excel: {e}"))
             return
 
-        cont_creados = 0
-        MAPA_ESTADOS = {
-            'Fabricación': 'TALLER', 'Terminado': 'COLA', 
-            'Entregado': 'ENTREGADO', 'Pendiente': 'COLA', '': 'COLA'
-        }
+        # --- MEMORIA DE DECISIONES ---
+        # Guardaremos tus respuestas aquí para no preguntarte lo mismo 2 veces
+        memoria = {}
+
+        # Material por defecto para piezas nuevas
+        # CORREGIDO: Usamos solo los campos que existen en tu modelo Filamento
+        material_default, _ = Filamento.objects.get_or_create(
+            color="Generico Importacion", 
+            defaults={
+                'tipo': 'PLA', 
+                'cantidad_rollos': 10,  # Iniciamos con 10 rollos para tener stock
+                'gramos_sueltos': 0
+            }
+        )
+
+        contadores = {'proyectos': 0, 'productos': 0, 'piezas': 0, 'saltados': 0}
 
         for index, row in df.iterrows():
             try:
-                # 1. CLIENTE
+                # 1. DATOS BÁSICOS
                 nombre_cliente = str(row['Nombre']).strip()
-                if not nombre_cliente: continue
+                desc_bruta = str(row['Descripción']).strip()
+                
+                if not nombre_cliente or not desc_bruta: 
+                    continue
 
+                clave_memoria = desc_bruta.lower() # Usamos minúsculas para comparar
+
+                # --- INTERACCIÓN CON EL USUARIO ---
+                tipo_elegido = None
+
+                # A) ¿Ya tomamos una decisión sobre esto antes?
+                if clave_memoria in memoria:
+                    tipo_elegido = memoria[clave_memoria]
+                    self.stdout.write(f"   🤖 Recordando: '{desc_bruta}' es {tipo_elegido}")
+                
+                # B) Si es nuevo, PREGUNTAMOS
+                else:
+                    self.stdout.write("\n" + "="*60)
+                    self.stdout.write(f"📝 Fila {index+2} | Cliente: {nombre_cliente}")
+                    self.stdout.write(f"🔍 Descripción: {self.style.WARNING(desc_bruta)}")
+                    self.stdout.write("="*60)
+                    
+                    while True:
+                        opcion = input("Es: [1] Producto  [2] Pieza/Repuesto  [3] Proyecto  [s] Saltar: ").lower().strip()
+                        
+                        if opcion == '1':
+                            tipo_elegido = 'PRODUCTO'
+                            break
+                        elif opcion == '2':
+                            tipo_elegido = 'PIEZA'
+                            break
+                        elif opcion == '3':
+                            tipo_elegido = 'PROYECTO'
+                            break
+                        elif opcion == 's':
+                            tipo_elegido = 'SALTAR'
+                            break
+                    
+                    # Guardamos en memoria para la próxima
+                    memoria[clave_memoria] = tipo_elegido
+
+                if tipo_elegido == 'SALTAR':
+                    contadores['saltados'] += 1
+                    continue
+
+                # --- PROCESAR SEGÚN LA ELECCIÓN ---
+                
+                # Crear Cliente Común
                 cliente, _ = Cliente.objects.get_or_create(
                     nombre=nombre_cliente, defaults={'telefono': '', 'direccion': ''}
                 )
-
-                # 2. PRODUCTO
-                nombre_sucio = str(row['Descripción']).strip()
-                if not nombre_sucio: nombre_producto = "Generico"
-                nombre_limpio = self.normalizar_producto(nombre_sucio)
-
-                try: precio = float(row['Precio de venta'])
-                except: precio = 0
-
-                producto, _ = Producto.objects.update_or_create(
-                    nombre=nombre_limpio, defaults={'precio': precio}
-                )
-
-                # 3. CANTIDAD Y DESCUENTO
-                try: cant = int(row['Cantidad'])
-                except: cant = 1
                 
-                try: descuento = float(row['Dscuento']) if row['Dscuento'] != '' else 0
-                except: descuento = 0
-
-                # 4. REGLAS DE FACTURA
-                try: monto_igv = float(row['IGV']) if row['IGV'] != '' else 0
-                except: monto_igv = 0
-                
-                es_mayorista = (cant >= 10)
-                requiere_factura = (monto_igv > 0) or es_mayorista
-
-                # 5. FECHAS (CORREGIDO PARA TIMEZONES)
-                fecha_entrega = None
-                val_ent = row['Fecha de entrega']
-                if val_ent and val_ent != '':
-                    try: fecha_entrega = pd.to_datetime(val_ent).date()
+                # Fecha
+                val_crea = row['Fecha de pedido']
+                fecha_creacion = None
+                if val_crea and val_crea != '':
+                    try:
+                        ts = pd.to_datetime(val_crea)
+                        fecha_creacion = make_aware(ts.to_pydatetime())
                     except: pass
                 
-                # --- AQUÍ ESTÁ LA CORRECCIÓN DE LA ZONA HORARIA ---
-                fecha_creacion_real = None
-                val_crea = row['Fecha de pedido']
-                if val_crea and val_crea != '':
-                    try: 
-                        # 1. Convertimos a Timestamp de Pandas
-                        ts = pd.to_datetime(val_crea)
-                        # 2. Lo pasamos a datetime de Python puro
-                        dt_naive = ts.to_pydatetime()
-                        # 3. Le ponemos la zona horaria del sistema (make_aware)
-                        fecha_creacion_real = make_aware(dt_naive)
-                    except: 
-                        pass
-                # --------------------------------------------------
+                estado_excel = str(row['Estado']).strip()
 
-                # 6. PAGOS
-                try:
-                    total = float(row['Total']) if row['Total'] != '' else 0
-                    adelanto = float(row['Adelanto']) if row['Adelanto'] != '' else 0
-                except:
-                    total, adelanto = 0, 0
-                
-                estado_pago = 'PENDIENTE'
-                if total > 0:
-                    if adelanto >= total: estado_pago = 'PAGADO'
-                    elif adelanto > 0: estado_pago = 'PARCIAL'
+                # === OPCIÓN 1: PRODUCTO ===
+                if tipo_elegido == 'PRODUCTO':
+                    # Precio
+                    try: precio = float(row['Precio de venta'])
+                    except: precio = 0
+                    
+                    # Normalizamos nombre
+                    nombre_limpio = desc_bruta.strip().capitalize()
+                    
+                    producto, _ = Producto.objects.update_or_create(
+                        nombre=nombre_limpio, defaults={'precio': precio}
+                    )
 
-                estado_entrega = MAPA_ESTADOS.get(str(row['Estado']).strip(), 'COLA')
+                    pedido = self.crear_pedido_base(row, cliente, fecha_creacion, estado_excel)
 
-                # 7. CREAR PEDIDO
-                pedido = Pedido.objects.create(
-                    cliente=cliente,
-                    fecha_entrega_estimada=fecha_entrega,
-                    estado_pago=estado_pago,
-                    monto_pagado=adelanto,
-                    estado_entrega=estado_entrega,
-                    es_urgente=False,
-                    requiere_factura=requiere_factura
-                )
+                    # Items
+                    try: cant = int(row['Cantidad'])
+                    except: cant = 1
+                    try: descuento = float(row['Dscuento']) if row['Dscuento'] != '' else 0
+                    except: descuento = 0
+                    
+                    val_cubierta = str(row['Cubierta']).lower()
+                    cubierta = val_cubierta in ['si', 's', 'yes', 'true', 'ok']
+                    
+                    ItemPedido.objects.create(
+                        pedido=pedido, producto=producto, cantidad=cant, 
+                        precio_unitario=precio, descuento=descuento, cubierta=cubierta,
+                        poner_nombre=False, nombre=""
+                    )
+                    contadores['productos'] += 1
 
-                if fecha_creacion_real:
-                    # Usamos update para forzar la fecha antigua
-                    Pedido.objects.filter(id=pedido.id).update(fecha_creacion=fecha_creacion_real)
+                # === OPCIÓN 2: PIEZA ===
+                elif tipo_elegido == 'PIEZA':
+                    try: precio = float(row['Precio de venta'])
+                    except: precio = 0
+                    
+                    # Al crear pieza, usamos los campos que sí existen
+                    pieza_obj, _ = Pieza.objects.get_or_create(
+                        nombre=desc_bruta,
+                        defaults={
+                            'material': material_default, 
+                            'peso_gramos': 0, 
+                            # 'tiempo_minutos' no lo ponemos porque no es obligatorio en tu modelo, o si lo es, ponlo en 0
+                        }
+                    )
+                    
+                    pedido = self.crear_pedido_base(row, cliente, fecha_creacion, estado_excel)
+                    
+                    try: cant = int(row['Cantidad'])
+                    except: cant = 1
 
-                # 8. ITEMS
-                val_cubierta = str(row['Cubierta']).lower()
-                cubierta = val_cubierta in ['si', 's', 'yes', 'true', 'ok']
-                
-                texto = str(row['Mensaje/ Nombre']).strip()
-                poner_nombre = len(texto) > 0 and len(texto) < 30
-                nombre_grab = texto if poner_nombre else ""
-                dedic = texto if not poner_nombre else ""
-                
-                ItemPedido.objects.create(
-                    pedido=pedido, producto=producto, 
-                    cantidad=cant, precio_unitario=precio, 
-                    descuento=descuento,
-                    cubierta=cubierta,
-                    poner_nombre=poner_nombre, nombre=nombre_grab, texto_dedicatoria=dedic
-                )
-                cont_creados += 1
+                    ItemPiezaPedido.objects.create(
+                        pedido=pedido, pieza=pieza_obj, cantidad=cant, precio_unitario=precio
+                    )
+                    contadores['piezas'] += 1
+
+                # === OPCIÓN 3: PROYECTO ===
+                elif tipo_elegido == 'PROYECTO':
+                    estado_proy = 'DISENO'
+                    if estado_excel in ['Entregado', 'Terminado']: estado_proy = 'TERMINADO'
+                    elif estado_excel in ['Fabricación', 'En proceso']: estado_proy = 'PRODUCCION'
+                    
+                    Proyecto.objects.create(
+                        nombre=desc_bruta[:200],
+                        cliente=cliente,
+                        descripcion=f"Importado. Estado orig: {estado_excel}",
+                        estado=estado_proy
+                    )
+                    contadores['proyectos'] += 1
 
             except Exception as e:
-                self.stdout.write(self.style.WARNING(f"Error fila {index}: {e}"))
+                self.stdout.write(self.style.WARNING(f"⚠️ Error fila {index}: {e}"))
 
-        self.stdout.write(self.style.SUCCESS(f'✅ ¡Importación limpia! {cont_creados} pedidos sin errores de fecha.'))
+        self.stdout.write(self.style.SUCCESS(f"\n✅ ¡Listo! Resumen:"))
+        self.stdout.write(f"   📦 Productos: {contadores['productos']}")
+        self.stdout.write(f"   🔧 Piezas:    {contadores['piezas']}")
+        self.stdout.write(f"   🧪 Proyectos: {contadores['proyectos']}")
 
-    def normalizar_producto(self, nombre_sucio):
-        nombre = nombre_sucio.lower().strip() 
-        if 'motor' in nombre and 'tracc' in nombre: return "Motor de Tracción"
-        if 'sag' in nombre:
-            if 'cubierta' in nombre: return "Cubierta Molino SAG"
-            if '65' in nombre or 'grande' in nombre: return "Molino SAG (Escala 1:65)"
-            return "Molino SAG (Escala 1:115)"
-        if 'bola' in nombre:
-            if 'seccion' in nombre or 'sección' in nombre: return "Sección de Molino de Bolas"
-            if 'mecanico' in nombre or 'mecánico' in nombre: return "Molino de Bolas (Mecánico)"
-            if '65' in nombre or 'grande' in nombre: return "Molino de Bolas (Escala 1:65)"
-            if '100' in nombre and '1:100' in nombre: return "Molino de Bolas (Escala 1:100)"
-            return "Molino de Bolas (Escala 1:115)"
-        if 'chancadora' in nombre:
-            if '50' in nombre: return "Chancadora Primaria (Escala 1:50)"
-            return "Chancadora Primaria"
-        if 'cubierta' in nombre:
-            if 'dos' in nombre or '2' in nombre: return "Set de Cubiertas (2 unid.)"
-            return "Cubierta de Repuesto"
-        if 'celda' in nombre: return "Celda de Flotación"
-        if 'obsequio' in nombre: return "Obsequio / Promoción"
-        return nombre_sucio.strip().capitalize()
+    def crear_pedido_base(self, row, cliente, fecha_creacion, estado_excel):
+        MAPA_ESTADOS = {'Fabricación': 'PROCESO', 'Terminado': 'LISTO', 'Entregado': 'ENTREGADO', 'Pendiente': 'COLA', '': 'COLA'}
+        
+        try: cant = int(row['Cantidad'])
+        except: cant = 1
+        try: monto_igv = float(row['IGV']) if row['IGV'] != '' else 0
+        except: monto_igv = 0
+        requiere_factura = (monto_igv > 0) or (cant >= 10)
+
+        try:
+            total = float(row['Total']) if row['Total'] != '' else 0
+            adelanto = float(row['Adelanto']) if row['Adelanto'] != '' else 0
+        except: total, adelanto = 0, 0
+        
+        estado_pago = 'PENDIENTE'
+        if total > 0:
+            if adelanto >= total: estado_pago = 'PAGADO'
+            elif adelanto > 0: estado_pago = 'PARCIAL'
+
+        fecha_entrega = None
+        if row['Fecha de entrega']:
+            try: fecha_entrega = pd.to_datetime(row['Fecha de entrega']).date()
+            except: pass
+
+        pedido = Pedido.objects.create(
+            cliente=cliente, fecha_entrega_estimada=fecha_entrega,
+            estado_pago=estado_pago, monto_pagado=adelanto,
+            estado_entrega=MAPA_ESTADOS.get(estado_excel, 'COLA'),
+            requiere_factura=requiere_factura
+        )
+        if fecha_creacion: Pedido.objects.filter(id=pedido.id).update(fecha_creacion=fecha_creacion)
+        return pedido
