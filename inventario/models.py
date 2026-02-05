@@ -1,6 +1,7 @@
 import re
 import zipfile
 import logging
+import base64
 from io import BytesIO
 from django.db import models
 from django.core.files.base import ContentFile
@@ -246,6 +247,34 @@ class Pieza(models.Model):
         """Lee el archivo GCode y extrae la imagen previsualizada."""
         # Logica existente (omito prints aqui para no saturar si no es el foco)
         try:
+            # 1. SI ES 3MF (ZIP), BUSCAR IMAGEN EN METADATA PRIMERO
+            if self.archivo_gcode.name.lower().endswith(".3mf"):
+                try:
+                    self.archivo_gcode.open("rb")
+                    with zipfile.ZipFile(self.archivo_gcode) as z:
+                        file_list = z.namelist()
+                        
+                        # Buscar Imagenes en Metadata/plate_*.png
+                        candidates = [f for f in file_list if f.startswith("Metadata/plate_") and f.endswith(".png")]
+                        
+                        # Si hay varias, tomar la primera
+                        if candidates:
+                            logger.debug(f"Imagen encontrada en 3MF: {candidates[0]}")
+                            with z.open(candidates[0]) as f:
+                                return ContentFile(f.read())
+                                
+                        # Fallback: Buscar Metadata/thumbnail.png (Estándar 3MF)
+                        if "Metadata/thumbnail.png" in file_list:
+                             with z.open("Metadata/thumbnail.png") as f:
+                                return ContentFile(f.read())
+                                
+                except Exception as e:
+                    logger.error(f"Error buscando imagen en ZIP 3MF: {e}")
+                finally:
+                    try: self.archivo_gcode.seek(0)
+                    except: pass
+
+            # 2. SI NO ENCONTRÓ EN ZIP O NO ES ZIP, BUSCAR EN GCODE PURO
             contenido_bytes = self._leer_contenido_gcode_raw(max_bytes=100000) 
             if not contenido_bytes: return None
             lines = contenido_bytes.split(b"\n")
