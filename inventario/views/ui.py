@@ -8,6 +8,7 @@ from django.db import transaction  # Para guardar todo o nada si hay error
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 # Importamos Modelos
 from inventario.models import (
@@ -33,6 +34,9 @@ def crear_pedido(request):
     1. Pedidos de Venta (Con Productos y/o Piezas sueltas)
     2. Proyectos (De Clientes o Internos)
     """
+    if request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser:
+        return redirect("kanban_taller")
+
     # Inicializamos Formularios
     pedido_form = PedidoForm(request.POST or None)
     cliente_form = ClienteForm(request.POST or None)
@@ -152,6 +156,14 @@ def crear_pedido(request):
 @login_required
 def kanban_ventas(request):
     """Vista completa para Ventas/Administración"""
+    # DEBUG LOGS
+    logger.info(f"🔍 DEBUG KANBAN VENTAS: User={request.user.username}, Superuser={request.user.is_superuser}")
+    logger.info(f"Groups: {[g.name for g in request.user.groups.all()]}")
+    
+    if request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser:
+        logger.warning(f"⛔ ACCESO DENEGADO: Usuario {request.user.username} redirigido a Taller")
+        return redirect("kanban_taller")
+
     context = {
         'venta': Pedido.objects.filter(estado_entrega='VENTA'),
         'cola': Pedido.objects.filter(estado_entrega='COLA'),
@@ -178,9 +190,14 @@ def kanban_taller(request):
     }
     return render(request, 'inventario/tablero_kanban.html', context)
 
+    return render(request, 'inventario/tablero_kanban.html', context)
+
 @login_required
 def kanban_proyectos(request):
     """Vista para el Laboratorio de Proyectos"""
+    if request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser:
+        return redirect("kanban_taller")
+
     proyectos = Proyecto.objects.all()
     return render(request, 'inventario/kanban_proyectos.html', {'proyectos': proyectos})
 
@@ -196,6 +213,9 @@ def tablero_kanban(request):
 
 @login_required
 def lista_pedidos(request):
+    if request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser:
+        return redirect("kanban_taller")
+        
     # Ordenamos: Primero los no entregados, luego los más nuevos
     pedidos = Pedido.objects.all().order_by("estado_entrega", "-fecha_creacion")
     return render(request, "inventario/lista_pedidos.html", {"pedidos": pedidos})
@@ -235,12 +255,21 @@ def dashboard_simple(request):
             data_creados.append(h['total_creados'])
             data_entregados.append(h['total_entregados'])
 
+    # Validar permisos para gráfico
+    is_taller = request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser
+    show_sales_plot = not is_taller
+
+    # DEBUG LOGS
+    logger.info(f"🔍 DEBUG DASHBOARD: User={request.user.username}, IsTaller={is_taller}, ShowPlot={show_sales_plot}")
+    logger.info(f"Groups: {[g.name for g in request.user.groups.all()]}")
+
     context = {
         'filamentos': filamentos_ordenados,
         'productos': resumen_productos,
-        'grafico_labels': labels_meses,
-        'grafico_creados': data_creados,
-        'grafico_entregados': data_entregados,
+        'grafico_labels': json.dumps(labels_meses),
+        'grafico_creados': json.dumps(data_creados),
+        'grafico_entregados': json.dumps(data_entregados),
+        'show_sales_plot': show_sales_plot,
     }
 
     return render(request, "inventario/dashboard_simple.html", context)
@@ -472,6 +501,9 @@ def accion_crear_pieza_superrapida(request, producto_id):
 @login_required
 def gestion_insumos(request):
     """Vista para gestionar stock de insumos (imanes, motores, etc)."""
+    if request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser:
+        return redirect("dashboard")
+
     insumos = Insumo.objects.all().order_by('nombre')
     return render(request, "inventario/gestion_insumos.html", {
         "insumos": insumos
@@ -484,3 +516,7 @@ def gestion_filamentos(request):
     return render(request, "inventario/gestion_filamentos.html", {
         "filamentos": filamentos
     })
+
+def salir(request):
+    logout(request)
+    return redirect('/admin/login/')

@@ -1,4 +1,5 @@
 {% extends 'inventario/base.html' %}
+{% load auth_extras %}
 
 {% block content %}
 
@@ -27,6 +28,7 @@
         <div style="font-size: 2.2em; font-weight: bold; color: #2c3e50;">{{ producto.stock_armado }} <span style="font-size: 0.5em; color: #95a5a6;">unidades</span></div>
       </div>
 
+      {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
       <div class="card-resumen card-border-orange">
         <div style="display: flex; gap: 20px; text-align: center;">
           <div style="border-right: 1px solid #eee; padding-right: 20px;">
@@ -44,8 +46,9 @@
               </div>
               <small style="color: #95a5a6;">(S/ {{ producto.ganancia_estimada|floatformat:2 }})</small>
           </div>
+        </div>
       </div>
-    </div>
+      {% endif %}
       <div class="card-resumen card-border-red">
         <small class="text-label-small">Demanda Pendiente</small>
         <div style="font-size: 2.2em; font-weight: bold; color: #e74c3c;">
@@ -100,9 +103,8 @@
         <th>Requerido</th>
         <th>Peso</th>
         <th>Tiempo</th>
-        <th>Stock Impreso</th>
         <th>Equivalencia</th>
-        <th>Acción Rápida</th>
+        <th>Stock Impreso</th>
       </tr>
     </thead>
     <tbody>
@@ -139,9 +141,6 @@
             {% else %}
             -
             {% endif %}
-        </td>
-        <td style="font-size: 1.1em; color: #2c3e50;">
-            <strong id="stock-display-{{ item.pieza.id }}">{{ item.tengo }} u.</strong>
         </td>
         <td data-requerido="{{ item.requerido }}">
           <span id="equiv-text-{{ item.pieza.id }}" class="equiv" style="color: #2980b9; font-weight: bold;">{{ item.equivalencia }}</span>
@@ -181,7 +180,9 @@
             <th>Insumo</th>
             <th>Cantidad</th>
             <th>Stock Disponible</th>
+            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
             <th>Costo Total</th>
+            {% endif %}
             <th>Estado</th>
         </tr>
     </thead>
@@ -196,7 +197,9 @@
             </td>
             <td>{{ item.cantidad }} {{ item.insumo.unidad }}</td>
             <td>{{ item.insumo.stock }}</td>
+            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
             <td>S/ {% widthratio item.insumo.costo_unitario 1 item.cantidad %}</td>
+            {% endif %}
             <td>
                 {% if item.insumo.stock >= item.cantidad %}
                     <span style="color: #27ae60; font-weight: bold;">✅ OK</span>
@@ -210,6 +213,9 @@
   </table>
   {% endif %}
 
+
+
+  {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
   <!-- SECCIÓN DE AGREGADO RÁPIDO -->
   <div style="display: flex; gap: 20px; margin-top: 30px;">
     
@@ -244,8 +250,11 @@
             + Abrir Formulario de Creación
         </button>
     </div>
-  </div>
 
+  </div>
+  {% endif %}
+
+  {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
   <!-- MODAL CREACIÓN -->
   <div id="modal-crear-pieza" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
     <div style="background: white; padding: 30px; border-radius: 10px; width: 500px; max-width: 90%; position: relative;">
@@ -305,8 +314,11 @@
             </div>
         </form>
     </div>
-  </div>
 
+  </div>
+  {% endif %}
+
+  {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
   <!-- SECCIÓN DE AGREGADO DE INSUMOS -->
   <div style="display: flex; gap: 20px; margin-top: 30px;">
     
@@ -345,7 +357,9 @@
             <button onclick="crearInsumoExpress()" class="btn" style="background: #f39c12; width: 100%;">Crear y Vincular</button>
         </div>
     </div>
+
   </div>
+  {% endif %}
 {% endblock %}
 
 {% block extra_js %}

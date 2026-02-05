@@ -592,13 +592,35 @@ class Pedido(models.Model):
     estado_entrega = models.CharField(max_length=20, choices=ESTADOS_ENTREGA, default='VENTA')
 
     # Datos de Envío
+    costo_envio = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, verbose_name="Costo Envío (S/)"
+    )
+    metodo_envio = models.CharField(
+        max_length=50, blank=True, verbose_name="Método de Envío",
+        choices=[
+            ('RECOJO', '🏠 Recojo en Taller'),
+            ('MOTORIZADO', '🏍️ Motorizado (Lima)'),
+            ('SHALOM', '🚛 Shalom'),
+            ('OLVA', '📦 Olva Courier'),
+            ('OTRO', '✨ Otro'),
+        ],
+        default='RECOJO'
+    )
     codigo_seguimiento = models.CharField(
         max_length=50, blank=True, help_text="Número de guía o tracking"
+    )
+
+    # Descuentos
+    descuento = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, verbose_name="Descuento (S/)"
     )
 
     # --- CAMPOS NUEVOS (BOOLEANOS) ---
     requiere_factura = models.BooleanField(
         default=False, verbose_name="Solicitó Factura"
+    )
+    paga_al_recibir = models.BooleanField(
+        default=False, verbose_name="Paga Envío al Recibir"
     )
 
     def __str__(self):
@@ -606,17 +628,23 @@ class Pedido(models.Model):
 
     @property
     def total_pedido(self):
-        """Suma productos Y piezas sueltas"""
+        """Suma productos, piezas sueltas y envío, menos descuentos"""
         total = 0
         # 1. Sumar Productos
         for item in self.items.all():
             total += item.subtotal
         
-        # 2. Sumar Piezas Sueltas (NUEVO)
+        # 2. Sumar Piezas Sueltas
         for item_p in self.items_pieza.all():
             total += item_p.subtotal
+
+        # 3. Sumar Envío
+        total += self.costo_envio * (0 if self.paga_al_recibir else 1)
+
+        # 4. Restar Descuento Global
+        total -= self.descuento
             
-        return total
+        return max(total, 0)
 
     @property
     def saldo_pendiente(self):

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,37 +9,59 @@
     <link rel="stylesheet" href="{% static 'inventario/css/styles.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
-        {% block extra_css %}{% endblock %}
+        {
+            % block extra_css %
+        }
+
+            {
+            % endblock %
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
+        {% load auth_extras %}
         <a href="{% url 'dashboard' %}" class="navbar-brand">
             🚀 3D TEC
         </a>
 
         <div class="navbar-menu">
             <a href="{% url 'dashboard' %}" class="nav-link">📊 Inicio</a>
-            
+
+            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
             <a href="{% url 'kanban_ventas' %}" class="nav-link link-ventas">💰 Ventas</a>
+            {% endif %}
+
             <a href="{% url 'kanban_taller' %}" class="nav-link link-taller">🔨 Taller</a>
+
+            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
             <a href="{% url 'kanban_proyectos' %}" class="nav-link link-proy">🧪 Laboratorio</a>
-            <a href="{% url 'gestion_filamentos' %}" class="nav-link" style="border-bottom: 2px solid #95a5a6;">🧵 Filamentos</a>
-            <a href="{% url 'gestion_insumos' %}" class="nav-link" style="border-bottom: 2px solid #7f8c8d;">📦 Insumos</a>
-            
-            <a href="{% url 'lista_pedidos' %}" class="nav-link">📋 Historial</a>
+            {% endif %}
+
+            <a href="{% url 'gestion_filamentos' %}" class="nav-link" style="border-bottom: 2px solid #95a5a6;">🧵
+                Filamentos</a>
+
+            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
+            <a href="{% url 'gestion_insumos' %}" class="nav-link" style="border-bottom: 2px solid #7f8c8d;">📦
+                Insumos</a>
+
             <a href="{% url 'crear_pedido' %}" class="nav-link" style="background: #27ae60; color: white;">+ Nuevo</a>
+            {% endif %}
+
+            <a href="{% url 'salir' %}" class="nav-link" style="background: #e74c3c; color: white;">Salir</a>
         </div>
     </nav>
 
     <div class="container">
         {% if messages %}
-            {% for message in messages %}
-                <div style="background: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #c3e6cb;">
-                    {{ message }}
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div
+            style="background: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #c3e6cb;">
+            {{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
 
         {% block content %}
@@ -49,4 +72,5 @@
     {% block extra_js %}{% endblock %}
 
 </body>
+
 </html>

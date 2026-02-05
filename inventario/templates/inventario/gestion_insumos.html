@@ -30,9 +30,9 @@
     </div>
 
     <div class="control-stock">
-        <button class="btn-stock btn-menos" onclick="updateStock('{{ i.id }}', 'restar')">-</button>
+        <button class="btn-stock btn-menos" onclick="updateStockInsumo('{{ i.id }}', 'restar')">-</button>
         <div class="stock-numero" id="stock-{{ i.id }}">{{ i.stock }}</div>
-        <button class="btn-stock btn-mas" onclick="updateStock('{{ i.id }}', 'sumar')">+</button>
+        <button class="btn-stock btn-mas" onclick="updateStockInsumo('{{ i.id }}', 'sumar')">+</button>
     </div>
 </div>
 {% empty %}
@@ -45,7 +45,7 @@
 
 {% block extra_js %}
 <script>
-    async function updateStock(id, accion) {
+    async function updateStockInsumo(id, accion) {
         try {
             const res = await fetch(`/inventario/api/stock-insumo/${id}/`, {
                 method: 'POST',

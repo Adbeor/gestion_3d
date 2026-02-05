@@ -5,31 +5,34 @@
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
     <h1 style="margin: 0; color: #2c3e50;">📊 Estado del Negocio</h1>
-    <a href="{% url 'crear_pedido' %}" style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);">
+    <a href="{% url 'crear_pedido' %}"
+        style="background: #27ae60; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);">
         + Nuevo Pedido
     </a>
 </div>
 
 <div class="grid-dashboard">
-    
+
     <div class="panel-filamentos">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px;">
             <h3 style="margin:0; color: #2c3e50;">🧵 Materia Prima</h3>
-            <a href="{% url 'gestion_filamentos' %}" 
-               style="background:#ecf0f1; color:#7f8c8d; padding:5px 10px; text-decoration:none; border-radius:4px; font-size:0.8em; font-weight: 600;">
-               ⚙️ Gestionar
+            <a href="{% url 'gestion_filamentos' %}"
+                style="background:#ecf0f1; color:#7f8c8d; padding:5px 10px; text-decoration:none; border-radius:4px; font-size:0.8em; font-weight: 600;">
+                ⚙️ Gestionar
             </a>
         </div>
-        
+
         {% for f in filamentos %}
-            <div class="fila-filamento">
-                <div style="font-weight: 500;">
-                    <span style="color: #7f8c8d; font-size: 0.9em;">{{ f.tipo }}</span> {{ f.color }}
-                </div>
-                <div class="{% if f.stock_total < 500 %}critico{% elif f.stock_total < 1500 %}alerta{% else %}bien{% endif %}">
-                    {{ f.cantidad_rollos }} R
-                </div>
+        <div class="fila-filamento">
+            <div style="font-weight: 500;">
+                <span style="color: #7f8c8d; font-size: 0.9em;">{{ f.tipo }}</span> {{ f.color }}
             </div>
+            <div
+                class="{% if f.stock_total < 500 %}critico{% elif f.stock_total < 1500 %}alerta{% else %}bien{% endif %}">
+                {{ f.cantidad_rollos }} R
+            </div>
+        </div>
         {% endfor %}
     </div>
 
@@ -37,65 +40,72 @@
         <h3 style="margin-top:0; color: #34495e; margin-bottom: 20px;">🚜 Modelos a Escala</h3>
         <div class="grid-productos">
             {% for item in productos %}
-                <a href="{% url 'detalle_producto' item.obj.id %}" class="card-producto">
-                    <h3 style="margin:0; font-size: 1.1em; color: #2c3e50;">{{ item.obj.nombre }}</h3>
-                    
-                    <div style="display:flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
-                        <div>
-                            <p class="numero-grande">{{ item.listos_venta }}</p>
-                            <span class="etiqueta">Stock</span>
-                        </div>
-                        
-                        {% if item.listos_armar > 0 %}
-                            <div class="badge-armar">
-                                +{{ item.listos_armar }} armables
-                            </div>
-                        {% endif %}
+            <a href="{% url 'detalle_producto' item.obj.id %}" class="card-producto">
+                <h3 style="margin:0; font-size: 1.1em; color: #2c3e50;">{{ item.obj.nombre }}</h3>
+
+                <div style="display:flex; justify-content: space-between; align-items: flex-end; margin-top: auto;">
+                    <div>
+                        <p class="numero-grande">{{ item.listos_venta }}</p>
+                        <span class="etiqueta">Stock</span>
                     </div>
-                </a>
+
+                    {% if item.listos_armar > 0 %}
+                    <div class="badge-armar">
+                        +{{ item.listos_armar }} armables
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
             {% endfor %}
         </div>
     </div>
 
 </div>
 
-<div style="margin-top: 40px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+{% if show_sales_plot %}
+<div
+    style="margin-top: 40px; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
     <h3 style="margin-top: 0; color: #2c3e50; margin-bottom: 20px;">📈 Evolución de Pedidos</h3>
-    
+
     <div style="height: 300px; width: 100%;">
         <canvas id="miGraficoVentas"></canvas>
     </div>
 </div>
+{% endif %}
 
+{% if show_sales_plot %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const ctx = document.getElementById('miGraficoVentas').getContext('2d');
+    document.addEventListener("DOMContentLoaded", function () {
+        const canvas = document.getElementById('miGraficoVentas');
+        if (!canvas) return; // Prevent errors if canvas is missing
         
-        // Recibimos los datos de Django (usamos safe para que no escape caracteres)
+        const ctx = canvas.getContext('2d');
+
+        // Recibimos los datos de Django (ya vienen como JSON string safe)
         const labels = {{ grafico_labels|safe }};
         const dataCreados = {{ grafico_creados|safe }};
         const dataEntregados = {{ grafico_entregados|safe }};
 
         new Chart(ctx, {
-            type: 'line', // Tipo de gráfico: 'line', 'bar', 'pie', etc.
+            type: 'line', 
             data: {
                 labels: labels,
                 datasets: [
                     {
                         label: 'Pedidos Recibidos',
                         data: dataCreados,
-                        borderColor: '#3498db', // Azul
+                        borderColor: '#3498db', 
                         backgroundColor: 'rgba(52, 152, 219, 0.1)',
                         borderWidth: 3,
-                        tension: 0.3, // Curvatura de la línea
+                        tension: 0.3, 
                         fill: true
                     },
                     {
                         label: 'Entregados',
                         data: dataEntregados,
-                        borderColor: '#27ae60', // Verde
+                        borderColor: '#27ae60', 
                         backgroundColor: 'rgba(39, 174, 96, 0.1)',
                         borderWidth: 3,
                         tension: 0.3,
@@ -113,11 +123,12 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: { stepSize: 1 } // Para que no muestre decimales (1.5 pedidos)
+                        ticks: { stepSize: 1 } 
                     }
                 }
             }
         });
     });
 </script>
+{% endif %}
 {% endblock %}

@@ -27,9 +27,9 @@
     </div>
 
     <div class="control-stock">
-        <button class="btn-stock btn-menos" onclick="updateStock('{{ f.id }}', 'restar')">-</button>
+        <button class="btn-stock btn-menos" onclick="updateStockFilamento('{{ f.id }}', 'restar')">-</button>
         <div class="stock-numero" id="stock-{{ f.id }}">{{ f.cantidad_rollos }}</div>
-        <button class="btn-stock btn-mas" onclick="updateStock('{{ f.id }}', 'sumar')">+</button>
+        <button class="btn-stock btn-mas" onclick="updateStockFilamento('{{ f.id }}', 'sumar')">+</button>
     </div>
 </div>
 {% endfor %}
@@ -38,7 +38,7 @@
 
 {% block extra_js %}
 <script>
-    async function updateStock(id, accion) {
+    async function updateStockFilamento(id, accion) {
         try {
             const res = await fetch(`/inventario/api/stock-filamento/${id}/`, {
                 method: 'POST',

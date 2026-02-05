@@ -43,4 +43,5 @@ urlpatterns = [
     path("api/vincular-insumo/<int:producto_id>/", views.api_vincular_insumo, name="api_vincular_insumo"),
     path('api/crear-logo/', views.api_crear_logo, name='api_crear_logo'),
     path('api/mover-proyecto/', views.actualizar_estado_proyecto, name='api_mover_proyecto'),
+    path('salir/', views.salir, name='salir'),
 ]

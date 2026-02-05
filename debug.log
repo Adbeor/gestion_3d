@@ -25,3 +25,993 @@ INFO 2026-02-04 22:29:25,261 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 57
 INFO 2026-02-04 22:29:27,889 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 84587
 INFO 2026-02-04 22:29:29,099 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5738
 INFO 2026-02-04 22:29:29,840 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+INFO 2026-02-04 22:57:35,210 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 64421
+INFO 2026-02-04 22:57:35,282 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 304 0
+INFO 2026-02-04 22:57:35,285 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-04 22:57:47,430 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 29225
+INFO 2026-02-04 23:11:37,841 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-04 23:11:38,657 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 23:11:47,826 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/forms.py changed, reloading.
+INFO 2026-02-04 23:11:48,277 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 23:14:09,706 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 30597
+INFO 2026-02-04 23:14:09,749 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-04 23:20:54,513 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-04 23:20:55,422 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 23:20:57,590 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/forms.py changed, reloading.
+INFO 2026-02-04 23:20:58,031 autoreload Watching for file changes with StatReloader
+INFO 2026-02-04 23:23:07,632 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 32085
+INFO 2026-02-04 23:23:07,674 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+ERROR 2026-02-04 23:28:11,731 ui Error creando pedido/proyecto: Error en los items: Productos: [{}, {'producto': ['This field is required.'], 'cantidad': ['This field is required.'], 'precio_unitario': ['This field is required.']}] 
+INFO 2026-02-04 23:28:11,764 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 200 35771
+ERROR 2026-02-04 23:28:26,904 ui Error creando pedido/proyecto: Error en los items: Productos: [{}, {'producto': ['This field is required.'], 'cantidad': ['This field is required.'], 'precio_unitario': ['This field is required.']}] 
+INFO 2026-02-04 23:28:26,933 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 200 35771
+ERROR 2026-02-04 23:28:37,583 ui Error creando pedido/proyecto: Error en los items: Productos: [{}, {'producto': ['This field is required.'], 'cantidad': ['This field is required.'], 'precio_unitario': ['This field is required.']}] 
+INFO 2026-02-04 23:28:37,615 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 200 35771
+INFO 2026-02-04 23:28:37,661 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 200 7762
+INFO 2026-02-04 23:28:37,661 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 200 9932
+WARNING 2026-02-04 23:28:37,722 log Not Found: /favicon.ico
+WARNING 2026-02-04 23:28:37,723 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+INFO 2026-02-04 23:28:42,054 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-04 23:28:43,427 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 32085
+INFO 2026-02-04 23:30:04,444 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 302 0
+INFO 2026-02-04 23:30:04,719 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 85930
+INFO 2026-02-04 23:30:12,428 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 67451
+INFO 2026-02-04 23:31:10,494 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 32131
+INFO 2026-02-04 23:37:16,288 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 34008
+INFO 2026-02-04 23:37:16,336 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-04 23:38:26,477 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 34008
+INFO 2026-02-04 23:38:34,332 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 34008
+INFO 2026-02-04 23:42:01,574 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 35192
+INFO 2026-02-04 23:42:06,659 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 35192
+INFO 2026-02-04 23:49:00,204 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 39926
+INFO 2026-02-04 23:49:00,274 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-04 23:50:05,922 basehttp "POST /inventario/api/crear-logo/ HTTP/1.1" 200 49
+ERROR 2026-02-04 23:51:05,665 ui Error creando pedido/proyecto: Error en los items: Productos: [{}, {'producto': ['This field is required.'], 'cantidad': ['This field is required.'], 'precio_unitario': ['This field is required.']}] 
+INFO 2026-02-04 23:51:05,699 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 200 43958
+INFO 2026-02-04 23:53:29,508 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 302 0
+INFO 2026-02-04 23:53:29,728 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 87017
+INFO 2026-02-04 23:53:36,419 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-04 23:53:38,339 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70473
+INFO 2026-02-04 23:57:26,569 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 40008
+INFO 2026-02-04 23:59:04,790 basehttp "POST /inventario/api/crear-logo/ HTTP/1.1" 200 50
+INFO 2026-02-04 23:59:58,881 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 86752
+INFO 2026-02-04 23:59:58,934 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:00:40,653 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 40092
+INFO 2026-02-05 00:01:35,634 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-05 00:01:39,520 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70473
+INFO 2026-02-05 00:04:19,488 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-05 00:04:20,615 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 12940
+INFO 2026-02-05 00:04:21,851 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-05 00:04:23,690 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 12940
+INFO 2026-02-05 00:04:30,686 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33545
+INFO 2026-02-05 00:04:31,605 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70473
+INFO 2026-02-05 00:04:34,280 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 40092
+INFO 2026-02-05 00:05:26,468 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70473
+INFO 2026-02-05 00:05:30,266 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 86752
+INFO 2026-02-05 00:06:16,863 basehttp "GET /admin/ HTTP/1.1" 200 13644
+INFO 2026-02-05 00:06:22,614 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65322
+INFO 2026-02-05 00:06:22,685 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:06:27,849 basehttp "GET /admin/inventario/pedido/78/change/ HTTP/1.1" 200 43038
+INFO 2026-02-05 00:06:27,917 basehttp "GET /static/admin/css/autocomplete.css HTTP/1.1" 200 9185
+INFO 2026-02-05 00:06:27,918 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:06:27,918 basehttp "GET /static/admin/css/vendor/select2/select2.css HTTP/1.1" 200 17358
+INFO 2026-02-05 00:06:27,921 basehttp "GET /static/admin/js/vendor/select2/select2.full.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:06:27,923 basehttp "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:06:27,925 basehttp "GET /static/admin/js/autocomplete.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:06:27,924 basehttp "GET /static/admin/js/vendor/select2/i18n/en.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:06:27,927 basehttp "GET /static/admin/js/inlines.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:06:27,927 basehttp "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:06:27,970 basehttp "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+INFO 2026-02-05 00:06:28,060 basehttp "GET /static/admin/img/inline-delete.svg HTTP/1.1" 200 560
+INFO 2026-02-05 00:06:28,199 basehttp "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+INFO 2026-02-05 00:06:39,782 basehttp "POST /admin/inventario/pedido/78/change/ HTTP/1.1" 302 0
+INFO 2026-02-05 00:06:39,892 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65548
+INFO 2026-02-05 00:06:39,967 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:06:53,964 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 00:06:54,818 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 00:07:06,008 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 00:07:06,530 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 00:07:55,719 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65328
+INFO 2026-02-05 00:07:55,772 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:08:39,062 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 00:08:40,404 autoreload Watching for file changes with StatReloader
+ERROR 2026-02-05 00:08:42,414 log Internal Server Error: /admin/inventario/pedido/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/db/models/options.py", line 676, in get_field
+    return self.fields_map[field_name]
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'total_calculado'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 290, in lookup_field
+    f = _get_non_gfk_field(opts, name)
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 330, in _get_non_gfk_field
+    field = opts.get_field(name)
+  File "/usr/lib/python3.14/site-packages/django/db/models/options.py", line 678, in get_field
+    raise FieldDoesNotExist(
+        "%s has no field named '%s'" % (self.object_name, field_name)
+    )
+django.core.exceptions.FieldDoesNotExist: Pedido has no field named 'total_calculado'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/lib/python3.14/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/library.py", line 258, in render
+    _dict = self.func(*resolved_args, **resolved_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 346, in result_list
+    "results": list(results(cl)),
+               ~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 322, in results
+    yield ResultList(None, items_for_result(cl, res, None))
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 313, in __init__
+    super().__init__(*items)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 218, in items_for_result
+    f, attr, value = lookup_field(field_name, result, cl.model_admin)
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 299, in lookup_field
+    value = attr(obj)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/admin.py", line 96, in total_calculado
+    return f"S/ {obj.total_pedido}"
+                 ^^^^^^^^^^^^^^^^
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py", line 642, in total_pedido
+    total += self.costo_envio * paga_al_recibir
+                                ^^^^^^^^^^^^^^^
+NameError: name 'paga_al_recibir' is not defined. Did you mean: 'self.paga_al_recibir'?
+ERROR 2026-02-05 00:08:42,421 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 500 392478
+INFO 2026-02-05 00:09:26,739 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 00:09:27,198 autoreload Watching for file changes with StatReloader
+ERROR 2026-02-05 00:09:28,188 log Internal Server Error: /admin/inventario/pedido/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/db/models/options.py", line 676, in get_field
+    return self.fields_map[field_name]
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'total_calculado'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 290, in lookup_field
+    f = _get_non_gfk_field(opts, name)
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 330, in _get_non_gfk_field
+    field = opts.get_field(name)
+  File "/usr/lib/python3.14/site-packages/django/db/models/options.py", line 678, in get_field
+    raise FieldDoesNotExist(
+        "%s has no field named '%s'" % (self.object_name, field_name)
+    )
+django.core.exceptions.FieldDoesNotExist: Pedido has no field named 'total_calculado'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/lib/python3.14/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/library.py", line 258, in render
+    _dict = self.func(*resolved_args, **resolved_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 346, in result_list
+    "results": list(results(cl)),
+               ~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 322, in results
+    yield ResultList(None, items_for_result(cl, res, None))
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 313, in __init__
+    super().__init__(*items)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 218, in items_for_result
+    f, attr, value = lookup_field(field_name, result, cl.model_admin)
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 299, in lookup_field
+    value = attr(obj)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/admin.py", line 96, in total_calculado
+    return f"S/ {obj.total_pedido}"
+                 ^^^^^^^^^^^^^^^^
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py", line 642, in total_pedido
+    total += self.costo_envio * self.paga_al_recibir.value
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'value'
+ERROR 2026-02-05 00:09:28,195 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 500 392619
+ERROR 2026-02-05 00:09:29,308 log Internal Server Error: /admin/inventario/pedido/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/db/models/options.py", line 676, in get_field
+    return self.fields_map[field_name]
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'total_calculado'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 290, in lookup_field
+    f = _get_non_gfk_field(opts, name)
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 330, in _get_non_gfk_field
+    field = opts.get_field(name)
+  File "/usr/lib/python3.14/site-packages/django/db/models/options.py", line 678, in get_field
+    raise FieldDoesNotExist(
+        "%s has no field named '%s'" % (self.object_name, field_name)
+    )
+django.core.exceptions.FieldDoesNotExist: Pedido has no field named 'total_calculado'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/usr/lib/python3.14/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/base.py", line 45, in render
+    return super().render(context)
+           ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/library.py", line 258, in render
+    _dict = self.func(*resolved_args, **resolved_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 346, in result_list
+    "results": list(results(cl)),
+               ~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 322, in results
+    yield ResultList(None, items_for_result(cl, res, None))
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 313, in __init__
+    super().__init__(*items)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/templatetags/admin_list.py", line 218, in items_for_result
+    f, attr, value = lookup_field(field_name, result, cl.model_admin)
+                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/contrib/admin/utils.py", line 299, in lookup_field
+    value = attr(obj)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/admin.py", line 96, in total_calculado
+    return f"S/ {obj.total_pedido}"
+                 ^^^^^^^^^^^^^^^^
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py", line 642, in total_pedido
+    total += self.costo_envio * self.paga_al_recibir.value
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bool' object has no attribute 'value'
+ERROR 2026-02-05 00:09:29,313 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 500 392619
+INFO 2026-02-05 00:09:37,433 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 00:09:37,903 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 00:09:38,905 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65328
+INFO 2026-02-05 00:09:38,950 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:09:43,592 basehttp "GET /admin/inventario/pedido/78/change/ HTTP/1.1" 200 43030
+INFO 2026-02-05 00:09:43,659 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:09:51,539 basehttp "POST /admin/inventario/pedido/78/change/ HTTP/1.1" 302 0
+INFO 2026-02-05 00:09:51,648 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65554
+INFO 2026-02-05 00:09:51,699 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:10:15,193 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 00:10:15,551 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 00:10:17,363 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65328
+INFO 2026-02-05 00:10:17,410 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:10:19,883 basehttp "GET /admin/inventario/pedido/78/change/ HTTP/1.1" 200 43038
+INFO 2026-02-05 00:10:19,958 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:10:23,610 basehttp "POST /admin/inventario/pedido/78/change/ HTTP/1.1" 302 0
+INFO 2026-02-05 00:10:23,716 basehttp "GET /admin/inventario/pedido/ HTTP/1.1" 200 65554
+INFO 2026-02-05 00:10:23,784 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 00:10:43,436 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 86752
+INFO 2026-02-05 00:10:43,469 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 304 0
+INFO 2026-02-05 00:10:47,784 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 41125
+INFO 2026-02-05 00:12:17,480 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 12940
+INFO 2026-02-05 00:12:17,539 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-05 00:12:41,701 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 41125
+INFO 2026-02-05 00:13:10,956 basehttp "POST /inventario/pedidos/nuevo/ HTTP/1.1" 302 0
+INFO 2026-02-05 00:13:10,970 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 14065
+INFO 2026-02-05 00:13:16,444 basehttp "POST /inventario/api/mover-proyecto/ HTTP/1.1" 200 21
+INFO 2026-02-05 00:15:08,064 basehttp "POST /inventario/api/mover-proyecto/ HTTP/1.1" 200 21
+INFO 2026-02-05 00:15:11,516 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13758
+INFO 2026-02-05 00:15:12,464 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+INFO 2026-02-05 00:15:15,670 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5738
+INFO 2026-02-05 00:15:22,276 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5738
+INFO 2026-02-05 00:15:24,681 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13758
+INFO 2026-02-05 00:15:29,344 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70485
+INFO 2026-02-05 00:15:31,009 basehttp "GET /inventario/ HTTP/1.1" 200 12066
+INFO 2026-02-05 00:15:50,469 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+ERROR 2026-02-05 00:15:52,637 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:52,640 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:52,640 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:52,780 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:52,780 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:52,780 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:52,900 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:52,901 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:52,901 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:53,033 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:53,034 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:53,034 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:53,264 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:53,264 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:53,265 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:53,796 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:53,796 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:53,796 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:54,026 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:54,027 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:54,027 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:54,862 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:15:54,863 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:54,863 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 77
+ERROR 2026-02-05 00:15:55,357 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:55,357 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:55,358 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:55,504 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:55,505 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:55,505 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:55,662 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:55,662 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:55,662 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:55,807 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:55,807 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:55,807 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:55,977 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:55,977 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:55,977 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+INFO 2026-02-05 00:15:57,256 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+ERROR 2026-02-05 00:15:59,272 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:59,272 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:59,272 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:15:59,428 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:15:59,428 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:15:59,429 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:00,334 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:00,334 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:00,334 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:00,782 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:00,782 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:00,782 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:00,906 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:00,906 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:00,906 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:01,051 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:01,051 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:01,052 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:01,693 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:01,693 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:01,693 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:01,813 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:01,814 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:01,814 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:01,947 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:01,947 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:01,948 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:02,080 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:02,080 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:02,081 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:02,226 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:02,226 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:02,226 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:02,383 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:02,383 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:02,384 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:02,789 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:02,789 log Bad Request: /inventario/api/stock-pieza/9/
+WARNING 2026-02-05 00:16:02,789 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:15,290 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:15,291 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:15,291 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:15,426 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:15,427 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:15,427 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:15,910 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:16:15,910 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:15,911 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 77
+ERROR 2026-02-05 00:16:16,032 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:16:16,033 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:16,033 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 77
+ERROR 2026-02-05 00:16:16,177 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:16:16,178 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:16,178 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 77
+ERROR 2026-02-05 00:16:16,673 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:16:16,673 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:16,673 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 77
+ERROR 2026-02-05 00:16:16,817 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:16:16,818 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:16,818 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 77
+ERROR 2026-02-05 00:16:17,019 api Error API Stock Pieza: could not convert string to float: 'restar'
+WARNING 2026-02-05 00:16:17,019 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:17,020 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 77
+INFO 2026-02-05 00:16:17,418 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10721
+ERROR 2026-02-05 00:16:21,837 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:21,837 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:21,838 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:22,040 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:22,041 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:22,041 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:22,186 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:22,186 log Bad Request: /inventario/api/stock-pieza/6/
+WARNING 2026-02-05 00:16:22,187 basehttp "POST /inventario/api/stock-pieza/6/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:16:33,377 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:16:33,377 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:16:33,378 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:17:02,015 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:17:02,015 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:17:02,015 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:17:02,137 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:17:02,137 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:17:02,137 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+ERROR 2026-02-05 00:17:02,296 api Error API Stock Pieza: could not convert string to float: 'sumar'
+WARNING 2026-02-05 00:17:02,297 log Bad Request: /inventario/api/stock-pieza/2/
+WARNING 2026-02-05 00:17:02,297 basehttp "POST /inventario/api/stock-pieza/2/ HTTP/1.1" 400 76
+INFO 2026-02-05 00:18:09,504 basehttp "GET /inventario/ HTTP/1.1" 200 12066
+INFO 2026-02-05 00:18:11,789 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 41125
+INFO 2026-02-05 00:19:19,498 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 41125
+INFO 2026-02-05 00:19:21,167 basehttp "GET /inventario/ HTTP/1.1" 200 12066
+INFO 2026-02-05 00:19:22,140 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10874
+INFO 2026-02-05 00:19:23,795 basehttp "POST /inventario/api/stock-filamento/6/ HTTP/1.1" 200 74
+INFO 2026-02-05 00:19:24,399 basehttp "POST /inventario/api/stock-filamento/6/ HTTP/1.1" 200 74
+INFO 2026-02-05 00:19:26,822 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:28,056 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:28,189 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:28,972 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:29,102 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+WARNING 2026-02-05 00:19:29,204 log Bad Request: /inventario/api/stock-filamento/2/
+WARNING 2026-02-05 00:19:29,204 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 400 59
+INFO 2026-02-05 00:19:32,575 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:32,694 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:32,840 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:32,948 basehttp "POST /inventario/api/stock-filamento/2/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:38,649 basehttp "POST /inventario/api/stock-filamento/5/ HTTP/1.1" 200 80
+INFO 2026-02-05 00:19:39,147 basehttp "POST /inventario/api/stock-filamento/8/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:39,583 basehttp "POST /inventario/api/stock-filamento/7/ HTTP/1.1" 200 75
+INFO 2026-02-05 00:19:40,022 basehttp "POST /inventario/api/stock-filamento/9/ HTTP/1.1" 200 76
+INFO 2026-02-05 00:19:41,133 basehttp "POST /inventario/api/stock-filamento/9/ HTTP/1.1" 200 76
+INFO 2026-02-05 00:19:42,066 basehttp "POST /inventario/api/stock-filamento/8/ HTTP/1.1" 200 79
+WARNING 2026-02-05 00:19:42,187 log Bad Request: /inventario/api/stock-filamento/8/
+WARNING 2026-02-05 00:19:42,187 basehttp "POST /inventario/api/stock-filamento/8/ HTTP/1.1" 400 59
+INFO 2026-02-05 00:19:45,422 basehttp "POST /inventario/api/stock-filamento/8/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:46,087 basehttp "POST /inventario/api/stock-filamento/8/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:46,345 basehttp "POST /inventario/api/stock-filamento/8/ HTTP/1.1" 200 79
+INFO 2026-02-05 00:19:50,713 basehttp "GET /inventario/ HTTP/1.1" 200 12055
+INFO 2026-02-05 00:20:01,236 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 37315
+INFO 2026-02-05 00:20:01,313 basehttp "GET /media/piezas/Chumacera_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,317 basehttp "GET /media/piezas/SAG-Tapas_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,317 basehttp "GET /media/piezas/SAG-Acople_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,317 basehttp "GET /media/piezas/SAG-Motor2_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,319 basehttp "GET /media/piezas/SAG-Motor1_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,318 basehttp "GET /media/piezas/SAG-Coraza_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,321 basehttp "GET /media/piezas/SAG-MOTOR3_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:20:01,320 basehttp "GET /media/piezas/SAG-Marble_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 00:21:37,226 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 36285
+INFO 2026-02-05 00:22:09,627 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5768
+INFO 2026-02-05 00:22:11,036 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10874
+INFO 2026-02-05 00:22:11,683 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13758
+INFO 2026-02-05 00:22:55,193 basehttp "GET /inventario/pedidos/ HTTP/1.1" 200 86752
+INFO 2026-02-05 00:22:55,811 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5768
+INFO 2026-02-05 00:23:13,201 basehttp "GET /inventario/pedidos/nuevo/ HTTP/1.1" 200 41125
+INFO 2026-02-05 01:05:13,627 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5768
+INFO 2026-02-05 01:05:13,746 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-05 01:05:13,746 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 304 0
+INFO 2026-02-05 03:10:31,116 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-05 03:10:31,658 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 03:10:59,828 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-05 03:11:00,148 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 03:40:02,287 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5962
+INFO 2026-02-05 03:40:02,325 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 304 0
+INFO 2026-02-05 03:40:02,325 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-05 03:40:03,617 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:40:04,486 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:40:05,459 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:40:07,860 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:40:14,430 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:40:15,533 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13952
+INFO 2026-02-05 03:40:16,700 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 11068
+INFO 2026-02-05 03:40:17,537 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5962
+INFO 2026-02-05 03:40:19,509 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:40:35,054 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:40:38,460 basehttp "GET /admin/ HTTP/1.1" 200 13806
+INFO 2026-02-05 03:40:45,153 basehttp "GET /admin/auth/group/ HTTP/1.1" 200 12060
+INFO 2026-02-05 03:40:45,201 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:40:47,415 basehttp "GET /admin/ HTTP/1.1" 200 13806
+INFO 2026-02-05 03:40:48,609 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 14680
+INFO 2026-02-05 03:40:48,648 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:40:48,717 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2026-02-05 03:40:56,567 basehttp "GET /admin/ HTTP/1.1" 200 13806
+INFO 2026-02-05 03:40:58,585 basehttp "GET /admin/auth/user/add/ HTTP/1.1" 200 15067
+INFO 2026-02-05 03:40:58,645 basehttp "GET /static/admin/css/unusable_password_field.css HTTP/1.1" 200 663
+INFO 2026-02-05 03:40:58,645 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:40:58,646 basehttp "GET /static/admin/js/unusable_password_field.js HTTP/1.1" 200 1480
+INFO 2026-02-05 03:41:13,194 basehttp "POST /admin/auth/user/add/ HTTP/1.1" 200 15333
+INFO 2026-02-05 03:41:13,227 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:41:24,136 basehttp "POST /admin/auth/user/add/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:41:24,168 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28196
+INFO 2026-02-05 03:41:24,254 basehttp "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+INFO 2026-02-05 03:41:24,255 basehttp "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15502
+INFO 2026-02-05 03:41:24,257 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:41:24,459 basehttp "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+INFO 2026-02-05 03:41:24,460 basehttp "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+INFO 2026-02-05 03:41:24,460 basehttp "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+INFO 2026-02-05 03:41:30,301 basehttp "POST /admin/logout/ HTTP/1.1" 200 3555
+INFO 2026-02-05 03:41:31,786 basehttp "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:41:31,800 basehttp "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4160
+INFO 2026-02-05 03:41:31,875 basehttp "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2026-02-05 03:41:40,384 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4323
+INFO 2026-02-05 03:41:54,034 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:41:54,046 basehttp "GET /admin/ HTTP/1.1" 200 13834
+INFO 2026-02-05 03:42:08,856 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 15125
+INFO 2026-02-05 03:42:08,908 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:42:08,912 basehttp "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+INFO 2026-02-05 03:42:13,413 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 27974
+INFO 2026-02-05 03:42:13,461 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:42:18,079 basehttp "GET /admin/auth/user/2/password/ HTTP/1.1" 200 11163
+INFO 2026-02-05 03:42:26,363 basehttp "POST /admin/auth/user/2/password/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:42:26,392 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28346
+INFO 2026-02-05 03:42:26,492 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:42:30,205 basehttp "POST /admin/logout/ HTTP/1.1" 200 3555
+INFO 2026-02-05 03:42:32,142 basehttp "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:42:32,149 basehttp "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4160
+INFO 2026-02-05 03:42:35,280 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:42:35,291 basehttp "GET /admin/ HTTP/1.1" 200 13866
+INFO 2026-02-05 03:42:37,072 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 15125
+INFO 2026-02-05 03:42:37,112 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:42:39,149 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28210
+INFO 2026-02-05 03:42:39,192 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:42:55,763 basehttp "POST /admin/auth/user/2/change/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:42:55,778 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 15320
+INFO 2026-02-05 03:42:55,863 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:43:04,822 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:43:07,725 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:43:09,221 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:43:09,707 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:43:10,641 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:43:12,472 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:43:12,500 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 200 7762
+INFO 2026-02-05 03:43:12,501 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 200 9932
+WARNING 2026-02-05 03:43:12,738 log Not Found: /favicon.ico
+WARNING 2026-02-05 03:43:12,738 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+INFO 2026-02-05 03:43:14,073 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:43:15,596 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:43:16,502 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:43:17,398 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:43:18,038 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13952
+INFO 2026-02-05 03:43:18,949 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:43:24,864 basehttp "GET / HTTP/1.1" 301 0
+INFO 2026-02-05 03:43:24,889 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:43:27,322 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:43:28,590 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:43:29,173 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13952
+INFO 2026-02-05 03:43:30,041 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:43:30,748 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 11068
+INFO 2026-02-05 03:43:31,578 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5962
+INFO 2026-02-05 03:43:33,720 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:44:28,270 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:44:56,041 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:44:57,636 basehttp "GET /inventario/producto/7/ HTTP/1.1" 200 16649
+INFO 2026-02-05 03:45:01,454 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:45:02,937 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33739
+INFO 2026-02-05 03:45:05,641 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13952
+INFO 2026-02-05 03:45:06,553 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:47:24,481 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-05 03:47:24,969 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 03:49:40,239 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 03:49:40,241 ui Groups: []
+INFO 2026-02-05 03:49:40,385 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:49:48,833 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 03:49:48,834 ui Groups: []
+INFO 2026-02-05 03:49:48,947 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70679
+INFO 2026-02-05 03:49:48,975 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 200 7762
+INFO 2026-02-05 03:49:48,976 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 200 9932
+WARNING 2026-02-05 03:49:49,120 log Not Found: /favicon.ico
+WARNING 2026-02-05 03:49:49,121 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+INFO 2026-02-05 03:49:51,753 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 03:49:51,754 ui Groups: []
+INFO 2026-02-05 03:49:51,759 basehttp "GET /inventario/ HTTP/1.1" 200 11287
+INFO 2026-02-05 03:51:02,757 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-05 03:51:03,096 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 03:51:05,198 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-05 03:51:05,526 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 03:51:15,646 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/urls.py changed, reloading.
+INFO 2026-02-05 03:51:15,974 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 03:52:06,075 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 03:52:06,076 ui Groups: []
+INFO 2026-02-05 03:52:06,093 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 03:52:10,208 basehttp "GET /inventario/salir/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:52:10,227 basehttp "GET /admin/login/ HTTP/1.1" 200 4147
+INFO 2026-02-05 03:52:22,668 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:52:37,063 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:52:37,079 basehttp "GET /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 200 4198
+INFO 2026-02-05 03:52:53,670 basehttp "POST /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 200 4361
+INFO 2026-02-05 03:53:01,984 basehttp "POST /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 200 4361
+INFO 2026-02-05 03:53:08,578 basehttp "POST /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:53:08,628 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33772
+WARNING 2026-02-05 03:53:19,700 log Forbidden (CSRF token from POST incorrect.): /admin/login/
+WARNING 2026-02-05 03:53:19,700 basehttp "POST /admin/login/ HTTP/1.1" 403 2503
+INFO 2026-02-05 03:53:21,843 basehttp "GET /admin/login/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:53:21,865 basehttp "GET /admin/ HTTP/1.1" 200 13901
+INFO 2026-02-05 03:53:23,591 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 15125
+INFO 2026-02-05 03:53:23,641 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:53:24,793 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28219
+INFO 2026-02-05 03:53:24,841 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:53:30,036 basehttp "GET /admin/auth/user/2/password/ HTTP/1.1" 200 11947
+INFO 2026-02-05 03:53:37,919 basehttp "POST /admin/auth/user/2/password/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:53:37,951 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28355
+INFO 2026-02-05 03:53:38,058 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:53:46,256 basehttp "GET /inventario/salir/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:53:46,269 basehttp "GET /admin/login/ HTTP/1.1" 200 4147
+INFO 2026-02-05 03:53:48,960 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:53:54,244 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:54:10,267 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:54:20,769 basehttp "POST /admin/login/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:54:20,784 basehttp "GET /admin/ HTTP/1.1" 200 13931
+INFO 2026-02-05 03:54:22,476 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 15125
+INFO 2026-02-05 03:54:22,580 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:54:25,167 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28219
+INFO 2026-02-05 03:54:25,256 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:54:27,538 basehttp "GET /admin/auth/user/2/password/ HTTP/1.1" 200 11947
+INFO 2026-02-05 03:54:51,661 basehttp "POST /admin/auth/user/2/password/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:54:51,694 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28355
+INFO 2026-02-05 03:54:51,870 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2026-02-05 03:54:58,767 log Forbidden (CSRF token from POST incorrect.): /admin/logout/
+WARNING 2026-02-05 03:54:58,768 basehttp "POST /admin/logout/ HTTP/1.1" 403 2503
+WARNING 2026-02-05 03:55:03,019 log Forbidden (CSRF token from POST incorrect.): /admin/logout/
+WARNING 2026-02-05 03:55:03,020 basehttp "POST /admin/logout/ HTTP/1.1" 403 2503
+INFO 2026-02-05 03:55:05,740 basehttp "GET / HTTP/1.1" 301 0
+INFO 2026-02-05 03:55:05,762 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 03:55:05,762 ui Groups: []
+INFO 2026-02-05 03:55:05,765 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 03:55:07,909 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 03:55:07,909 ui Groups: []
+INFO 2026-02-05 03:55:07,914 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 03:55:10,028 basehttp "GET /inventario/salir/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:55:10,035 basehttp "GET /admin/login/ HTTP/1.1" 200 4147
+INFO 2026-02-05 03:55:14,782 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:55:19,900 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:55:28,663 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:55:34,833 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:55:46,542 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:55:55,037 basehttp "POST /admin/login/ HTTP/1.1" 200 4310
+INFO 2026-02-05 03:56:07,887 basehttp "GET / HTTP/1.1" 301 0
+INFO 2026-02-05 03:56:07,899 basehttp "GET /inventario/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:56:07,947 basehttp "GET /admin/login/?next=/inventario/ HTTP/1.1" 200 4170
+INFO 2026-02-05 03:56:11,615 basehttp "POST /admin/login/?next=/inventario/ HTTP/1.1" 200 4333
+INFO 2026-02-05 03:56:15,864 basehttp "POST /admin/login/?next=/inventario/ HTTP/1.1" 200 4333
+INFO 2026-02-05 03:56:21,262 basehttp "POST /admin/login/?next=/inventario/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:56:21,274 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 03:56:21,275 ui Groups: []
+INFO 2026-02-05 03:56:21,278 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 03:56:25,117 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 03:56:25,117 ui Groups: []
+INFO 2026-02-05 03:56:25,249 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70712
+INFO 2026-02-05 03:56:26,158 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 03:56:26,158 ui Groups: []
+INFO 2026-02-05 03:56:26,162 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 03:56:56,228 basehttp "GET /admin/auth/user/2/history/ HTTP/1.1" 200 10369
+INFO 2026-02-05 03:57:08,099 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28219
+INFO 2026-02-05 03:57:08,224 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:57:12,987 basehttp "GET /admin/auth/user/2/password/ HTTP/1.1" 200 11947
+INFO 2026-02-05 03:57:53,128 basehttp "POST /admin/auth/user/2/password/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:57:53,168 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28355
+INFO 2026-02-05 03:57:53,297 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 03:58:02,163 basehttp "POST /admin/logout/ HTTP/1.1" 200 3555
+INFO 2026-02-05 03:58:05,163 basehttp "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:58:05,175 basehttp "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4160
+INFO 2026-02-05 03:58:13,739 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4323
+INFO 2026-02-05 03:58:18,843 basehttp "GET / HTTP/1.1" 301 0
+INFO 2026-02-05 03:58:18,849 basehttp "GET /inventario/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:58:18,896 basehttp "GET /admin/login/?next=/inventario/ HTTP/1.1" 200 4170
+INFO 2026-02-05 03:58:25,265 basehttp "POST /admin/login/?next=/inventario/ HTTP/1.1" 200 4333
+INFO 2026-02-05 03:58:39,411 basehttp "POST /admin/login/?next=/inventario/ HTTP/1.1" 200 4333
+INFO 2026-02-05 03:58:57,405 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:58:57,422 basehttp "GET /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 200 4198
+INFO 2026-02-05 03:59:10,211 basehttp "POST /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 200 4361
+INFO 2026-02-05 03:59:20,894 basehttp "POST /admin/login/?next=/inventario/kanban/taller/ HTTP/1.1" 302 0
+INFO 2026-02-05 03:59:20,942 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33772
+INFO 2026-02-05 03:59:24,027 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33772
+INFO 2026-02-05 03:59:24,582 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13985
+INFO 2026-02-05 03:59:25,383 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33772
+INFO 2026-02-05 04:07:20,585 basehttp "GET /admin/ HTTP/1.1" 200 13995
+INFO 2026-02-05 04:07:22,478 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 15125
+INFO 2026-02-05 04:07:22,562 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 04:07:23,503 basehttp "GET /admin/auth/user/2/change/ HTTP/1.1" 200 28219
+INFO 2026-02-05 04:07:23,556 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 04:07:35,361 basehttp "POST /admin/logout/ HTTP/1.1" 200 3555
+INFO 2026-02-05 04:07:36,936 basehttp "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:07:36,943 basehttp "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4160
+INFO 2026-02-05 04:07:39,500 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4323
+INFO 2026-02-05 04:07:44,261 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4323
+INFO 2026-02-05 04:07:54,895 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:07:54,910 basehttp "GET /admin/login/?next=/inventario/kanban/ventas/ HTTP/1.1" 200 4198
+INFO 2026-02-05 04:08:01,441 basehttp "POST /admin/login/?next=/inventario/kanban/ventas/ HTTP/1.1" 200 4361
+INFO 2026-02-05 04:08:54,089 basehttp "POST /admin/login/?next=/inventario/kanban/ventas/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:08:54,097 ui 🔍 DEBUG KANBAN VENTAS: User=taller1, Superuser=False
+INFO 2026-02-05 04:08:54,098 ui Groups: ['Taller']
+WARNING 2026-02-05 04:08:54,098 ui ⛔ ACCESO DENEGADO: Usuario taller1 redirigido a Taller
+INFO 2026-02-05 04:08:54,099 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:08:54,189 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33289
+INFO 2026-02-05 04:08:57,401 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10618
+INFO 2026-02-05 04:08:58,406 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:08:58,407 ui Groups: ['Taller']
+INFO 2026-02-05 04:08:58,410 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:09:03,603 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10618
+INFO 2026-02-05 04:09:05,185 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33289
+INFO 2026-02-05 04:09:06,253 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:09:06,253 ui Groups: ['Taller']
+INFO 2026-02-05 04:09:06,256 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:09:10,510 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 36029
+INFO 2026-02-05 04:09:10,551 basehttp "GET /media/piezas/Chumacera_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,551 basehttp "GET /media/piezas/SAG-Motor1_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,555 basehttp "GET /media/piezas/SAG-Tapas_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,558 basehttp "GET /media/piezas/SAG-MOTOR3_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,560 basehttp "GET /media/piezas/SAG-Acople_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,563 basehttp "GET /media/piezas/SAG-Marble_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,563 basehttp "GET /media/piezas/SAG-Motor2_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:10,564 basehttp "GET /media/piezas/SAG-Coraza_thumbnail.png HTTP/1.1" 304 0
+INFO 2026-02-05 04:09:44,581 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33289
+INFO 2026-02-05 04:10:10,213 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:10:10,214 ui Groups: ['Taller']
+INFO 2026-02-05 04:10:10,218 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:10:11,020 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 36029
+INFO 2026-02-05 04:14:33,418 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 23899
+INFO 2026-02-05 04:17:16,957 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:17:16,958 ui Groups: ['Taller']
+INFO 2026-02-05 04:17:16,962 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:17:18,644 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33289
+INFO 2026-02-05 04:17:19,226 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 10618
+INFO 2026-02-05 04:17:19,806 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33289
+INFO 2026-02-05 04:17:20,537 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:17:20,537 ui Groups: ['Taller']
+INFO 2026-02-05 04:17:20,541 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:18:35,585 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:18:35,585 ui Groups: ['Taller']
+INFO 2026-02-05 04:18:35,590 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:18:36,759 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 23689
+INFO 2026-02-05 04:18:44,499 basehttp "GET /inventario/salir/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:18:44,515 basehttp "GET /admin/login/ HTTP/1.1" 200 4147
+INFO 2026-02-05 04:18:47,411 basehttp "POST /admin/login/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:18:47,427 basehttp "GET /admin/ HTTP/1.1" 200 13995
+INFO 2026-02-05 04:18:53,371 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:18:53,372 ui Groups: []
+INFO 2026-02-05 04:18:53,375 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 04:18:55,738 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 36631
+INFO 2026-02-05 04:19:09,300 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 04:19:09,301 ui Groups: []
+INFO 2026-02-05 04:19:09,435 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70712
+INFO 2026-02-05 04:19:11,037 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33772
+INFO 2026-02-05 04:19:13,602 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13985
+INFO 2026-02-05 04:19:16,301 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 11101
+INFO 2026-02-05 04:19:19,996 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 5995
+INFO 2026-02-05 04:19:26,177 basehttp "GET /inventario/salir/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:19:26,188 basehttp "GET /admin/login/ HTTP/1.1" 200 4147
+INFO 2026-02-05 04:19:28,314 basehttp "POST /admin/login/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:19:28,325 basehttp "GET /admin/ HTTP/1.1" 200 4508
+INFO 2026-02-05 04:19:36,838 ui 🔍 DEBUG KANBAN VENTAS: User=taller1, Superuser=False
+INFO 2026-02-05 04:19:36,838 ui Groups: ['Taller']
+WARNING 2026-02-05 04:19:36,839 ui ⛔ ACCESO DENEGADO: Usuario taller1 redirigido a Taller
+INFO 2026-02-05 04:19:36,839 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:19:36,899 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33289
+INFO 2026-02-05 04:19:58,018 ui 🔍 DEBUG DASHBOARD: User=taller1, IsTaller=True, ShowPlot=False
+INFO 2026-02-05 04:19:58,019 ui Groups: ['Taller']
+INFO 2026-02-05 04:19:58,022 basehttp "GET /inventario/ HTTP/1.1" 200 10492
+INFO 2026-02-05 04:20:06,896 basehttp "GET /inventario/producto/1/ HTTP/1.1" 200 3997
+INFO 2026-02-05 04:20:43,305 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 23689
+INFO 2026-02-05 04:21:11,654 basehttp "GET /inventario/salir/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:21:11,662 basehttp "GET /admin/login/ HTTP/1.1" 200 4147
+INFO 2026-02-05 04:21:14,204 basehttp "POST /admin/login/ HTTP/1.1" 302 0
+INFO 2026-02-05 04:21:14,217 basehttp "GET /admin/ HTTP/1.1" 200 13995
+INFO 2026-02-05 04:21:21,590 basehttp "GET / HTTP/1.1" 301 0
+INFO 2026-02-05 04:21:21,609 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:21:21,610 ui Groups: []
+INFO 2026-02-05 04:21:21,614 basehttp "GET /inventario/ HTTP/1.1" 200 11320
+INFO 2026-02-05 04:23:24,778 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-05 04:23:25,352 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 04:23:48,247 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:23:48,247 ui Groups: []
+INFO 2026-02-05 04:23:48,267 basehttp "GET /inventario/ HTTP/1.1" 200 11509
+INFO 2026-02-05 04:24:34,507 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13985
+INFO 2026-02-05 04:24:34,562 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-05 04:24:40,361 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 11101
+INFO 2026-02-05 04:24:43,505 basehttp "POST /inventario/api/stock-filamento/9/ HTTP/1.1" 200 76
+INFO 2026-02-05 04:24:45,676 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:24:45,676 ui Groups: []
+INFO 2026-02-05 04:24:45,679 basehttp "GET /inventario/ HTTP/1.1" 200 11507
+INFO 2026-02-05 04:25:02,267 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 36631
+INFO 2026-02-05 04:25:13,903 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:25:13,904 ui Groups: []
+INFO 2026-02-05 04:25:13,907 basehttp "GET /inventario/ HTTP/1.1" 200 11507
+INFO 2026-02-05 04:25:28,359 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 04:25:28,359 ui Groups: []
+INFO 2026-02-05 04:25:28,498 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70712
+INFO 2026-02-05 04:26:32,652 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:26:32,652 ui Groups: []
+INFO 2026-02-05 04:26:32,656 basehttp "GET /inventario/ HTTP/1.1" 200 11507
+INFO 2026-02-05 04:26:47,600 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 13985
+INFO 2026-02-05 04:27:01,727 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-05 04:27:01,728 ui Groups: []
+INFO 2026-02-05 04:27:01,732 basehttp "GET /inventario/ HTTP/1.1" 200 11507
+INFO 2026-02-05 04:27:02,788 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 04:27:02,789 ui Groups: []
+INFO 2026-02-05 04:27:02,908 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70712
+INFO 2026-02-05 04:27:04,120 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 33772
+INFO 2026-02-05 04:27:04,975 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-05 04:27:04,976 ui Groups: []
+INFO 2026-02-05 04:27:05,103 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70712

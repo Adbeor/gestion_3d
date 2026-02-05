@@ -93,9 +93,14 @@
 
         <div id="bloque-pedido" class="section-content active">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-                <div>
-                    <label>📅 Fecha Entrega</label>
-                    {{ pedido_form.fecha_entrega_estimada }}
+                <div style="display: flex; align-items: flex-end; gap: 10px;">
+                    <div style="flex-grow: 1;">
+                        <label>📅 Fecha Entrega</label>
+                        {{ pedido_form.fecha_entrega_estimada }}
+                    </div>
+                    <button type="button" onclick="setFechaSemana()" style="height: 38px; background: #e8f6f3; border: 1px solid #a2d9ce; color: #16a085; border-radius: 6px; cursor: pointer; font-weight: bold; padding: 0 15px;">
+                        +1 Sem
+                    </button>
                 </div>
                 <div style="display: flex; gap: 20px; align-items: center; background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 8px;">
                     <label style="cursor:pointer;">{{ pedido_form.es_urgente }} 🔥 Urgente</label>
@@ -113,8 +118,7 @@
                         <th style="width: 70px;">Cant.</th>
                         <th style="width: 90px;">Precio</th>
                         <th style="text-align: center;">Cubierta?</th>
-                        <th style="text-align: center;">Nombre?</th>
-                        <th class="col-nombre">Texto Nombre</th>
+                        <th class="col-nombre" style="width: 200px;">Personalización (Nombre)</th>
                         <th>Logo / Dedicatoria</th>
                         <th style="width: 40px;"></th>
                     </tr>
@@ -129,8 +133,13 @@
                             <td>{{ form.cantidad }}</td>
                             <td>{{ form.precio_unitario }}</td>
                             <td style="text-align: center;">{{ form.cubierta }}</td>
-                            <td style="text-align: center;">{{ form.poner_nombre }}</td>
-                            <td class="col-nombre">{{ form.nombre }}</td>
+                            <td class="td-nombre">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    {{ form.poner_nombre }}
+                                    <span style="font-size: 0.9em; color: #7f8c8d;">Incluir</span>
+                                </div>
+                                {{ form.nombre }}
+                            </td>
                             <td>
                                 <div style="margin-bottom: 5px;">{{ form.logo }}</div>
                                 {{ form.texto_dedicatoria }}
@@ -146,6 +155,30 @@
                 </tbody>
             </table>
             <button type="button" class="btn-add-row" onclick="agregarFila()">+ Agregar Otro Producto</button>
+
+            <div style="background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                <h4 style="margin:0 0 15px 0; color:#2c3e50;">💰 Facturación y Envío</h4>
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 20px; align-items: start;">
+                    <div>
+                        <label>Método de Envío</label>
+                        {{ pedido_form.metodo_envio }}
+                    </div>
+                    <div id="box-costo-envio">
+                        <label>🚚 Costo Envío (S/)</label>
+                        {{ pedido_form.costo_envio }}
+                    </div>
+                    <div id="box-paga-envio" style="display: flex; align-items: center; height: 100%; padding-top: 25px;">
+                        <label style="cursor:pointer; font-size: 0.9em; line-height: 1.2;">
+                            {{ pedido_form.paga_al_recibir }} 
+                            <br>Paga al Recibir
+                        </label>
+                    </div>
+                    <div>
+                        <label>🎫 Descuento (S/)</label>
+                        {{ pedido_form.descuento }}
+                    </div>
+                </div>
+            </div>
 
             <div style="margin-top: 40px; border-top: 2px dashed #eee; padding-top: 20px;">
                 <h4 style="color:#e67e22; margin-bottom: 10px;">🔧 Piezas Sueltas / Repuestos</h4>
@@ -227,8 +260,13 @@
     <td>{{ formset.empty_form.cantidad }}</td>
     <td>{{ formset.empty_form.precio_unitario }}</td>
     <td style="text-align: center;">{{ formset.empty_form.cubierta }}</td>
-    <td style="text-align: center;">{{ formset.empty_form.poner_nombre }}</td>
-    <td class="col-nombre">{{ formset.empty_form.nombre }}</td>
+    <td class="td-nombre">
+        <div style="display: flex; align-items: center; gap: 5px;">
+            {{ formset.empty_form.poner_nombre }}
+            <span style="font-size: 0.9em; color: #7f8c8d;">Incluir</span>
+        </div>
+        {{ formset.empty_form.nombre }}
+    </td>
     <td><div style="margin-bottom: 5px;">{{ formset.empty_form.logo }}</div>{{ formset.empty_form.texto_dedicatoria }}</td>
     <td style="text-align: center;"><span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span></td>
 </tr></tbody></table>
@@ -239,6 +277,27 @@
     <td>{{ pieza_formset.empty_form.precio_unitario }}</td>
     <td style="text-align: center;"><span class="btn-delete" onclick="eliminarFilaNueva(this)" style="cursor:pointer; color:red;">🗑</span></td>
 </tr></tbody></table>
+
+<!-- MODAL NUEVO LOGO -->
+<div id="modal-nuevo-logo" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:9999;">
+    <div style="background:white; padding:25px; border-radius:10px; width:400px; max-width:90%;">
+        <h3 style="margin-top:0; color:#2c3e50;">✨ Nuevo Logo</h3>
+        <form id="form-nuevo-logo" enctype="multipart/form-data">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px;">Nombre Identificativo</label>
+                <input type="text" name="nombre" class="form-control" required placeholder="Ej: Minera X - Casco">
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">Imagen</label>
+                <input type="file" name="image" class="form-control" accept="image/*" required>
+            </div>
+            <div style="text-align:right;">
+                <button type="button" onclick="cerrarModalLogo()" style="background:#e74c3c; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; margin-right:10px;">Cancelar</button>
+                <button type="button" id="btn-guardar-logo" onclick="guardarLogoAjax()" style="background:#27ae60; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Guardar Logo</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
     const LISTA_PRECIOS = {{ precios_json|safe }};
@@ -370,26 +429,207 @@
         if (precio !== undefined && input) input.value = precio.toFixed(2);
     }
 
-    function eliminarFilaNueva(btn) { btn.closest('tr').remove(); }
+    function reindexarFormularios(prefix) {
+        let selectorRow = prefix === 'productos' ? '#lista-productos .item-row' : '#lista-piezas .pieza-row';
+        let filas = document.querySelectorAll(selectorRow);
+        
+        let totalInput = document.querySelector(`[name="${prefix}-TOTAL_FORMS"]`);
+        if(totalInput) totalInput.value = filas.length;
+
+        filas.forEach((fila, index) => {
+            fila.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.name) {
+                    input.name = input.name.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${index}-`);
+                }
+                if (input.id) {
+                    input.id = input.id.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${index}-`);
+                }
+            });
+        });
+    }
+
+    function eliminarFilaNueva(btn) { 
+        let row = btn.closest('tr');
+        let isProducto = row.classList.contains('item-row');
+        let prefix = isProducto ? 'productos' : 'piezas';
+        
+        row.remove();
+        reindexarFormularios(prefix);
+    }
     
     function marcarBorrar(btn) { 
         var chk = btn.nextElementSibling.querySelector('input');
         if(chk) { chk.checked = true; btn.closest('tr').style.opacity = '0.3'; }
     }
 
+    // --- 4. DATE BUTTON logic ---
+    function setFechaSemana() {
+        const dateInput = document.querySelector('input[name="fecha_entrega_estimada"]');
+        if (dateInput) {
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 7);
+            
+            // Format YYYY-MM-DD
+            const yyyy = nextWeek.getFullYear();
+            const mm = String(nextWeek.getMonth() + 1).padStart(2, '0');
+            const dd = String(nextWeek.getDate()).padStart(2, '0');
+            
+            dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+    }
+
     function toggleNombre(chk) {
-        var input = chk.closest('tr').querySelector('.input-nombre');
-        if(input) input.style.display = chk.checked ? 'block' : 'none';
+        // Buscamos el input de texto hermano dentro de la misma celda o fila
+        var cell = chk.closest('td');
+        var input = cell.querySelector('input[type="text"]');
+        
+        if(input) {
+            input.style.display = chk.checked ? 'block' : 'none';
+            if (chk.checked) {
+                input.focus();
+                
+                // AUTO-FILL LOGIC: Si está vacío, rellenar con nombre del cliente
+                if (!input.value.trim()) {
+                    let clientName = "";
+                    const isNewClient = document.getElementById('nuevo-cliente-box').style.display !== 'none';
+                    
+                    if (isNewClient) {
+                        // Tomar nombre del formulario de nuevo cliente
+                        const newNameInput = document.getElementById('id_nombre'); // Standard Django ID
+                        if (newNameInput) clientName = newNameInput.value;
+                    } else {
+                        // Tomar nombre del combo
+                        const select = document.querySelector('.select-cliente');
+                        if (select && select.selectedIndex >= 0) {
+                            clientName = select.options[select.selectedIndex].text;
+                            // Limpiar si es el placeholder "---------"
+                            if (clientName.includes('----')) clientName = "";
+                        }
+                    }
+                    
+                    if (clientName) input.value = clientName;
+                }
+            }
+        }
+    }
+
+    // --- 5. LOGO MODAL LOGIC ---
+    let logoSelectActual = null; // Store which select triggered the modal
+
+    window.inyectarOpcionNuevo = function(select) {
+        // Remove existing "New" option if present to avoid dupes
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === 'NUEVO_LOGO') select.remove(i);
+        }
+        
+        // Add "New Logo" option at the end
+        const opt = document.createElement('option');
+        opt.value = 'NUEVO_LOGO';
+        opt.text = '✨ Nuevo Logo...';
+        opt.style.fontWeight = 'bold';
+        opt.style.color = '#27ae60';
+        select.add(opt);
+
+        // Bind change event if not already bound (checking a custom flag)
+        if (!select.dataset.logoBound) {
+            select.addEventListener('change', function() {
+                if (this.value === 'NUEVO_LOGO') {
+                    logoSelectActual = this;
+                    document.getElementById('modal-nuevo-logo').style.display = 'flex';
+                    this.value = ''; // Reset select while creating
+                }
+            });
+            select.dataset.logoBound = true;
+        }
+    };
+
+    function cerrarModalLogo() {
+        document.getElementById('modal-nuevo-logo').style.display = 'none';
+        document.getElementById('form-nuevo-logo').reset();
+    }
+
+    function guardarLogoAjax() {
+        const form = document.getElementById('form-nuevo-logo');
+        const formData = new FormData(form);
+        const btn = document.getElementById('btn-guardar-logo');
+        
+        btn.disabled = true; btn.innerText = 'Subiendo...';
+
+        fetch('/inventario/api/crear-logo/', { // URL fixed to match urls.py
+            method: 'POST',
+            body: formData,
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'ok') {
+                // Add new logo to ALL logo selects
+                document.querySelectorAll('.select-logo, [name$="-logo"]').forEach(sel => {
+                    const opt = document.createElement('option');
+                    opt.value = data.id;
+                    opt.text = data.nombre;
+                    // Insert before "New Logo" option
+                    const lastIdx = sel.options.length - 1;
+                    if(sel.options[lastIdx].value === 'NUEVO_LOGO') {
+                        sel.add(opt, lastIdx);
+                    } else {
+                        sel.add(opt);
+                    }
+                });
+
+                // Select it in the trigger
+                if(logoSelectActual) logoSelectActual.value = data.id;
+                
+                cerrarModalLogo();
+            } else {
+                alert('Error al crear logo: ' + (JSON.stringify(data.errors) || data.mensaje));
+            }
+        })
+        .catch(err => { console.error(err); alert('Error de conexión'); })
+        .finally(() => { btn.disabled = false; btn.innerText = 'Guardar Logo'; });
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.check-nombre').forEach(c => toggleNombre(c));
+        // Re-bind eventos para checkbox existentes
+        document.querySelectorAll('input[type="checkbox"][name$="poner_nombre"]').forEach(c => {
+            c.addEventListener('change', () => toggleNombre(c));
+            toggleNombre(c); // Init state
+        });
+
+        // Initialize existing logo selects
+        document.querySelectorAll('select[name$="-logo"]').forEach(s => window.inyectarOpcionNuevo(s));
         
         cambiarModo('pedido'); // Reset inicial
         
         // Apagar inputs de nuevo cliente al inicio
         const boxNuevo = document.getElementById('nuevo-cliente-box');
         if(boxNuevo) boxNuevo.querySelectorAll('input, select').forEach(el => el.disabled = true);
+
+        // LÓGICA ENVÍO (Ocultar costo si es Recojo)
+        const selectEnvio = document.querySelector('[name="metodo_envio"]');
+        const boxCosto = document.getElementById('box-costo-envio');
+        const boxPaga = document.getElementById('box-paga-envio');
+        const inputCosto = document.querySelector('[name="costo_envio"]');
+
+        function toggleEnvio() {
+            if(!selectEnvio) return;
+            const esRecojo = selectEnvio.value === "RECOJO";
+            
+            if(esRecojo) {
+                if(boxCosto) boxCosto.style.display = 'none';
+                if(boxPaga) boxPaga.style.display = 'none';
+                if(inputCosto) inputCosto.value = 0; // Limpiar costo
+            } else {
+                if(boxCosto) boxCosto.style.display = 'block';
+                if(boxPaga) boxPaga.style.display = 'flex';
+            }
+        }
+
+        if(selectEnvio) {
+            selectEnvio.addEventListener('change', toggleEnvio);
+            toggleEnvio(); // Run on load
+        }
     });
 </script>
 {% endblock %}

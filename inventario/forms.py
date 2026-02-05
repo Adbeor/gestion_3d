@@ -10,11 +10,15 @@ class PedidoForm(forms.ModelForm):
             'cliente',  
             'fecha_entrega_estimada', 
             'es_urgente', 
-            'requiere_factura'
+            'requiere_factura',
+            'metodo_envio', 'costo_envio', 'paga_al_recibir', 'descuento'
         ]
         widgets = {
             'fecha_entrega_estimada': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'cliente': forms.Select(attrs={'class': 'form-control select-cliente'}), # Le ponemos clase para JS
+            'cliente': forms.Select(attrs={'class': 'form-control select-cliente'}),
+            'metodo_envio': forms.Select(attrs={'class': 'form-control'}),
+            'costo_envio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50'}),
+            'descuento': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50'}),
         }
 
     def __init__(self, *args, **kwargs):
