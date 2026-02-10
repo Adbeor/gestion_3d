@@ -18,7 +18,12 @@
     {% endif %}
 
     <div class="project-footer">
-        <span style="color: #95a5a6;">📅 {{ p.fecha_inicio|date:"d M" }}</span>
+        <div style="display: flex; gap: 5px; align-items: center;">
+            <a href="{% url 'detalle_proyecto' p.id %}" class="btn btn-sm btn-light" style="font-size: 0.8em; padding: 2px 5px;" title="Ver Gantt">
+                📊
+            </a>
+            <span style="color: #95a5a6;">📅 {{ p.fecha_inicio|date:"d M" }}</span>
+        </div>
         
         {% if p.archivo_adjunto %}
             <a href="{{ p.archivo_adjunto.url }}" target="_blank" class="btn-file" title="Ver Archivo">

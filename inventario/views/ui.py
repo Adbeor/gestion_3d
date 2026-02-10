@@ -13,7 +13,8 @@ from django.contrib.auth import logout
 # Importamos Modelos
 from inventario.models import (
     Producto, Filamento, Pieza, ItemPedido, 
-    Pedido, Proyecto, ItemPiezaPedido, ComposicionProducto, Insumo
+    Pedido, Proyecto, ItemPiezaPedido, ComposicionProducto, Insumo,
+    TareaProyecto
 )
 
 # Importamos Formularios
@@ -205,6 +206,48 @@ def kanban_proyectos(request):
 def tablero_kanban(request):
     """(Redirección por compatibilidad)"""
     return redirect('kanban_ventas')
+
+
+@login_required
+def detalle_proyecto(request, proyecto_id):
+    """
+    Vista de detalle para un proyecto específico.
+    Incluye diagrama de Gantt.
+    """
+    proyecto = get_object_or_404(Proyecto, pk=proyecto_id)
+    tareas = proyecto.tareas.all().order_by('fecha_inicio')
+    
+    # Serializar tareas para el Gantt (JSON)
+    tareas_data = []
+    for t in tareas:
+        deps = [d.id for d in t.dependencias.all()]
+        
+        # Clase dinámica basada en ID de categoría
+        # En el template generaremos el CSS correspondiente
+        css_class = "bar-default"
+        if t.categoria:
+             css_class = f"bar-cat-{t.categoria.id}"
+
+        tareas_data.append({
+            "id": str(t.id),
+            "name": t.nombre,
+            "start": t.fecha_inicio.strftime("%Y-%m-%d"),
+            "end": t.fecha_fin.strftime("%Y-%m-%d"),
+            "progress": t.progreso,
+            "dependencies": ",".join(map(str, deps)),
+            "custom_class": css_class,
+            "categoria_id": t.categoria.id if t.categoria else ""
+        })
+
+    # Obtener todas las categorías para el template
+    from inventario.models import CategoriaTarea
+    categorias = CategoriaTarea.objects.all()
+
+    return render(request, "inventario/detalle_proyecto.html", {
+        "proyecto": proyecto,
+        "tareas_json": json.dumps(tareas_data),
+        "categorias": categorias,
+    })
 
 
 # =========================================================

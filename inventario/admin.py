@@ -8,10 +8,12 @@ from .models import (
     Cliente,
     Pedido,
     ItemPedido,
-    ItemPedido,
     Logo,
     Insumo,
     ComposicionInsumo,
+    Proyecto,
+    TareaProyecto,
+    CategoriaTarea,
 )
 
 admin.site.register(Insumo)
@@ -21,6 +23,17 @@ admin.site.register(Filamento)
 admin.site.register(Cliente)
 
 admin.site.register(Logo)
+
+
+@admin.register(CategoriaTarea)
+class CategoriaTareaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'color')
+    search_fields = ('nombre',)
+
+@admin.register(TareaProyecto)
+class TareaProyectoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'proyecto', 'categoria', 'progreso', 'fecha_fin')
+    list_filter = ('proyecto', 'categoria', 'progreso')
 
 
 class PiezaAdmin(admin.ModelAdmin):

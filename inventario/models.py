@@ -655,9 +655,11 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.id} - {self.cliente.nombre}"
 
+        return max(total, 0)
+
     @property
     def total_pedido(self):
-        """Suma productos, piezas sueltas y envío, menos descuentos"""
+        """Suma productos, piezas sueltas, insumos y envío, menos descuentos"""
         total = 0
         # 1. Sumar Productos
         for item in self.items.all():
@@ -667,10 +669,14 @@ class Pedido(models.Model):
         for item_p in self.items_pieza.all():
             total += item_p.subtotal
 
-        # 3. Sumar Envío
+        # 3. Sumar Insumos
+        for item_i in self.items_insumo.all():
+            total += item_i.subtotal
+
+        # 4. Sumar Envío
         total += self.costo_envio * (0 if self.paga_al_recibir else 1)
 
-        # 4. Restar Descuento Global
+        # 5. Restar Descuento Global
         total -= self.descuento
             
         return max(total, 0)
@@ -745,3 +751,42 @@ class ComposicionInsumo(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.insumo.nombre} (x{self.cantidad})"
+
+
+class CategoriaTarea(models.Model):
+    nombre = models.CharField(max_length=100)
+    color = models.CharField(max_length=20, default="#3b82f6", help_text="Código Hex (ej: #3b82f6)")
+    
+    def __str__(self):
+        return self.nombre
+
+
+class TareaProyecto(models.Model):
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name="tareas")
+    nombre = models.CharField(max_length=200)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    progreso = models.PositiveIntegerField(default=0, help_text="Porcentaje 0-100")
+    dependencias = models.ManyToManyField("self", blank=True, symmetrical=False)
+    
+    categoria = models.ForeignKey(CategoriaTarea, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.nombre} ({self.progreso}%)"
+
+
+class ItemInsumoPedido(models.Model):
+    """Clase para insumos vendidos dentro de un pedido"""
+    pedido = models.ForeignKey(Pedido, related_name="items_insumo", on_delete=models.CASCADE)
+    insumo = models.ForeignKey(Insumo, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio_unitario = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, verbose_name="Precio Venta (S/)"
+    )
+
+    @property
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario
+
+    def __str__(self):
+        return f"{self.cantidad}x Insumo: {self.insumo.nombre}"

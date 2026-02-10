@@ -3,20 +3,22 @@ from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
 from inventario.models import (
     Cliente, Pedido, Producto, ItemPedido, 
-    Proyecto, Pieza, ItemPiezaPedido, Filamento
+    Proyecto, Pieza, ItemPiezaPedido, Filamento,
+    Insumo, ItemInsumoPedido
 )
 
 class Command(BaseCommand):
     help = 'Importar Excel preguntando al usuario (Modo Interactivo)'
 
     def handle(self, *args, **kwargs):
-        archivo_excel = 'Ventas TEC.xlsx'
+        archivo_excel = 'Control_Empresarial_Automatizado_V3.xlsx'
         nombre_hoja = 'Pedidos'
         
         self.stdout.write(f"📂 Cargando Excel: {archivo_excel}...")
 
         try:
-            df = pd.read_excel(archivo_excel, sheet_name=nombre_hoja, header=1, engine='openpyxl')
+            # Change header to 0 because the new Excel has headers on the first row
+            df = pd.read_excel(archivo_excel, sheet_name=nombre_hoja, header=0, engine='openpyxl')
             df = df.fillna('')
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Error al leer Excel: {e}"))
@@ -37,13 +39,14 @@ class Command(BaseCommand):
             }
         )
 
-        contadores = {'proyectos': 0, 'productos': 0, 'piezas': 0, 'saltados': 0}
+        contadores = {'proyectos': 0, 'productos': 0, 'piezas': 0, 'insumos': 0, 'saltados': 0}
 
         for index, row in df.iterrows():
             try:
                 # 1. DATOS BÁSICOS
-                nombre_cliente = str(row['Nombre']).strip()
-                desc_bruta = str(row['Descripción']).strip()
+                nombre_cliente = str(row['Cliente']).strip()
+                # 'Producto' column is the Description/Name now
+                desc_bruta = str(row['Producto']).strip()
                 
                 if not nombre_cliente or not desc_bruta: 
                     continue
@@ -66,7 +69,7 @@ class Command(BaseCommand):
                     self.stdout.write("="*60)
                     
                     while True:
-                        opcion = input("Es: [1] Producto  [2] Pieza/Repuesto  [3] Proyecto  [s] Saltar: ").lower().strip()
+                        opcion = input("Es: [1] Producto  [2] Pieza/Repuesto  [3] Proyecto  [4] Insumo  [s] Saltar: ").lower().strip()
                         
                         if opcion == '1':
                             tipo_elegido = 'PRODUCTO'
@@ -76,6 +79,9 @@ class Command(BaseCommand):
                             break
                         elif opcion == '3':
                             tipo_elegido = 'PROYECTO'
+                            break
+                        elif opcion == '4':
+                            tipo_elegido = 'INSUMO'
                             break
                         elif opcion == 's':
                             tipo_elegido = 'SALTAR'
@@ -96,7 +102,7 @@ class Command(BaseCommand):
                 )
                 
                 # Fecha
-                val_crea = row['Fecha de pedido']
+                val_crea = row['Fecha Pedido']
                 fecha_creacion = None
                 if val_crea and val_crea != '':
                     try:
@@ -109,7 +115,7 @@ class Command(BaseCommand):
                 # === OPCIÓN 1: PRODUCTO ===
                 if tipo_elegido == 'PRODUCTO':
                     # Precio
-                    try: precio = float(row['Precio de venta'])
+                    try: precio = float(row['Precio Unitario'])
                     except: precio = 0
                     
                     # Normalizamos nombre
@@ -124,11 +130,13 @@ class Command(BaseCommand):
                     # Items
                     try: cant = int(row['Cantidad'])
                     except: cant = 1
-                    try: descuento = float(row['Dscuento']) if row['Dscuento'] != '' else 0
+                    try: descuento = float(row['Descuento']) if row['Descuento'] != '' else 0
                     except: descuento = 0
                     
-                    val_cubierta = str(row['Cubierta']).lower()
-                    cubierta = val_cubierta in ['si', 's', 'yes', 'true', 'ok']
+                    # 'Cubierta' column doesn't exist in new Excel, default to False or remove logic
+                    # val_cubierta = str(row['Cubierta']).lower()
+                    # cubierta = val_cubierta in ['si', 's', 'yes', 'true', 'ok']
+                    cubierta = False 
                     
                     ItemPedido.objects.create(
                         pedido=pedido, producto=producto, cantidad=cant, 
@@ -139,7 +147,7 @@ class Command(BaseCommand):
 
                 # === OPCIÓN 2: PIEZA ===
                 elif tipo_elegido == 'PIEZA':
-                    try: precio = float(row['Precio de venta'])
+                    try: precio = float(row['Precio Unitario'])
                     except: precio = 0
                     
                     # Al crear pieza, usamos los campos que sí existen
@@ -176,6 +184,31 @@ class Command(BaseCommand):
                     )
                     contadores['proyectos'] += 1
 
+                # === OPCIÓN 4: INSUMO ===
+                elif tipo_elegido == 'INSUMO':
+                    try: precio = float(row['Precio Unitario'])
+                    except: precio = 0
+                    
+                    # 1. Crear/Buscar Insumo en Catálogo
+                    # Asumimos que el precio del Excel es Precio Venta, no Costo. 
+                    # El costo lo dejamos en 0 o lo que sea por defecto.
+                    insumo_obj, _ = Insumo.objects.get_or_create(
+                        nombre=desc_bruta,
+                        defaults={'costo_unitario': 0, 'stock': 0} 
+                    )
+
+                    # 2. Crear Pedido
+                    pedido = self.crear_pedido_base(row, cliente, fecha_creacion, estado_excel)
+
+                    try: cant = int(row['Cantidad'])
+                    except: cant = 1
+
+                    # 3. Vincular Insumo al Pedido
+                    ItemInsumoPedido.objects.create(
+                        pedido=pedido, insumo=insumo_obj, cantidad=cant, precio_unitario=precio
+                    )
+                    contadores['insumos'] += 1
+
             except Exception as e:
                 self.stdout.write(self.style.WARNING(f"⚠️ Error fila {index}: {e}"))
 
@@ -183,6 +216,7 @@ class Command(BaseCommand):
         self.stdout.write(f"   📦 Productos: {contadores['productos']}")
         self.stdout.write(f"   🔧 Piezas:    {contadores['piezas']}")
         self.stdout.write(f"   🧪 Proyectos: {contadores['proyectos']}")
+        self.stdout.write(f"   🔩 Insumos:   {contadores['insumos']}")
 
     def crear_pedido_base(self, row, cliente, fecha_creacion, estado_excel):
         MAPA_ESTADOS = {'Fabricación': 'PROCESO', 'Terminado': 'LISTO', 'Entregado': 'ENTREGADO', 'Pendiente': 'COLA', '': 'COLA'}
@@ -204,8 +238,8 @@ class Command(BaseCommand):
             elif adelanto > 0: estado_pago = 'PARCIAL'
 
         fecha_entrega = None
-        if row['Fecha de entrega']:
-            try: fecha_entrega = pd.to_datetime(row['Fecha de entrega']).date()
+        if row['Fecha Entrega']:
+            try: fecha_entrega = pd.to_datetime(row['Fecha Entrega']).date()
             except: pass
 
         pedido = Pedido.objects.create(

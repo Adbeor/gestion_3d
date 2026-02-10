@@ -1015,3 +1015,480 @@ INFO 2026-02-05 04:27:04,120 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 
 INFO 2026-02-05 04:27:04,975 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
 INFO 2026-02-05 04:27:04,976 ui Groups: []
 INFO 2026-02-05 04:27:05,103 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 70712
+INFO 2026-02-05 14:56:39,136 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 14:56:40,241 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-05 14:56:40,586 autoreload Watching for file changes with StatReloader
+INFO 2026-02-05 15:06:02,385 basehttp "GET /admin/inventario/pieza/ HTTP/1.1" 200 16068
+INFO 2026-02-05 15:06:04,445 basehttp "GET /admin/inventario/pieza/10/change/ HTTP/1.1" 200 18057
+INFO 2026-02-05 15:06:04,492 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 15:06:08,119 basehttp "POST /admin/inventario/pieza/10/change/ HTTP/1.1" 302 0
+INFO 2026-02-05 15:06:08,137 basehttp "GET /admin/inventario/pieza/ HTTP/1.1" 200 16299
+INFO 2026-02-05 15:06:08,230 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-02-05 15:06:11,764 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 38871
+DEBUG 2026-02-05 16:01:11,221 models Imagen encontrada en 3MF: Metadata/plate_1.png
+DEBUG 2026-02-05 16:01:11,227 models Iniciando extraer_peso_gcode para SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,228 models _leer_metadata_bambu: Procesando SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,228 models Abierto archivo 3mf para zip reading...
+DEBUG 2026-02-05 16:01:11,229 models Archivos en zip: 73 encontrados.
+DEBUG 2026-02-05 16:01:11,229 models Metadata encontrada: Metadata/slice_info.config
+DEBUG 2026-02-05 16:01:11,229 models Contenido slice_info (1379 chars)
+DEBUG 2026-02-05 16:01:11,230 models Peso metadata encontrado: 49.83
+DEBUG 2026-02-05 16:01:11,230 models Tiempo (seg) metadata encontrado: 15711
+DEBUG 2026-02-05 16:01:11,231 models Retornando peso desde Metadata: 49.83
+DEBUG 2026-02-05 16:01:11,231 models _leer_metadata_bambu: Procesando SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,231 models Abierto archivo 3mf para zip reading...
+DEBUG 2026-02-05 16:01:11,231 models Archivos en zip: 73 encontrados.
+DEBUG 2026-02-05 16:01:11,231 models Metadata encontrada: Metadata/slice_info.config
+DEBUG 2026-02-05 16:01:11,232 models Contenido slice_info (1379 chars)
+DEBUG 2026-02-05 16:01:11,232 models Peso metadata encontrado: 49.83
+DEBUG 2026-02-05 16:01:11,232 models Tiempo (seg) metadata encontrado: 15711
+INFO 2026-02-05 16:01:11,255 ui Procesando archivo: SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,255 models Iniciando extraer_peso_gcode para gcodes/SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,255 models _leer_metadata_bambu: Procesando gcodes/SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,255 models Abierto archivo 3mf para zip reading...
+DEBUG 2026-02-05 16:01:11,256 models Archivos en zip: 73 encontrados.
+DEBUG 2026-02-05 16:01:11,256 models Metadata encontrada: Metadata/slice_info.config
+DEBUG 2026-02-05 16:01:11,256 models Contenido slice_info (1379 chars)
+DEBUG 2026-02-05 16:01:11,256 models Peso metadata encontrado: 49.83
+DEBUG 2026-02-05 16:01:11,256 models Tiempo (seg) metadata encontrado: 15711
+DEBUG 2026-02-05 16:01:11,256 models Retornando peso desde Metadata: 49.83
+INFO 2026-02-05 16:01:11,256 ui Peso detectado: 49.83
+DEBUG 2026-02-05 16:01:11,257 models _leer_metadata_bambu: Procesando gcodes/SAG-Tapa.gcode.3mf
+DEBUG 2026-02-05 16:01:11,257 models Abierto archivo 3mf para zip reading...
+DEBUG 2026-02-05 16:01:11,257 models Archivos en zip: 73 encontrados.
+DEBUG 2026-02-05 16:01:11,257 models Metadata encontrada: Metadata/slice_info.config
+DEBUG 2026-02-05 16:01:11,257 models Contenido slice_info (1379 chars)
+DEBUG 2026-02-05 16:01:11,257 models Peso metadata encontrado: 49.83
+DEBUG 2026-02-05 16:01:11,257 models Tiempo (seg) metadata encontrado: 15711
+INFO 2026-02-05 16:01:11,258 ui Tiempo detectado: 4h21m
+INFO 2026-02-05 16:01:11,291 basehttp "POST /inventario/producto/2/crear-pieza-rapida/ HTTP/1.1" 302 0
+INFO 2026-02-05 16:01:11,400 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 41529
+INFO 2026-02-05 16:01:11,469 basehttp "GET /media/piezas/SAG-Tapa_thumbnail.png HTTP/1.1" 200 14204
+INFO 2026-02-06 00:21:40,343 basehttp "POST /inventario/api/stock-pieza/7/ HTTP/1.1" 200 73
+INFO 2026-02-06 00:21:56,315 basehttp "POST /inventario/api/stock-pieza/7/ HTTP/1.1" 200 73
+INFO 2026-02-06 00:23:49,025 basehttp "POST /inventario/api/stock-pieza/8/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:23:49,167 basehttp "POST /inventario/api/stock-pieza/8/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:24:18,671 basehttp "POST /inventario/api/stock-pieza/12/ HTTP/1.1" 200 73
+INFO 2026-02-06 00:24:18,812 basehttp "POST /inventario/api/stock-pieza/12/ HTTP/1.1" 200 73
+INFO 2026-02-06 00:24:27,327 basehttp "POST /inventario/api/stock-pieza/9/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:25:08,509 basehttp "POST /inventario/api/stock-pieza/10/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:25:13,428 basehttp "POST /inventario/api/stock-pieza/10/ HTTP/1.1" 200 73
+INFO 2026-02-06 00:25:14,394 basehttp "POST /inventario/api/stock-pieza/11/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:25:53,759 basehttp "POST /inventario/api/stock-pieza/12/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:26:07,447 basehttp "POST /inventario/api/stock-pieza/14/ HTTP/1.1" 200 73
+INFO 2026-02-06 00:38:05,029 basehttp "POST /inventario/api/stock-pieza/26/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:38:05,169 basehttp "POST /inventario/api/stock-pieza/26/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:38:05,312 basehttp "POST /inventario/api/stock-pieza/26/ HTTP/1.1" 200 71
+INFO 2026-02-06 00:38:05,969 basehttp "POST /inventario/api/stock-pieza/26/ HTTP/1.1" 200 71
+DEBUG 2026-02-06 00:38:12,067 models Imagen encontrada en 3MF: Metadata/plate_1.png
+INFO 2026-02-06 00:38:12,087 basehttp "POST /inventario/api/stock-pieza/25/ HTTP/1.1" 200 73
+INFO 2026-02-08 22:36:52,631 autoreload Watching for file changes with StatReloader
+INFO 2026-02-08 22:37:03,233 basehttp "GET /inventario/producto/2/ HTTP/1.1" 200 41413
+INFO 2026-02-08 22:37:03,296 basehttp "GET /media/piezas/SAG-Shell_thumbnail.png HTTP/1.1" 200 14204
+INFO 2026-02-08 22:37:03,296 basehttp "GET /media/piezas/SAG-Tapa_thumbnail.png HTTP/1.1" 200 14204
+INFO 2026-02-08 22:37:04,779 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-08 22:37:04,780 ui Groups: []
+INFO 2026-02-08 22:37:04,784 basehttp "GET /inventario/ HTTP/1.1" 200 11377
+INFO 2026-02-08 22:37:04,823 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 304 0
+INFO 2026-02-08 22:37:04,824 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 304 0
+INFO 2026-02-08 22:37:19,884 basehttp "GET /inventario/producto/3/ HTTP/1.1" 200 17005
+INFO 2026-02-08 22:37:21,010 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16153
+INFO 2026-02-08 22:37:24,917 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 8805
+INFO 2026-02-08 22:38:05,042 basehttp "POST /inventario/api/crear-tarea/ HTTP/1.1" 200 52
+INFO 2026-02-08 22:38:05,061 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 8926
+INFO 2026-02-08 22:38:15,524 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16153
+INFO 2026-02-08 22:38:17,364 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 8926
+INFO 2026-02-08 22:46:21,456 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-08 22:46:21,936 autoreload Watching for file changes with StatReloader
+INFO 2026-02-08 22:46:39,090 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/api.py changed, reloading.
+INFO 2026-02-08 22:46:39,376 autoreload Watching for file changes with StatReloader
+INFO 2026-02-08 22:46:50,488 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-08 22:46:50,769 autoreload Watching for file changes with StatReloader
+INFO 2026-02-08 22:50:42,590 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 13255
+INFO 2026-02-08 22:51:12,696 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 13255
+INFO 2026-02-08 22:51:12,733 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 200 7762
+INFO 2026-02-08 22:51:12,734 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 200 9932
+WARNING 2026-02-08 22:51:12,879 log Not Found: /favicon.ico
+WARNING 2026-02-08 22:51:12,879 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+INFO 2026-02-08 22:51:21,728 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 22:51:26,135 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 22:51:29,188 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 22:51:42,918 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 22:52:16,235 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 22:59:47,360 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 13559
+ERROR 2026-02-08 22:59:55,052 log Internal Server Error: /inventario/proyecto/7/detalle/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/auth/decorators.py", line 60, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py", line 242, in detalle_proyecto
+    return render(request, "inventario/detalle_proyecto.html", {
+        "proyecto": proyecto,
+    ...<2 lines>...
+        "categorias": TareaProyecto.CATEGORIAS,
+    })
+  File "/usr/lib/python3.14/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 573, in invalid_block_tag
+    raise self.error(
+    ...<3 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 311: 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 22:59:55,055 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 500 161787
+ERROR 2026-02-08 22:59:56,414 log Internal Server Error: /inventario/proyecto/7/detalle/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/auth/decorators.py", line 60, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py", line 242, in detalle_proyecto
+    return render(request, "inventario/detalle_proyecto.html", {
+        "proyecto": proyecto,
+    ...<2 lines>...
+        "categorias": TareaProyecto.CATEGORIAS,
+    })
+  File "/usr/lib/python3.14/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 573, in invalid_block_tag
+    raise self.error(
+    ...<3 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 311: 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 22:59:56,417 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 500 161787
+ERROR 2026-02-08 22:59:57,609 log Internal Server Error: /inventario/proyecto/7/detalle/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/auth/decorators.py", line 60, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py", line 242, in detalle_proyecto
+    return render(request, "inventario/detalle_proyecto.html", {
+        "proyecto": proyecto,
+    ...<2 lines>...
+        "categorias": TareaProyecto.CATEGORIAS,
+    })
+  File "/usr/lib/python3.14/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 573, in invalid_block_tag
+    raise self.error(
+    ...<3 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 311: 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 22:59:57,611 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 500 162052
+WARNING 2026-02-08 22:59:57,643 log Not Found: /favicon.ico
+WARNING 2026-02-08 22:59:57,644 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+ERROR 2026-02-08 23:00:03,780 log Internal Server Error: /inventario/proyecto/7/detalle/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/auth/decorators.py", line 60, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py", line 242, in detalle_proyecto
+    return render(request, "inventario/detalle_proyecto.html", {
+        "proyecto": proyecto,
+    ...<2 lines>...
+        "categorias": TareaProyecto.CATEGORIAS,
+    })
+  File "/usr/lib/python3.14/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 573, in invalid_block_tag
+    raise self.error(
+    ...<3 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 311: 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 23:00:03,785 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 500 162052
+WARNING 2026-02-08 23:00:03,832 log Not Found: /favicon.ico
+WARNING 2026-02-08 23:00:03,832 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+INFO 2026-02-08 23:00:07,027 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-08 23:00:07,027 ui Groups: []
+INFO 2026-02-08 23:00:07,035 basehttp "GET /inventario/ HTTP/1.1" 200 11681
+INFO 2026-02-08 23:00:09,376 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16457
+ERROR 2026-02-08 23:00:11,509 log Internal Server Error: /inventario/proyecto/7/detalle/
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 510, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/usr/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/lib/python3.14/site-packages/django/contrib/auth/decorators.py", line 60, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py", line 242, in detalle_proyecto
+    return render(request, "inventario/detalle_proyecto.html", {
+        "proyecto": proyecto,
+    ...<2 lines>...
+        "categorias": TareaProyecto.CATEGORIAS,
+    })
+  File "/usr/lib/python3.14/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/usr/lib/python3.14/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/backends/django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 177, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "/usr/lib/python3.14/site-packages/django/template/loaders/base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 154, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 196, in compile_nodelist
+    nodelist = parser.parse()
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 512, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/site-packages/django/template/base.py", line 573, in invalid_block_tag
+    raise self.error(
+    ...<3 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Invalid block tag on line 311: 'endblock'. Did you forget to register or load this tag?
+ERROR 2026-02-08 23:00:11,511 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 500 161787
+INFO 2026-02-08 23:25:26,038 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 15216
+INFO 2026-02-08 23:25:37,896 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16457
+INFO 2026-02-08 23:25:41,067 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 15216
+INFO 2026-02-08 23:26:07,797 basehttp "POST /inventario/api/crear-tarea/ HTTP/1.1" 200 52
+INFO 2026-02-08 23:26:07,815 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 15356
+INFO 2026-02-08 23:26:19,916 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 23:26:45,815 basehttp "POST /inventario/api/crear-tarea/ HTTP/1.1" 200 52
+INFO 2026-02-08 23:26:45,831 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 15499
+INFO 2026-02-08 23:26:48,109 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-08 23:30:56,556 basehttp "GET /inventario/insumos/ HTTP/1.1" 200 6299
+INFO 2026-02-08 23:30:57,752 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 11405
+INFO 2026-02-08 23:31:01,744 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-08 23:31:01,744 ui Groups: []
+INFO 2026-02-08 23:31:01,870 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 71016
+INFO 2026-02-08 23:31:08,962 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-08 23:31:08,962 ui Groups: []
+INFO 2026-02-08 23:31:08,972 basehttp "GET /inventario/ HTTP/1.1" 200 11681
+INFO 2026-02-08 23:31:15,511 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16457
+INFO 2026-02-08 23:31:18,890 ui 🔍 DEBUG KANBAN VENTAS: User=adriandbo, Superuser=True
+INFO 2026-02-08 23:31:18,891 ui Groups: []
+INFO 2026-02-08 23:31:19,000 basehttp "GET /inventario/kanban/ventas/ HTTP/1.1" 200 71016
+INFO 2026-02-08 23:31:23,409 basehttp "POST /inventario/api/mover-pedido/ HTTP/1.1" 200 45
+INFO 2026-02-08 23:31:25,526 basehttp "POST /inventario/api/mover-pedido/ HTTP/1.1" 200 49
+INFO 2026-02-08 23:31:30,866 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-08 23:31:30,867 ui Groups: []
+INFO 2026-02-08 23:31:30,872 basehttp "GET /inventario/ HTTP/1.1" 200 11681
+INFO 2026-02-08 23:31:38,674 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-08 23:31:38,675 ui Groups: []
+INFO 2026-02-08 23:31:38,677 basehttp "GET /inventario/ HTTP/1.1" 200 11681
+INFO 2026-02-09 01:16:41,891 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-09 01:16:42,462 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:17:10,658 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-09 01:17:11,059 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:17:39,259 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-09 01:17:39,629 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:18:07,811 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/models.py changed, reloading.
+INFO 2026-02-09 01:18:08,180 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:18:47,418 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/api.py changed, reloading.
+INFO 2026-02-09 01:18:47,758 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:19:06,912 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/api.py changed, reloading.
+INFO 2026-02-09 01:19:07,247 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:19:09,343 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/views/ui.py changed, reloading.
+INFO 2026-02-09 01:19:09,662 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:20:35,178 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/admin.py changed, reloading.
+INFO 2026-02-09 01:20:35,499 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:27:14,473 autoreload /home/adriandbo/Documentos/proyectos/gestion_3d/inventario/admin.py changed, reloading.
+INFO 2026-02-09 01:27:14,742 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 01:34:29,219 ui 🔍 DEBUG DASHBOARD: User=adriandbo, IsTaller=False, ShowPlot=True
+INFO 2026-02-09 01:34:29,220 ui Groups: []
+INFO 2026-02-09 01:34:29,241 basehttp "GET /inventario/ HTTP/1.1" 200 11681
+INFO 2026-02-09 01:34:31,040 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16457
+INFO 2026-02-09 01:34:32,104 basehttp "GET /inventario/proyecto/7/detalle/ HTTP/1.1" 200 18549
+INFO 2026-02-09 01:34:52,786 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18549
+INFO 2026-02-09 01:34:54,296 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18549
+INFO 2026-02-09 01:35:07,475 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18549
+INFO 2026-02-09 01:35:07,685 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18549
+INFO 2026-02-09 01:35:14,656 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18549
+INFO 2026-02-09 01:35:14,689 basehttp "GET /static/inventario/css/styles.css HTTP/1.1" 200 7762
+INFO 2026-02-09 01:35:14,690 basehttp "GET /static/inventario/js/scripts.js HTTP/1.1" 200 9932
+WARNING 2026-02-09 01:35:14,857 log Not Found: /favicon.ico
+WARNING 2026-02-09 01:35:14,858 basehttp "GET /favicon.ico HTTP/1.1" 404 2678
+INFO 2026-02-09 01:37:47,376 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18557
+INFO 2026-02-09 01:38:07,394 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-09 01:38:07,414 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18558
+INFO 2026-02-09 01:38:41,956 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-09 01:38:41,976 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18557
+INFO 2026-02-09 01:39:11,836 basehttp "POST /inventario/api/actualizar-tarea/ HTTP/1.1" 200 48
+INFO 2026-02-09 01:39:11,859 basehttp "GET /inventario/proyecto/7/detalle/?proyecto_id=7&id=&nombre=prueba&categoria=1&start=2026-02-08&end=2026-02-19&progress=15 HTTP/1.1" 200 18557
+INFO 2026-02-09 01:39:18,593 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16457
+INFO 2026-02-09 01:39:20,360 basehttp "GET /inventario/proyecto/8/detalle/ HTTP/1.1" 200 18084
+INFO 2026-02-09 01:39:26,880 basehttp "GET /inventario/kanban/taller/ HTTP/1.1" 200 31370
+INFO 2026-02-09 01:39:28,796 basehttp "GET /inventario/filamentos/ HTTP/1.1" 200 11405
+INFO 2026-02-09 01:39:30,118 basehttp "GET /inventario/proyectos/ HTTP/1.1" 200 16457

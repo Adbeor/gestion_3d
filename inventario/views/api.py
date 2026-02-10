@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from inventario.models import (
     Producto, Filamento, Pieza, ItemPedido, 
-    Pedido, Proyecto, Insumo, ComposicionInsumo
+    Pedido, Proyecto, Insumo, ComposicionInsumo, TareaProyecto
 )
 from inventario.forms import LogoForm
 
@@ -294,3 +294,89 @@ def api_crear_logo(request):
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
     
     return JsonResponse({'status': 'error', 'mensaje': 'Método no permitido'}, status=405)
+
+
+@csrf_exempt
+@login_required
+def api_crear_tarea_proyecto(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            proyecto_id = data.get('proyecto_id')
+            nombre = data.get('nombre')
+            start = data.get('start')
+            end = data.get('end')
+            progress = data.get('progress', 0)
+            end = data.get('end')
+            progress = data.get('progress', 0)
+            categoria_id = data.get('categoria') # ID de la categoría (antes era código)
+            
+            proyecto = Proyecto.objects.get(pk=proyecto_id)
+            
+            # Buscar instancia de categoría
+            categoria_obj = None
+            if categoria_id:
+                try:
+                    categoria_obj = CategoriaTarea.objects.get(pk=categoria_id)
+                except CategoriaTarea.DoesNotExist:
+                    pass # O asignar default
+
+            # Si no hay categoría y la queremos default
+            if not categoria_obj:
+                 categoria_obj = CategoriaTarea.objects.filter(nombre="Otros").first()
+
+            tarea = TareaProyecto.objects.create(
+                proyecto=proyecto,
+                nombre=nombre,
+                fecha_inicio=start,
+                fecha_fin=end,
+                progreso=progress,
+                categoria=categoria_obj
+            )
+            
+            # TODO: Handle dependencies if passed as IDs
+            # if dependencies: ...
+
+            return JsonResponse({'status': 'ok', 'id': tarea.id, 'message': 'Tarea creada'})
+        except Exception as e:
+             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error'}, status=400)
+
+@csrf_exempt
+@login_required
+def api_actualizar_tarea_proyecto(request):
+    """Actualiza fechas o progreso (Drag & Drop del Gantt)"""
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            tarea_id = data.get('id')
+            
+            tarea = TareaProyecto.objects.get(pk=tarea_id)
+            
+            if 'nombre' in data: tarea.nombre = data['nombre']
+            if 'start' in data: tarea.fecha_inicio = data['start']
+            if 'end' in data: tarea.fecha_fin = data['end']
+            if 'progress' in data: tarea.progreso = int(data['progress'])
+            if 'categoria' in data:
+                 try:
+                     tarea.categoria = CategoriaTarea.objects.get(pk=data['categoria'])
+                 except: pass
+            
+            tarea.save()
+            return JsonResponse({'status': 'ok', 'message': 'Tarea actualizada'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error'}, status=400)
+
+@csrf_exempt
+@login_required
+def api_eliminar_tarea_proyecto(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            tarea_id = data.get('id')
+            TareaProyecto.objects.filter(pk=tarea_id).delete()
+            return JsonResponse({'status': 'ok', 'message': 'Tarea eliminada'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error'}, status=400)

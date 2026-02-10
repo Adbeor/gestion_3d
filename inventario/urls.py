@@ -29,6 +29,7 @@ urlpatterns = [
     path("kanban/ventas/", views.kanban_ventas, name="kanban_ventas"),
     path("kanban/taller/", views.kanban_taller, name="kanban_taller"),
     path("proyectos/", views.kanban_proyectos, name="kanban_proyectos"),
+    path("proyecto/<int:proyecto_id>/detalle/", views.detalle_proyecto, name="detalle_proyecto"),
     path("filamentos/", views.gestion_filamentos, name="gestion_filamentos"),
     path("api/mover-pedido/", views.actualizar_estado_pedido, name="api_mover_pedido"),
     path("api/stock-pieza/<int:pieza_id>/", views.api_control_stock_pieza, name="api_control_stock_pieza"),
@@ -43,5 +44,11 @@ urlpatterns = [
     path("api/vincular-insumo/<int:producto_id>/", views.api_vincular_insumo, name="api_vincular_insumo"),
     path('api/crear-logo/', views.api_crear_logo, name='api_crear_logo'),
     path('api/mover-proyecto/', views.actualizar_estado_proyecto, name='api_mover_proyecto'),
+    
+    # Tareas Gantt
+    path('api/crear-tarea/', views.api_crear_tarea_proyecto, name='api_crear_tarea_proyecto'),
+    path('api/actualizar-tarea/', views.api_actualizar_tarea_proyecto, name='api_actualizar_tarea_proyecto'),
+    path('api/eliminar-tarea/', views.api_eliminar_tarea_proyecto, name='api_eliminar_tarea_proyecto'),
+
     path('salir/', views.salir, name='salir'),
 ]

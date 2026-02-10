@@ -1,0 +1,351 @@
+{% extends 'inventario/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Glassmorphism & High End UI */
+    
+    .glass-card {
+        background: white;
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
+    }
+    
+    .gantt-container {
+        border-radius: 16px;
+        overflow: hidden;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    /* Floating Action Button */
+    .fab-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+    }
+    
+    .fab {
+        width: 65px;
+        height: 65px;
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 2px solid rgba(255,255,255,0.2);
+    }
+    .fab:hover { 
+        transform: translateY(-5px) scale(1.05); 
+        box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
+    }
+    .fab i { font-size: 28px; }
+
+    /* Custom Scrollbar for Gantt */
+    #gantt-chart::-webkit-scrollbar { height: 10px; }
+    #gantt-chart::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
+
+    /* Bar Colors - Dynamic from Database */
+    {% for cat in categorias %}
+    .gantt .bar-cat-{{ cat.id }} .bar { fill: {{ cat.color }}; }
+    .gantt .bar-cat-{{ cat.id }} .bar-progress { filter: brightness(0.85); fill: {{ cat.color }}; }
+    {% empty %}
+    .gantt .bar-default .bar { fill: #95a5a6; }
+    {% endfor %}
+
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #64748b; font-weight: 500; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+
+<div class="container-fluid mt-4 pb-5 px-lg-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="text-uppercase tracking-wide text-muted small fw-bold mb-1">Proyecto</div>
+            <h2 class="mb-0 fw-bold text-dark display-6">{{ proyecto.nombre }}</h2>
+            <div class="d-flex align-items-center gap-3 mt-2">
+                <span class="badge rounded-pill bg-white text-dark border shadow-sm px-3 py-2">
+                    {{ proyecto.get_estado_display }}
+                </span>
+                {% if proyecto.cliente %}
+                    <span class="text-secondary"><i class="bi bi-person"></i> {{ proyecto.cliente.nombre }}</span>
+                {% else %}
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">Iniciativa Propia</span>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'kanban_proyectos' %}" class="btn btn-white bg-white border shadow-sm rounded-pill px-4">
+                🔙 Volver al Tablero
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Gantt Chart Section -->
+        <div class="col-lg-9 col-12">
+            <div class="gantt-container bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <h5 class="mb-0 fw-bold text-dark">📅 Cronograma de Trabajo</h5>
+                    
+                    <div class="d-flex gap-4 align-items-center">
+                        <!-- Legend -->
+                        <div class="d-none d-xl-flex gap-3">
+                            {% for cat in categorias %}
+                            <div class="legend-item">
+                                <span class="legend-dot" style="background:{{ cat.color }}"></span>{{ cat.nombre }}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="btn-group shadow-sm rounded p-1 bg-light">
+                            <button class="btn btn-sm btn-white active" onclick="changeView('Day')">Día</button>
+                            <button class="btn btn-sm btn-white" onclick="changeView('Week')">Semana</button>
+                            <button class="btn btn-sm btn-white" onclick="changeView('Month')">Mes</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="gantt-chart" style="min-height: 300px;"></div>
+            </div>
+        </div>
+
+        <!-- Details & Description -->
+        <div class="col-lg-3 col-12">
+             <div class="glass-card p-4 h-100">
+                <h6 class="text-uppercase text-primary small fw-bold mb-3 ls-1">Acerca del Proyecto</h6>
+                {% if proyecto.descripcion %}
+                    <p class="text-secondary small" style="white-space: pre-line; line-height: 1.6;">{{ proyecto.descripcion }}</p>
+                {% else %}
+                    <p class="text-muted fst-italic small">Sin descripción detallada.</p>
+                {% endif %}
+                
+                <div class="mt-4 pt-4 border-top">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3 ls-1">Archivos</h6>
+                    {% if proyecto.archivo_adjunto %}
+                        <a href="{{ proyecto.archivo_adjunto.url }}" target="_blank" class="d-flex align-items-center p-3 rounded bg-light text-decoration-none border hover-shadow transition">
+                            <span class="fs-4 me-3">📎</span>
+                            <div class="small">
+                                <div class="fw-bold text-dark">Documento Adjunto</div>
+                                <div class="text-muted">Clic para descargar</div>
+                            </div>
+                        </a>
+                    {% else %}
+                        <div class="text-muted small">No hay archivos adjuntos.</div>
+                    {% endif %}
+                </div>
+             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<div class="fab-container">
+    <div class="fab" type="button" onclick="openNewTask()" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNewTask">
+        <span style="font-size: 32px; margin-top: -4px;">+</span>
+    </div>
+</div>
+
+<!-- Offcanvas (Right Sidebar) for New Task -->
+<div class="offcanvas offcanvas-end border-0 shadow-lg" tabindex="-1" id="offcanvasNewTask" style="width: 400px;">
+    <div class="offcanvas-header bg-light border-bottom">
+        <h5 class="offcanvas-title fw-bold" id="offcanvasTitle">✨ Nueva Tarea</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-4">
+        <form id="formNuevaTarea">
+            <input type="hidden" name="proyecto_id" value="{{ proyecto.id }}">
+            <input type="hidden" name="id" id="taskId"> <!-- ID para edición -->
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold text-dark small text-uppercase">Nombre de la Tarea</label>
+                <input type="text" class="form-control form-control-lg bg-light border-0" name="nombre" placeholder="Ej: Modelado 3D..." required>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold text-dark small text-uppercase">Categoría</label>
+                <div class="d-grid gap-2">
+                {% for cat in categorias %}
+                    <input type="radio" class="btn-check" name="categoria" id="cat_{{cat.id}}" value="{{cat.id}}" {% if forloop.first %}checked{% endif %}>
+                    <label class="btn btn-outline-secondary text-start" for="cat_{{cat.id}}">
+                        <span class="legend-dot" style="background:{{cat.color}}"></span> {{ cat.nombre }}
+                    </label>
+                {% endfor %}
+                </div>
+            </div>
+            
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <label class="form-label fw-bold text-dark small text-uppercase">Inicio</label>
+                    <input type="date" class="form-control bg-light border-0" name="start" required>
+                </div>
+                <div class="col-6">
+                    <label class="form-label fw-bold text-dark small text-uppercase">Fin</label>
+                    <input type="date" class="form-control bg-light border-0" name="end" required>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <label class="form-label fw-bold text-dark small text-uppercase d-flex justify-content-between">
+                    <span>Progreso Inicial</span>
+                    <span class="text-primary" id="progVal">0%</span>
+                </label>
+                <input type="range" class="form-range" name="progress" min="0" max="100" value="0" 
+                       oninput="document.getElementById('progVal').innerText = this.value + '%'">
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+                    Guardar Tarea
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Estilos Frappe Gantt -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.css">
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.js"></script>
+<script>
+    const tasksRaw = {{ tareas_json|safe }};
+    let ganttChart;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set default dates for form
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelector('[name=start]').value = today;
+        document.querySelector('[name=end]').value = today;
+
+        if (tasksRaw.length > 0) {
+            initGantt(tasksRaw);
+        } else {
+            document.getElementById('gantt-chart').innerHTML = 
+                '<div class="py-5 text-center text-muted"><p class="mb-0">🚀 No hay tareas iniciadas.</p><small>Usa el botón + para agregar la primera.</small></div>';
+        }
+    });
+
+    function initGantt(tasks) {
+        ganttChart = new Gantt("#gantt-chart", tasks, {
+            view_modes: ['Day', 'Week', 'Month'],
+            view_mode: 'Week',
+            date_format: 'YYYY-MM-DD',
+            language: 'es',
+            custom_popup_html: function(task) {
+                return `
+                    <div class="p-2" style="width: 200px;">
+                        <div class="fw-bold mb-1">${task.name}</div>
+                        <div class="small text-muted">
+                            ${task.start} - ${task.end}<br>
+                            Progreso: ${task.progress}%
+                        </div>
+                        <div class="mt-2 text-primary small fst-italic">☝️ Click para editar</div>
+                    </div>
+                `;
+            },
+            on_click: function (task) {
+                openTaskModal(task);
+            },
+            on_date_change: function(task, start, end) {
+                updateTask({ id: task.id, start: formatDate(start), end: formatDate(end) });
+            },
+            on_progress_change: function(task, progress) {
+                updateTask({ id: task.id, progress: progress });
+            },
+        });
+    }
+
+    // Abrir modal para NUEVA tarea
+    window.openNewTask = function() {
+        document.getElementById('formNuevaTarea').reset();
+        document.getElementById('taskId').value = "";
+        document.getElementById('offcanvasTitle').innerText = "✨ Nueva Tarea";
+        
+        // Default dates
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelector('[name=start]').value = today;
+        document.querySelector('[name=end]').value = today;
+    }
+
+    // Abrir modal para EDITAR tarea
+    function openTaskModal(task) {
+        const offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasNewTask'));
+        offcanvas.show();
+
+        document.getElementById('taskId').value = task.id;
+        document.getElementById('offcanvasTitle').innerText = "✏️ Editar Tarea";
+        
+        // Fill form
+        const form = document.getElementById('formNuevaTarea');
+        form.querySelector('[name=nombre]').value = task.name;
+        form.querySelector('[name=start]').value = task.start;
+        form.querySelector('[name=end]').value = task.end;
+        form.querySelector('[name=progress]').value = task.progress;
+        document.getElementById('progVal').innerText = task.progress + '%';
+
+        // Select category radio
+        if (task.categoria_id) {
+            const rad = document.getElementById('cat_' + task.categoria_id);
+            if(rad) rad.checked = true;
+        }
+    }
+
+    // Form Submit (Create or Update)
+    document.getElementById('formNuevaTarea').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target));
+        const id = document.getElementById('taskId').value;
+        
+        const url = id ? "{% url 'api_actualizar_tarea_proyecto' %}" : "{% url 'api_crear_tarea_proyecto' %}";
+
+        fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(res => {
+            if(res.status === 'ok') {
+                location.reload(); 
+            } else {
+                alert("Error: " + res.message);
+            }
+        });
+    });
+
+    function changeView(mode) {
+        if(ganttChart) ganttChart.change_view_mode(mode);
+        // Toggle active class
+        document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    function updateTask(data) {
+        fetch("{% url 'api_actualizar_tarea_proyecto' %}", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+    }
+
+    function formatDate(date) {
+        const d = new Date(date);
+        let month = '' + (d.getMonth() + 1);
+        let day = '' + d.getDate();
+        const year = d.getFullYear();
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        return [year, month, day].join('-');
+    }
+</script>
+{% endblock %}
