@@ -82,8 +82,9 @@
                 </div>
                 <input type="hidden" name="usar_nuevo_cliente" id="input-usar-nuevo">
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
                     {{ cliente_form.nombre }}
+                    {{ cliente_form.dni }}
                     {{ cliente_form.telefono }}
                     {{ cliente_form.email }}
                 </div>
@@ -178,6 +179,18 @@
                         {{ pedido_form.descuento }}
                     </div>
                 </div>
+                
+                <h4 style="margin:20px 0 15px 0; color:#2c3e50; border-top: 1px solid #eee; padding-top: 15px;">💳 Estado de Cuenta</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+                    <div>
+                        <label>Estado del Pago</label>
+                        {{ pedido_form.estado_pago }}
+                    </div>
+                    <div>
+                        <label>💸 Monto Abonado / Adelanto (S/)</label>
+                        {{ pedido_form.monto_pagado }}
+                    </div>
+                </div>
             </div>
 
             <div style="margin-top: 40px; border-top: 2px dashed #eee; padding-top: 20px;">
@@ -246,7 +259,16 @@
             </div>
         </div>
 
-        <div style="margin-top: 40px; text-align: right; border-top: 2px solid #f1f2f6; padding-top: 20px;">
+            <div style="background: #e8f6f3; padding: 20px; border-radius: 10px; border: 2px solid #27ae60; margin-top: 30px; text-align: right;">
+                <h3 style="margin: 0; color: #2c3e50; font-size: 1.5em;">
+                    Total Pedido: <span style="color: #27ae60;">S/ <span id="display-total">0.00</span></span>
+                </h3>
+                <h4 style="margin: 5px 0 0 0; color: #7f8c8d; font-size: 1.1em;">
+                    Saldo Pendiente: <span style="color: #e74c3c;">S/ <span id="display-pendiente">0.00</span></span>
+                </h4>
+            </div>
+
+            <div style="margin-top: 40px; text-align: right; border-top: 2px solid #f1f2f6; padding-top: 20px;">
             <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #7f8c8d; margin-right: 20px;">Cancelar</a>
             <button type="submit" id="btn-guardar" style="background: #2980b9; color: white; padding: 12px 40px; border: none; border-radius: 6px; font-size: 1.1em; cursor: pointer;">
                 Guardar Pedido
@@ -606,11 +628,22 @@
         const boxNuevo = document.getElementById('nuevo-cliente-box');
         if(boxNuevo) boxNuevo.querySelectorAll('input, select').forEach(el => el.disabled = true);
 
-        // LÓGICA ENVÍO (Ocultar costo si es Recojo)
         const selectEnvio = document.querySelector('[name="metodo_envio"]');
         const boxCosto = document.getElementById('box-costo-envio');
         const boxPaga = document.getElementById('box-paga-envio');
         const inputCosto = document.querySelector('[name="costo_envio"]');
+        
+        // Lógica para detectar deletes y recalcular
+        document.getElementById('lista-productos').addEventListener('click', function(e) {
+            if(e.target.classList.contains('btn-delete')) { setTimeout(calcularTotal, 100); }
+        });
+        document.getElementById('lista-piezas').addEventListener('click', function(e) {
+            if(e.target.classList.contains('btn-delete')) { setTimeout(calcularTotal, 100); }
+        });
+
+        // Event listener general para Paga al recibir
+        const chkPagaRecibir = document.querySelector('[name="paga_al_recibir"]');
+        if(chkPagaRecibir) { chkPagaRecibir.addEventListener('change', calcularTotal); }
 
         function toggleEnvio() {
             if(!selectEnvio) return;
@@ -630,6 +663,65 @@
             selectEnvio.addEventListener('change', toggleEnvio);
             toggleEnvio(); // Run on load
         }
+        
+        setTimeout(calcularTotal, 500); // Calcular inicial tras cargar
     });
+
+    // LÓGICA DE CÁLCULO EN TIEMPO REAL
+    function calcularTotal() {
+        let total = 0;
+
+        // 1. Sumar Productos
+        const filasProducto = document.querySelectorAll('#lista-productos .item-row');
+        filasProducto.forEach(fila => {
+            if (fila.style.display !== 'none' && fila.style.opacity !== '0.3') { // Ignore deleted rows
+                const cant = parseFloat(fila.querySelector('.input-cantidad')?.value) || 0;
+                const precio = parseFloat(fila.querySelector('.input-precio')?.value) || 0;
+                total += (cant * precio);
+            }
+        });
+
+        // 2. Sumar Piezas
+        const filasPieza = document.querySelectorAll('#lista-piezas .pieza-row');
+        filasPieza.forEach(fila => {
+            if (fila.style.display !== 'none' && fila.style.opacity !== '0.3') { // Ignore deleted rows
+                const cant = parseFloat(fila.querySelector('.input-cantidad-pieza')?.value) || 0;
+                const precio = parseFloat(fila.querySelector('.input-precio-pieza')?.value) || 0;
+                total += (cant * precio);
+            }
+        });
+
+        // 3. Sumar Envío (Si aplica)
+        const chkPagaRecibir = document.querySelector('[name="paga_al_recibir"]');
+        const selectEnvio = document.querySelector('[name="metodo_envio"]');
+        let costoEnvio = 0;
+        
+        if (selectEnvio && selectEnvio.value !== "RECOJO") {
+            costoEnvio = parseFloat(document.querySelector('[name="costo_envio"]')?.value) || 0;
+        }
+        
+        // Solo sumamos el costo de envío si NO se paga al recibir
+        if (!chkPagaRecibir || !chkPagaRecibir.checked) {
+            total += costoEnvio;
+        }
+
+        // 4. Restar Descuento
+        const descuento = parseFloat(document.querySelector('[name="descuento"]')?.value) || 0;
+        total -= descuento;
+        
+        // Evitar totales negativos
+        if (total < 0) total = 0;
+
+        // 5. Restar Adelanto para Saldo Pendiente
+        const adelanto = parseFloat(document.querySelector('[name="monto_pagado"]')?.value) || 0;
+        let pendiente = total - adelanto;
+        
+        // Evitar pendientes negativos
+        if (pendiente < 0) pendiente = 0;
+
+        // Actualizar UI
+        document.getElementById('display-total').innerText = total.toFixed(2);
+        document.getElementById('display-pendiente').innerText = pendiente.toFixed(2);
+    }
 </script>
 {% endblock %}

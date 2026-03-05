@@ -101,7 +101,7 @@ class PedidoAdmin(admin.ModelAdmin):
         "total_calculado",
     )
     list_filter = ("estado_pago", "estado_entrega", "fecha_entrega_estimada")
-    search_fields = ("cliente__nombre", "id", "fecha_entrega_estimada")
+    search_fields = ("id", "cliente__nombre", "items__producto__nombre", "items_pieza__pieza__nombre", "items_insumo__insumo__nombre")
     inlines = [ItemPedidoInline]  # <--- AQUÍ CONECTAMOS LA TABLITA
 
     # Un truco para mostrar el total calculado en la lista del admin

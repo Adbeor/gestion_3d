@@ -558,6 +558,7 @@ class ComposicionProducto(models.Model):
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100, verbose_name="Nombre del Cliente")
+    dni = models.CharField(max_length=20, blank=True, verbose_name="DNI / RUC")
     telefono = models.CharField(
         max_length=20, blank=True, verbose_name="Teléfono / WhatsApp"
     )

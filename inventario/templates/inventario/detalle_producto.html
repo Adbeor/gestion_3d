@@ -25,7 +25,19 @@
   <div style="display: flex; gap: 20px; margin-bottom: 30px;">
       <div class="card-resumen card-border-green">
         <small class="text-label-small">En Almacén (Listos)</small>
-        <div style="font-size: 2.2em; font-weight: bold; color: #2c3e50;">{{ producto.stock_armado }} <span style="font-size: 0.5em; color: #95a5a6;">unidades</span></div>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+            <div style="display: flex; gap: 5px; align-items: center; background: #f8f9fa; padding: 5px 10px; border-radius: 8px;">
+                <button class="btn" style="background: #e74c3c; padding: 4px 15px; font-size: 1.1em; font-weight: bold;" onclick="updateStockProducto('restar', 1)">-</button>
+                <input type="number" 
+                       value="{{ producto.stock_armado }}" 
+                       onchange="updateStockProducto('set', this.value)"
+                       id="input-stock-producto"
+                       style="width: 70px; padding: 6px; text-align: center; border: 1px solid #ddd; border-radius: 5px; font-size: 1.2em; font-weight: bold; color: #2c3e50;">
+                <button class="btn" style="background: #3498db; padding: 4px 15px; font-size: 1.1em; font-weight: bold;" onclick="updateStockProducto('sumar', 1)">+</button>
+            </div>
+            <span style="font-size: 1.1em; color: #95a5a6; font-weight: bold;">unidades</span>
+        </div>
       </div>
 
       {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
@@ -363,5 +375,51 @@
 {% endblock %}
 
 {% block extra_js %}
+  <script>
+    // Nueva función para actualizar el stock del producto principal directamente
+    function updateStockProducto(accion, valor) {
+        const prodId = document.getElementById('page-context').dataset.productoId;
+        const inputStock = document.getElementById('input-stock-producto');
+        const displayStock = document.getElementById('display-stock-producto');
+        
+        const originalValue = inputStock.value;
+
+        // Opcional: UI Optimista (si sabemos la acción exacta localmente)
+        let newValue = parseFloat(originalValue) || 0;
+        if (accion === 'sumar') newValue += parseFloat(valor);
+        if (accion === 'restar') newValue -= parseFloat(valor);
+        if (accion === 'set') newValue = parseFloat(valor);
+        if (newValue < 0) newValue = 0;
+        
+        inputStock.value = newValue; // optimistic
+        
+        fetch(`/inventario/api/stock-producto/${prodId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                accion: accion,
+                valor: valor
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                inputStock.value = data.nuevo_stock;
+                displayStock.innerText = data.nuevo_stock;
+            } else {
+                alert('Error al actualizar: ' + data.mensaje);
+                inputStock.value = originalValue; // revert
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error de conexión');
+            inputStock.value = originalValue; // revert
+        });
+    }
+  </script>
   <!-- Scripts en static/inventario/js/scripts.js -->
 {% endblock %}

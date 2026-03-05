@@ -5,6 +5,7 @@ import logging
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
 from inventario.models import (
@@ -36,6 +37,27 @@ def actualizar_estado_pedido(request):
             return JsonResponse({"status": "error", "mensaje": "Pedido no encontrado"}, status=404)
         except Exception as e:
             logger.error(f"Error actualizando pedido: {e}")
+            return JsonResponse({"status": "error", "mensaje": str(e)}, status=500)
+
+    return JsonResponse({"status": "error"}, status=400)
+
+@login_required
+def actualizar_estado_pago(request):
+    """Mueve el estado de pago de un Pedido"""
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            pedido_id = data.get("id")
+            nuevo_estado = data.get("estado")
+
+            pedido = Pedido.objects.get(pk=pedido_id)
+            pedido.estado_pago = nuevo_estado
+            pedido.save()
+            return JsonResponse({"status": "ok", "mensaje": f"Pago movido a {nuevo_estado}"})
+        except Pedido.DoesNotExist:
+            return JsonResponse({"status": "error", "mensaje": "Pedido no encontrado"}, status=404)
+        except Exception as e:
+            logger.error(f"Error actualizando pago de pedido: {e}")
             return JsonResponse({"status": "error", "mensaje": str(e)}, status=500)
 
     return JsonResponse({"status": "error"}, status=400)
@@ -365,8 +387,35 @@ def api_actualizar_tarea_proyecto(request):
             tarea.save()
             return JsonResponse({'status': 'ok', 'message': 'Tarea actualizada'})
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-    return JsonResponse({'status': 'error'}, status=400)
+            return JsonResponse({"status": "error", "mensaje": str(e)}, status=500)
+    return JsonResponse({"status": "error"}, status=400)
+
+@login_required
+@require_POST
+def api_actualizar_stock_producto(request, producto_id):
+    """Suma, resta o establece el stock armado de un producto (+1, -1, o =valor)"""
+    try:
+        producto = get_object_or_404(Producto, id=producto_id)
+        data = json.loads(request.body)
+        accion = data.get("accion") # 'sumar', 'restar', 'set'
+        valor = float(data.get("valor", 0))
+        
+        if accion == 'sumar':
+            producto.stock_armado += valor
+        elif accion == 'restar':
+            producto.stock_armado = max(0, producto.stock_armado - valor)
+        elif accion == 'set':
+            producto.stock_armado = max(0, valor)
+            
+        producto.save()
+        
+        return JsonResponse({
+            "status": "ok", 
+            "nuevo_stock": producto.stock_armado
+        })
+    except Exception as e:
+        logger.error(f"Error en API stock producto {producto_id}: {e}")
+        return JsonResponse({"status": "error", "mensaje": str(e)}, status=500)
 
 @csrf_exempt
 @login_required

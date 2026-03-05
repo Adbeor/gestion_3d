@@ -259,9 +259,58 @@ def lista_pedidos(request):
     if request.user.groups.filter(name="Taller").exists() and not request.user.is_superuser:
         return redirect("kanban_taller")
         
-    # Ordenamos: Primero los no entregados, luego los más nuevos
     pedidos = Pedido.objects.all().order_by("estado_entrega", "-fecha_creacion")
-    return render(request, "inventario/lista_pedidos.html", {"pedidos": pedidos})
+    
+    query = request.GET.get('q', '')
+    fecha_inicio = request.GET.get('fecha_inicio', '')
+    fecha_fin = request.GET.get('fecha_fin', '')
+    estado_entrega_filtro = request.GET.get('estado_entrega', '')
+    estado_pago_filtro = request.GET.get('estado_pago', '')
+    orden = request.GET.get('orden', '-fecha_creacion')
+
+    if query:
+        # Check if query is an integer to search by ID
+        import builtins
+        try:
+            pedido_id = builtins.int(query)
+            q_objects = Q(id=pedido_id) | Q(cliente__nombre__icontains=query) | Q(cliente__dni__icontains=query) | Q(items__producto__nombre__icontains=query) | Q(items_pieza__pieza__nombre__icontains=query) | Q(items_insumo__insumo__nombre__icontains=query)
+        except ValueError:
+            q_objects = Q(cliente__nombre__icontains=query) | Q(cliente__dni__icontains=query) | Q(items__producto__nombre__icontains=query) | Q(items_pieza__pieza__nombre__icontains=query) | Q(items_insumo__insumo__nombre__icontains=query)
+
+        pedidos = pedidos.filter(q_objects)
+
+    if fecha_inicio:
+        pedidos = pedidos.filter(fecha_creacion__date__gte=fecha_inicio)
+    
+    if fecha_fin:
+        pedidos = pedidos.filter(fecha_creacion__date__lte=fecha_fin)
+        
+    if estado_entrega_filtro:
+        pedidos = pedidos.filter(estado_entrega=estado_entrega_filtro)
+        
+    if estado_pago_filtro:
+        pedidos = pedidos.filter(estado_pago=estado_pago_filtro)
+        
+    if orden == 'antiguos':
+        pedidos = pedidos.order_by('fecha_creacion')
+    else:
+        pedidos = pedidos.order_by('-fecha_creacion')
+
+    pedidos = pedidos.distinct()
+
+    context = {
+        "pedidos": pedidos, 
+        "query": query,
+        "fecha_inicio": fecha_inicio,
+        "fecha_fin": fecha_fin,
+        "estado_entrega_filtro": estado_entrega_filtro,
+        "estado_pago_filtro": estado_pago_filtro,
+        "orden": orden,
+        "ESTADOS_ENTREGA": Pedido.ESTADOS_ENTREGA,
+        "ESTADOS_PAGO": Pedido.ESTADOS_PAGO,
+    }
+
+    return render(request, "inventario/lista_pedidos.html", context)
 
 @login_required
 def dashboard_simple(request):

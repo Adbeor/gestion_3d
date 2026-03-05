@@ -47,7 +47,9 @@
         </div>
         <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
             <h4 style="margin-top:0;">📦 Estado</h4>
+            {% if not modo_taller %}
             <p><strong>Pago:</strong> {{ pedido.get_estado_pago_display }}</p>
+            {% endif %}
             <p><strong>Entrega:</strong> {{ pedido.get_estado_entrega_display }}</p>
             <p><strong>Fecha Estimada:</strong> {{ pedido.fecha_entrega_estimada|date:"d F Y" }}</p>
         </div>

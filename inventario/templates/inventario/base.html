@@ -23,36 +23,58 @@
 
 <body>
 
-    <nav class="navbar">
-        {% load auth_extras %}
-        <a href="{% url 'dashboard' %}" class="navbar-brand">
-            🚀 3D TEC
-        </a>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #2c3e50; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+        <div class="container-fluid px-4">
+            {% load auth_extras %}
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'dashboard' %}">
+                🚀 3D TEC
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPrincipal" aria-controls="navbarPrincipal" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarPrincipal">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-2">
+                    <li class="nav-item">
+                        <a href="{% url 'dashboard' %}" class="nav-link custom-nav-link">📊 Inicio</a>
+                    </li>
 
-        <div class="navbar-menu">
-            <a href="{% url 'dashboard' %}" class="nav-link">📊 Inicio</a>
+                    {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url 'kanban_ventas' %}" class="nav-link custom-nav-link link-ventas">💰 Ventas</a>
+                    </li>
+                    {% endif %}
 
-            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
-            <a href="{% url 'kanban_ventas' %}" class="nav-link link-ventas">💰 Ventas</a>
-            {% endif %}
+                    <li class="nav-item">
+                        <a href="{% url 'kanban_taller' %}" class="nav-link custom-nav-link link-taller">🔨 Taller</a>
+                    </li>
 
-            <a href="{% url 'kanban_taller' %}" class="nav-link link-taller">🔨 Taller</a>
+                    {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url 'kanban_proyectos' %}" class="nav-link custom-nav-link link-proy">🧪 Laboratorio</a>
+                    </li>
+                    {% endif %}
 
-            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
-            <a href="{% url 'kanban_proyectos' %}" class="nav-link link-proy">🧪 Laboratorio</a>
-            {% endif %}
+                    <li class="nav-item">
+                        <a href="{% url 'gestion_filamentos' %}" class="nav-link custom-nav-link" style="border-bottom: 2px solid #95a5a6;">🧵 Filamentos</a>
+                    </li>
 
-            <a href="{% url 'gestion_filamentos' %}" class="nav-link" style="border-bottom: 2px solid #95a5a6;">🧵
-                Filamentos</a>
+                    {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
+                    <li class="nav-item">
+                        <a href="{% url 'gestion_insumos' %}" class="nav-link custom-nav-link" style="border-bottom: 2px solid #7f8c8d;">📦 Insumos</a>
+                    </li>
 
-            {% if not request.user|has_group:"Taller" or request.user.is_superuser %}
-            <a href="{% url 'gestion_insumos' %}" class="nav-link" style="border-bottom: 2px solid #7f8c8d;">📦
-                Insumos</a>
+                    <li class="nav-item">
+                        <a href="{% url 'crear_pedido' %}" class="nav-link fw-bold px-3 rounded text-white ms-lg-2 mt-2 mt-lg-0" style="background: #27ae60;">+ Nuevo</a>
+                    </li>
+                    {% endif %}
 
-            <a href="{% url 'crear_pedido' %}" class="nav-link" style="background: #27ae60; color: white;">+ Nuevo</a>
-            {% endif %}
-
-            <a href="{% url 'salir' %}" class="nav-link" style="background: #e74c3c; color: white;">Salir</a>
+                    <li class="nav-item">
+                        <a href="{% url 'salir' %}" class="nav-link fw-bold px-3 rounded text-white ms-lg-2 mt-2 mt-lg-0" style="background: #e74c3c;">Salir</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 

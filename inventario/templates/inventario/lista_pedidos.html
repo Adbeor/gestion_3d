@@ -24,19 +24,99 @@
     .pago-PARCIAL { color: #d35400; font-weight: bold; background: #fdebd0; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;}
     .pago-PAGADO { color: #27ae60; font-weight: bold; background: #d4efdf; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;}
 
-    .btn-editar { background: #ecf0f1; color: #2c3e50; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; font-weight: 600; transition: background 0.2s;}
+    .btn-editar { background: #ecf0f1; color: #2c3e50; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; font-weight: 600; transition: background 0.2s; white-space: nowrap; display: inline-block;}
     .btn-editar:hover { background: #bdc3c7; }
+    
+    /* Responsividad general */
+    .filtros-grid {
+        display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; 
+        background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;
+    }
+    .filtro-item {
+        display: flex; flex-direction: column; gap: 5px; min-width: 140px; flex-grow: 1;
+    }
+    .filtro-item label { font-size: 0.85em; color: #7f8c8d; font-weight: bold; }
+    .filtro-item input, .filtro-item select { padding: 8px 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; width: 100%; height: 38px;}
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* smooth scrolling en iOS */
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .header-pedidos { flex-direction: column; align-items: stretch; gap: 15px; }
+        .header-pedidos > div { display: flex; flex-direction: column; gap: 10px; }
+        .header-pedidos a { text-align: center; }
+        
+        .filtros-grid { flex-direction: column; align-items: stretch; }
+        .filtro-item { width: 100%; }
+        
+        .filtro-acciones { flex-direction: row; display: flex; gap: 10px; }
+        .filtro-acciones button, .filtro-acciones a { flex: 1; text-align: center; }
+    }
 </style>
 
-<div class="header-pedidos">
+<div class="header-pedidos" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
     <div>
         <h1 style="margin:0; color: #2c3e50;">📦 Historial de Pedidos</h1>
         <p style="margin:5px 0 0 0; color: #7f8c8d;">Todos tus movimientos en un solo lugar</p>
     </div>
-    <a href="{% url 'crear_pedido' %}" style="background: #2980b9; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; box-shadow: 0 4px 6px rgba(41, 128, 185, 0.3);">
+    <a href="{% url 'crear_pedido' %}" style="background: #2980b9; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; box-shadow: 0 4px 6px rgba(41, 128, 185, 0.3); display: inline-block;">
         + Nuevo Pedido
     </a>
 </div>
+
+<form method="GET" action="" class="filtros-grid">
+    <div class="filtro-item" style="flex-grow: 2;">
+        <label>Buscar</label>
+        <input type="text" name="q" placeholder="DNI, nombre, ID o ítem..." value="{{ query|default:'' }}">
+    </div>
+    <div class="filtro-item">
+        <label>Desde</label>
+        <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+    </div>
+    <div class="filtro-item">
+        <label>Hasta</label>
+        <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+    </div>
+    <div class="filtro-item">
+        <label>Estado Entrega</label>
+        <select name="estado_entrega">
+            <option value="">Todos</option>
+            {% for value, label in ESTADOS_ENTREGA %}
+                <option value="{{ value }}" {% if estado_entrega_filtro == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filtro-item">
+        <label>Estado Pago</label>
+        <select name="estado_pago">
+            <option value="">Todos</option>
+            {% for value, label in ESTADOS_PAGO %}
+                <option value="{{ value }}" {% if estado_pago_filtro == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="filtro-item">
+        <label>Orden</label>
+        <select name="orden">
+            <option value="nuevos" {% if orden != 'antiguos' %}selected{% endif %}>Más nuevos primero</option>
+            <option value="antiguos" {% if orden == 'antiguos' %}selected{% endif %}>Más viejos primero</option>
+        </select>
+    </div>
+    <div class="filtro-item filtro-acciones" style="flex-direction: row; flex-grow: 0;">
+        <button type="submit" style="background: #e74c3c; color: white; padding: 0 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; height: 38px;">
+            🔍 Buscar
+        </button>
+        <a href="{% url 'lista_pedidos' %}" style="background: #95a5a6; color: white; padding: 0 15px; text-decoration: none; border-radius: 6px; font-weight: bold; height: 38px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+            ✖ Limpiar
+        </a>
+    </div>
+</form>
+
+<div class="table-responsive">
 
 <table class="tabla-pedidos">
     <thead>
@@ -71,15 +151,31 @@
             <td style="font-weight: bold; color: #2c3e50;">S/ {{ pedido.total_pedido|floatformat:2 }}</td>
             
             <td>
-                <span class="badge bg-{{ pedido.estado_entrega }}">
-                    {{ pedido.get_estado_entrega_display }}
-                </span>
+                <select 
+                    class="badge bg-{{ pedido.estado_entrega }}" 
+                    style="border: none; cursor: pointer; outline: none;"
+                    onchange="actualizarEstadoEntrega({{ pedido.id }}, this)"
+                >
+                    {% for value, label in pedido.ESTADOS_ENTREGA %}
+                        <option value="{{ value }}" {% if pedido.estado_entrega == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
             </td>
             
             <td>
-                <span class="pago-{{ pedido.estado_pago }}">
-                    {{ pedido.get_estado_pago_display }}
-                </span>
+                <select 
+                    class="badge pago-{{ pedido.estado_pago }}" 
+                    style="border: none; cursor: pointer; outline: none;"
+                    onchange="actualizarEstadoPago({{ pedido.id }}, this)"
+                >
+                    {% for value, label in pedido.ESTADOS_PAGO %}
+                        <option value="{{ value }}" {% if pedido.estado_pago == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
             </td>
 
             <td>
@@ -95,4 +191,94 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
+
+{% csrf_token %}
+
+<script>
+    // Utils to update select classes immediately on change
+    function updateSelectClass(selectElement, prefix, newValue) {
+        // Remove all old colored classes that start with prefix
+        const classes = Array.from(selectElement.classList);
+        classes.forEach(c => {
+            if(c.startsWith(prefix)) {
+                selectElement.classList.remove(c);
+            }
+        });
+        // Add new colored class
+        selectElement.classList.add(prefix + newValue);
+    }
+
+    function actualizarEstadoEntrega(pedidoId, selectElement) {
+        const nuevoEstado = selectElement.value;
+        const originalValue = selectElement.dataset.originalValue || selectElement.querySelector('option[selected]').value;
+        
+        // Optimitic update UI
+        updateSelectClass(selectElement, 'bg-', nuevoEstado);
+        
+        fetch("{% url 'api_mover_pedido' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                id: pedidoId,
+                estado: nuevoEstado
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                selectElement.dataset.originalValue = nuevoEstado;
+            } else {
+                alert('Error al actualizar el estado: ' + data.mensaje);
+                selectElement.value = originalValue;
+                updateSelectClass(selectElement, 'bg-', originalValue);
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert('Error de conexión.');
+            selectElement.value = originalValue;
+            updateSelectClass(selectElement, 'bg-', originalValue);
+        });
+    }
+
+    function actualizarEstadoPago(pedidoId, selectElement) {
+        const nuevoEstado = selectElement.value;
+        const originalValue = selectElement.dataset.originalValue || selectElement.querySelector('option[selected]').value;
+
+        // Optimitic update UI
+        updateSelectClass(selectElement, 'pago-', nuevoEstado);
+
+        fetch("{% url 'api_mover_pago' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                id: pedidoId,
+                estado: nuevoEstado
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                selectElement.dataset.originalValue = nuevoEstado;
+            } else {
+                alert('Error al actualizar el pago: ' + data.mensaje);
+                selectElement.value = originalValue;
+                updateSelectClass(selectElement, 'pago-', originalValue);
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            alert('Error de conexión.');
+            selectElement.value = originalValue;
+            updateSelectClass(selectElement, 'pago-', originalValue);
+        });
+    }
+</script>
 {% endblock %}

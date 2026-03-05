@@ -11,14 +11,18 @@ class PedidoForm(forms.ModelForm):
             'fecha_entrega_estimada', 
             'es_urgente', 
             'requiere_factura',
-            'metodo_envio', 'costo_envio', 'paga_al_recibir', 'descuento'
+            'metodo_envio', 'costo_envio', 'paga_al_recibir', 'descuento',
+            'estado_pago', 'monto_pagado'
         ]
         widgets = {
             'fecha_entrega_estimada': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'cliente': forms.Select(attrs={'class': 'form-control select-cliente'}),
-            'metodo_envio': forms.Select(attrs={'class': 'form-control'}),
-            'costo_envio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50'}),
-            'descuento': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50'}),
+            'metodo_envio': forms.Select(attrs={'class': 'form-control', 'onchange': 'calcularTotal()'}),
+            'costo_envio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50', 'oninput': 'calcularTotal()'}),
+            'descuento': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50', 'oninput': 'calcularTotal()'}),
+            
+            'estado_pago': forms.Select(attrs={'class': 'form-control'}),
+            'monto_pagado': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.50', 'oninput': 'calcularTotal()'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -31,9 +35,10 @@ class PedidoForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente
-        fields = ['nombre', 'telefono', 'email', 'direccion']
+        fields = ['nombre', 'dni', 'telefono', 'email', 'direccion']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre Completo'}),
+            'dni': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'DNI o RUC (Opcional)'}),
             'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'WhatsApp'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo (Opcional)'}),
             'direccion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Dirección'}),
@@ -57,9 +62,9 @@ ItemPedidoFormSet = inlineformset_factory(
     extra=1,
     can_delete=True,
     widgets={
-        "producto": forms.Select(attrs={"class": "form-control","onchange": "actualizarPrecio(this)"}),
-        "cantidad": forms.NumberInput(attrs={"class": "form-control", "style": "width: 70px"}),
-        "precio_unitario": forms.NumberInput(attrs={"class": "form-control", "step": "0.01", "style": "width: 90px"}),
+        "producto": forms.Select(attrs={"class": "form-control","onchange": "actualizarPrecio(this); calcularTotal()"}),
+        "cantidad": forms.NumberInput(attrs={"class": "form-control input-cantidad", "style": "width: 70px", "oninput": "calcularTotal()"}),
+        "precio_unitario": forms.NumberInput(attrs={"class": "form-control input-precio", "step": "0.01", "style": "width: 90px", "oninput": "calcularTotal()"}),
         "cubierta": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         
         "poner_nombre": forms.CheckboxInput(
@@ -99,8 +104,8 @@ class ItemPiezaPedidoForm(forms.ModelForm):
         fields = ['pieza', 'cantidad', 'precio_unitario']
         widgets = {
              'pieza': forms.Select(attrs={'class': 'form-control'}),
-             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'style': 'width: 80px;'}),
-             'precio_unitario': forms.NumberInput(attrs={'class': 'form-control', 'min': 0, 'step': '0.1', 'style': 'width: 100px;'}),
+             'cantidad': forms.NumberInput(attrs={'class': 'form-control input-cantidad-pieza', 'min': 1, 'style': 'width: 80px;', 'oninput': "calcularTotal()"}),
+             'precio_unitario': forms.NumberInput(attrs={'class': 'form-control input-precio-pieza', 'min': 0, 'step': '0.1', 'style': 'width: 100px;', 'oninput': "calcularTotal()"}),
         }
 
 ItemPiezaFormSet = inlineformset_factory(
